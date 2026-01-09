@@ -1,0 +1,862 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ resume.name }}</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'home/favicon.png' %}"/>
+    <link href="https://fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'home/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'home/css/style.css' %}">
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar">
+    <div id="main-wrapper">
+        <!-- Loading Circle -->
+        <div id="preloader" style="background: rgba(255, 255, 255, 1.0)">
+            <div id="status">
+                <div class="status-mes"></div>
+            </div>
+        </div>
+
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+            <!-- The Close Button -->
+            <span class="close">&times;</span>
+
+            <!-- Modal Content -->
+            <img class="modal-content" id="img01"></img>
+            <video class="modal-content" id="vid01" autoplay="" loop=""></video>
+
+            <!-- Modal Caption -->
+            <div id="caption"></div>
+        </div>
+
+        <!-- The Modal for pdf -->
+        <div id="pdfModal" class="modal">
+
+            <!-- The Close Button -->
+            <span class="close">&times;</span>
+
+            <!-- Modal Content -->
+            <iframe class="modal-content" id="pdf01" style="display:none;height:100%" frameborder="0"></iframe>
+
+        </div>
+
+        <div class="columns-block container loading" id="right-container">
+            <div class="left-col-block blocks">
+                <header class="header theiaStickySidebar">
+                    <div class="profile-img">
+                        {% if site_config.profile_image %}
+                            <img src="{{ site_config.profile_image.url }}" class="img-responsive loading" alt="{{ site_config.profile_image_alt_text }}"
+                                id="profile-image" />
+                        {% endif %}
+                    </div>
+                    <div class="content loading" id="content-loading">
+                        <h1>{{ resume.name }}</h1>
+                        <span class="lead">
+                                {{ resume.headline }}
+                            <a href="mailto:{{ site_config.display_email }}">{{ site_config.display_email }}</a>
+                            </span>
+                        <nav class="navbar navbar-default" role="navigation">
+                            <div class="container-fluid" style="padding: 0">
+                                <ul class="nav navbar-nav " style="padding: 0;">
+                                    <li><a class="resume-button" style="padding-right: 40px; padding-left:40px"
+                                            href="javascript:void(0);">Resume</a></li>
+                                    <li><a class="projects-button" style="padding-left: 40px; padding-right:40px"
+                                            href="javascript:void(0);">Portfolio</a></li>
+                                </ul>
+                            </div>
+                        </nav>
+                        <div class="about-text">
+                            <p>
+                                {{ resume.about_text }}
+                            </p>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <address style="display:inline;">
+                                        <strong>Location</strong>
+                                            {{ resume.location }}
+
+                                    </address>
+                                </div>
+                            </div>
+                            <ul class="social-icon">
+                                <li><a href="{{ site_config.linkedin_url }}"><i class="fa fa-linkedin"
+                                            aria-hidden="true"></i></a></li>
+                                <li><a href="{{ site_config.github_url }}"><i class="fa fa-github"
+                                            aria-hidden="true"></i></a></li>
+                                <li><a href="mailto:{{ site_config.display_email }}"><i class="fa fa-envelope"
+                                            aria-hidden="true"></i></a></li>
+                            </ul>
+
+                </header>
+                <!-- .header-->
+            </div>
+            <!-- right-block-container -->
+            <div class="right-col-block blocks">
+                <!-- #resume -->
+                <div class="right-col-block blocks" id="resume">
+                
+                    <div class="theiaStickySidebar">
+                        <section class="expertise-wrapper section-wrapper gray-bg">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>Expertise</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- .row -->
+                                
+                                {% for item in resume.expertiseitem_set.all %}
+                                
+                                    {% if not forloop.counter|divisibleby:2 %} 
+                                    <div class="row">
+                                    {% endif %}
+                                    <div class="col-md-6">
+                                        <div class="expertise-item">
+                                            <p>
+                                                {{ item.text }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {% if forloop.counter|divisibleby:2 %} 
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+
+                            </div>
+                        </section>
+                        <!-- .expertise-wrapper -->
+
+                        <section class="section-wrapper skills-wrapper">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>Technical Strengths</h2>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="progress-wrapper">
+                                            {% for skill_group in skill_groups %}
+                                            <div class="col-md-6">
+                                                <p><b>{{ skill_group }}</b></p>
+                                                <p class="res-strengths">
+                                                {% for skill in resume.skill_set.all %}
+                                                
+                                                    {% if skill_group == skill.skill_group %}
+                                                        {{ skill.skill }} &nbsp;
+                                                    {% endif %}
+                                                
+                                                {% endfor %}
+                                                </p>
+                                             </div>
+                                            {% endfor %}
+                                        </div>
+                                        <!-- /.progress-wrapper -->
+                                    </div>
+                                </div>
+                                <!--.row -->
+                            </div>
+                            <!-- .container-fluid -->
+                        </section>
+                        <!-- .skills-wrapper -->
+
+                        <section class="section-wrapper section-education">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>Education</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--.row-->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    {% for education in resume.education_set.all %}
+                                    <div class="content-item">
+                                        <h3>{{ education.degree }}</h3>
+                                        <h4>{{ education.institution }}</h4>
+                                        <p>{{ education.location }}</p>
+                                    </div>
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                                <!--.row-->
+                            </div>
+                            <!-- .container-fluid -->
+
+                        </section>
+                        <!-- .section-education -->
+
+                        <section class="section-wrapper section-experience gray-bg">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>Work Experience</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--.row-->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {% for work_exp in resume.workexperience_set.all %}
+
+                                            <div class="content-item">
+                                                <small>{{ work_exp.start_date }} - {{ work_exp.end_date }}</small>
+                                                <h3>{{ work_exp.title }}</h3>
+                                                <h4>{{ work_exp.company }}</h4>
+
+                                                <p>{{ work_exp.location }}</p>
+                                                <ul>
+                                                {% for work_exp_item in work_exp.workexperienceitem_set.all %}
+                                                    <li>• {{ work_exp_item.text }}</li>
+                                                {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <!--.row-->
+                            </div>
+                            <!-- .container-fluid -->
+
+                        </section>
+
+                        <section class="section-wrapper section-ac-experience gray-bg">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>Academic Experience</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--.row-->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {% for ac_exp in resume.academicexperience_set.all %}
+                                            <div class="content-item">
+                                                <h3>{{ ac_exp.experience_type}}</h3>
+                                                <h4>{{ ac_exp.course }}</h4>
+
+                                                <p>{{ ac_exp.institution }}</p>
+                                                <ul>
+                                                    {% for ac_item in ac_exp.academicexperienceitem_set.all %}
+                                                        <li>• {{ ac_item.text }}</li>
+                                                    {% endfor %}
+                                                </ul>
+
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <!--.row-->
+                            </div>
+                            <!-- .container-fluid -->
+
+                        </section>
+                        <!-- .section-experience -->
+
+                        <section class="section-wrapper section-projects gray-bg">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>Projects</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--.row-->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    {% for project in resume.resumeproject_set.all %}
+                                        <div class="content-item">
+                                            <small>{{project.start_date}} - {{project.end_date}}</small>
+                                            <h3>{{project.name}}</h3>
+                                            <h4>{{project.short_description}}</h4>
+                                            <p>{{project.institution}}</p>
+                                            <ul>
+                                            {% for proj_item in project.resumeprojectexperienceitem_set.all %}
+                                                <li>• {{proj_item.text}}</li>
+                                            {% endfor %}
+                                            </ul>
+                                        </div>
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                                <!--.row-->
+                            </div>
+                            <!-- .container-fluid -->
+
+                        </section>
+                        <!-- .section-experience -->
+
+
+                        <section class="section-wrapper section-experience gray-bg">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>Volunteer Work</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--.row-->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    {% for vol_exp in resume.volunteerwork_set.all %}
+                                        <div class="content-item">
+                                            <small>{{vol_exp.start_date}} - {{vol_exp.end_date}}</small>
+                                            <h3>{{vol_exp.title}}</h3>
+                                            <h4>{{vol_exp.institution}}</h4>
+
+                                            <p>{{vol_exp.location}}</p>
+                                            <ul>
+                                            {% for volexp_item in vol_exp.volunteerexperienceitem_set.all %}
+                                                <li>• {{volexp_item.text}}</li>
+                                            {% endfor %}
+                                            </ul>
+                                        </div>
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                                <!--.row-->
+                            </div>
+                            <!-- .container-fluid -->
+
+                        </section>
+
+                        <section class="section-contact section-wrapper gray-bg">
+                            <div class="container-fluid">
+
+                                <!--.row-->
+
+                                <!--.row-->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title" style="margin-bottom: -30px">
+                                            <h2>Contact</h2>
+                                        </div>
+
+                                        <div class="feedback-form">
+
+                                            <form id="contactFormResume">
+                                                <div class="form-group">
+                                                    <label for="InputName">Name</label>
+                                                    <input type="text" name="name" required="" class="form-control"
+                                                        id="InputName" placeholder="Full Name">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="InputEmail">Email address</label>
+                                                    <input type="email" name="email" required="" class="form-control"
+                                                        id="InputEmail" placeholder="Email">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="InputSubject">Subject</label>
+                                                    <input type="text" name="subject" required="" class="form-control"
+                                                        id="InputSubject" placeholder="Subject">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="message-text" class="control-label">Message</label>
+                                                    <textarea class="form-control" rows="4" required="" name="message"
+                                                        id="message-text" placeholder="Write message"></textarea>
+                                                </div>
+
+                                                <div id="contactFormResumeMessage"></div>
+
+                                                <button type="button" id="resume-mail-button"
+                                                    class="btn btn-primary">Submit</button>
+                                            </form>
+                                        </div>
+                                        <!-- .feedback-form -->
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--.container-fluid-->
+                        </section>
+                        <!--.section-contact-->
+
+                        <footer class="footer">
+                            <div class="copyright-section">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="copytext">&copy; {{ site_config.copyright_text }}</div>
+                                        </div>
+                                    </div>
+                                    <!--.row-->
+                                </div>
+                                <!-- .container-fluid -->
+                            </div>
+                            <!-- .copyright-section -->
+                        </footer>
+                        <!-- .footer -->
+                    </div>
+                    <!-- Sticky -->
+                </div>
+                
+
+                <!-- #projects -->
+                <div class="right-col-block blocks" id="projects" style="display: none">
+                
+                    <div class="theiaStickySidebar">
+                        <!-- .github-section -->
+                        <section class="section-wrapper portfolio-section" id="github-section"
+                            style="padding-bottom:48px;">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>GitHub Repos</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="github-items">
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                        </section>
+                        <!-- .github-section -->
+    
+                        <!-- .software-section -->
+                        <section class="section-wrapper portfolio-section">
+                            <div class="container-fluid .software">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>Software Development</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                {% for project in software_projects %}
+                                <div class="software-project" id="{{project.css_id}}">
+                                    <div class="row">
+                                        <div class="project-header">
+                                            <div class="col-md-9" style="margin-bottom: 15px;">
+                                                <h2>{{project.title}}</h2>
+                                                {% autoescape off %}{{ project.short_description }}{% endautoescape %}
+					    </div>                                                
+                                        </div>
+                                        {% if project.projectvideo_set.count == 0 %}
+                                            {% for img in project.projectimage_set.all %}
+                                                <div class="col-md-4">
+                                                    <a class="portfolio-item" style="margin-bottom:10px">
+                                                        <div class="portfolio-thumb">
+                                                            <img class="portfolio-img" src="{{ img.image.url }}"
+                                                                alt="{{project.title}}">
+                                                            </img>
+                                                        </div>
+                                                        <!-- portfolio-info -->
+                                                    </a>
+                                                    <!-- .portfolio-item -->
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% if project.projectvideo_set.count == 1 %}
+                                            {% for video in project.projectvideo_set.all %}
+                                                <div class="col-md-12">
+                                                    <a class="portfolio-item">
+                                                        <div class="portfolio-thumb">
+                                                            <video class="portfolio-vid" src="{{video.video}}"
+                                                                loop="" muted preload="auto">
+                                                                <div class="alt" style="display: none">{{project.title}}</div>
+                                                            </video>
+                                                        </div>
+                                                        <!-- portfolio-info -->
+                                                    </a>
+                                                    <!-- .portfolio-item -->
+                                                </div>
+                                            {% endfor %}
+                                            {% for img in project.projectimage_set.all %}
+                                                <div class="col-md-6">
+                                                    <a class="portfolio-item" style="margin-bottom:10px">
+                                                        <div class="portfolio-thumb">
+                                                            <img class="portfolio-img" src="{{ img.image.url }}"
+                                                                alt="{{project.title}}">
+                                                            </img>
+                                                        </div>
+                                                        <!-- portfolio-info -->
+                                                    </a>
+                                                    <!-- .portfolio-item -->
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% if project.projectvideo_set.count == 2 %}
+                                            {% for video in project.projectvideo_set.all %}
+                                                {% if forloop.counter == 1 %}
+                                                    <div class="col-md-12">
+                                                        <a class="portfolio-item">
+                                                            <div class="portfolio-thumb">
+                                                                <video class="portfolio-vid" src="{{video.video}}"
+                                                                    loop="" muted preload="auto">
+                                                                    <div class="alt" style="display: none">{{project.title}}</div>
+                                                                </video>
+                                                            </div>
+                                                            <!-- portfolio-info -->
+                                                        </a>
+                                                        <!-- .portfolio-item -->
+                                                    </div>
+                                                {% endif %}
+                                                {% if forloop.counter == 2 %}
+                                                    <div class="col-md-6">
+                                                        <a class="portfolio-item">
+                                                            <div class="portfolio-thumb">
+                                                                <video class="portfolio-vid" src="{{video.video}}"
+                                                                    loop="" muted preload="auto">
+                                                                    <div class="alt" style="display: none">{{project.title}}</div>
+                                                                </video>
+                                                            </div>
+                                                            <!-- portfolio-info -->
+                                                        </a>
+                                                        <!-- .portfolio-item -->
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for img in project.projectimage_set.all %}
+                                                <div class="col-md-6">
+                                                    <a class="portfolio-item" style="margin-bottom:10px">
+                                                        <div class="portfolio-thumb">
+                                                            <img class="portfolio-img" src="{{ img.image.url }}"
+                                                                alt="{{project.title}}">
+                                                            </img>
+                                                        </div>
+                                                        <!-- portfolio-info -->
+                                                    </a>
+                                                    <!-- .portfolio-item -->
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% if project.projectvideo_set.count >= 3 %}
+                                            {% for video in project.projectvideo_set.all %}
+                                                {% if forloop.counter == 1 %}
+                                                    <div class="col-md-12">
+                                                        <a class="portfolio-item">
+                                                            <div class="portfolio-thumb">
+                                                                <video class="portfolio-vid" src="{{video.video}}"
+                                                                    loop="" muted preload="auto">
+                                                                    <div class="alt" style="display: none">{{project.title}}</div>
+                                                                </video>
+                                                            </div>
+                                                            <!-- portfolio-info -->
+                                                        </a>
+                                                        <!-- .portfolio-item -->
+                                                    </div>
+                                                {% endif %}
+                                                {% if forloop.counter > 1 %}
+                                                    <div class="col-md-6">
+                                                        <a class="portfolio-item">
+                                                            <div class="portfolio-thumb">
+                                                                <video class="portfolio-vid" src="{{video.video}}"
+                                                                    loop="" muted preload="auto">
+                                                                    <div class="alt" style="display: none">{{project.title}}</div>
+                                                                </video>
+                                                            </div>
+                                                            <!-- portfolio-info -->
+                                                        </a>
+                                                        <!-- .portfolio-item -->
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="project-info row">
+                                    
+                                        <div class="col-md-6" style="text-align: center">
+                                            <h2>Features:</h2>
+                                            <ul>
+                                            {% for feature in project.projectfeature_set.all %}
+                                                <li>{{feature.text}}</li>
+                                            {% endfor %}
+                                            </ul>
+                                        </div>
+                                    
+                                        <div class="col-md-6" style="text-align: center">
+                                            {% if project.projectspecialthanks_set.all|length > 0 %}
+                                            <h2>Special Thanks:</h2>
+                                            <ul>
+                                                {% for person in project.projectspecialthanks_set.all %}
+                                                    <li>{{person.text}}</li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                            {% if project.projectteammate_set.all|length > 0 %}
+                                            <h2>Teammates:</h2>
+                                            <ul>
+                                                {% for person in project.projectteammate_set.all %}
+                                                    <li>{{person.text}}</li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                            
+                                        </div>
+                                        <div class="col-md-12" style="text-align: center; margin-top: 15px">
+                                            <strong>Built with:</strong> {{project.technology}}
+                                        </div>
+
+					<div class="col-md-12" style="text-align:center;">
+					    <a href="{% url 'projects:project_detail' project.pk %}">Read more...</a>
+					</div>
+                                    </div>
+                                </div>
+
+                                <!-- divider -->
+                                <div class="software-divider" class="col-md-12" style="padding: 0">
+                                    <hr style="color: gray;">
+                                </div>
+                            {% endfor %}
+                            </div>
+                        </section>
+                        <!-- .software-section -->
+
+                        <!-- webdev section -->
+                        <section class="section-wrapper portfolio-section">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>Web Development</h2>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% for project in web_projects %}
+                                {% if not forloop.counter|divisibleby:2 %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="portfolio-item">
+                                            <div class="portfolio-thumb">
+                                                {% with project.projectimage_set.all|first as img %}
+                                                <img src="{{ img.image.url }}" alt="{{ project.title }}"
+                                                    class="portfolio-img">
+                                                {% endwith %}
+                                            </div>
+                                        </div>
+                                        <!-- .portfolio-item -->
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="portfolio-item">
+                                            <div>
+                                                <h3>{{project.title}}</h3>
+                                                <b>Built with: </b>{{project.technology}}<br>
+                                                {% with project.liveprojectlink_set.all|first as link %}
+                                                <a href="{{link.exact_url}}"
+                                                    target="_blank">{{link.text}}</a>
+                                                {% endwith %}
+                                            </div>
+                                            <!-- portfolio-info -->
+                                        </div>
+                                        <!-- .portfolio-item -->
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="row reverse">
+                                    <div class="col-md-6 web-thumb">
+                                        <div class="portfolio-item left-item">
+                                            <div>
+                                                <h3>{{project.title}}</h3>
+                                                <b>Built with:</b> {{project.technology}}<br>
+                                                {% with project.liveprojectlink_set.all|first as link %}
+                                                <a href="{{link.exact_url}}"
+                                                    target="_blank">{{link.text}}</a>
+                                                {% endwith %}
+                                            </div>
+                                            <!-- portfolio-info -->
+                                        </div>
+
+                                        <!-- .portfolio-item -->
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a class="portfolio-item">
+                                            <div class="portfolio-thumb web-thumb">
+                                                {% with project.projectimage_set.all|first as img %}
+                                                <img src="{{ img.image.url }}" alt="{{ project.title }}"
+                                                    class="portfolio-img" style="border: 1px solid lightgrey">
+                                                {% endwith %}
+                                            </div>
+                                        </a>
+                                        <!-- .portfolio-item -->
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </section>
+                        <!-- .portfolio -->
+
+                        <!-- physics section -->
+                        <section class="section-wrapper portfolio-section">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title">
+                                            <h2>Math and Physics</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% for project in mathphysics_projects %}
+                                {% if not forloop.counter|divisibleby:2 %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <a class="portfolio-item">
+                                            <div class="portfolio-thumb">
+                                                {% with project.projectimage_set.all|first as img %}
+                                                <img src="{{ img.image.url }}" alt="{{ project.title }}"
+                                                    class={% if project.preview_type == 'pdf' %}"portfolio-pdf"{% else %}"portfolio-img"{%endif%} style="border: 1px solid lightgrey">
+                                                {% endwith %}
+                                            </div>
+                                        </a>
+                                        <!-- .portfolio-item -->
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="portfolio-item">
+                                            <div>
+                                                <h3>{{ project.title }}</h3>
+                                                <small></small>
+                                            </div>
+                                            <!-- portfolio-info -->
+                                        </div>
+                                        <!-- .portfolio-item -->
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="row reverse">
+                                    <div class="col-md-6 web-thumb">
+                                        <div class="portfolio-item left-item">
+                                            <div>
+                                                <h3>{{ project.title }}</h3>
+                                                <small></small>
+                                            </div>
+                                            <!-- portfolio-info -->
+                                        </div>
+
+                                        <!-- .portfolio-item -->
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a class="portfolio-item">
+                                            <div class="portfolio-thumb web-thumb">
+
+                                                {% with project.projectimage_set.all|first as img %}
+                                                <img src="{{ img.image.url }}" alt="{{ project.title }}"
+                                                    class={% if project.preview_type == 'pdf' %}"portfolio-pdf"{% else %}"portfolio-img"{%endif%} style="border: 1px solid lightgrey">
+                                                {% endwith %}
+                                
+                                            </div>
+                                        </a>
+                                        <!-- .portfolio-item -->
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </section>
+                        <!-- .portfolio -->
+
+                        <section class="section-contact section-wrapper gray-bg">
+                            <div class="container-fluid">
+
+                                <!--.row-->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="section-title" style="margin-bottom: -30px">
+                                            <h2>Contact</h2>
+                                        </div>
+
+                                        <div class="feedback-form">
+
+                                            <form id="contactFormProjects" action="{% static 'home/php/sendemail.php' %}">
+                                                <div class="form-group">
+                                                    <label for="InputName">Name</label>
+                                                    <input type="text" name="name" required="" class="form-control"
+                                                        id="InputName" placeholder="Full Name">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="InputEmail">Email address</label>
+                                                    <input type="email" name="email" required="" class="form-control"
+                                                        id="InputEmail" placeholder="Email">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="InputSubject">Subject</label>
+                                                    <input type="text" name="subject" required="" class="form-control"
+                                                        id="InputSubject" placeholder="Subject">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="message-text" class="control-label">Message</label>
+                                                    <textarea class="form-control" rows="4" required="" name="message"
+                                                        id="message-text" placeholder="Write message"></textarea>
+                                                </div>
+
+                                                <div id="contactFormProjectsMessage"></div>
+
+                                                <button type="button" class="btn btn-primary"
+                                                    id="projects-mail-button">Submit</button>
+                                            </form>
+                                        </div>
+                                        <!-- .feedback-form -->
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--.container-fluid-->
+                        </section>
+                        <!--.section-contact-->
+
+                        <footer class="footer">
+                            <div class="copyright-section">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="copytext">&copy; {{ site_config.copyright_text }}</div>
+                                        </div>
+                                    </div>
+                                    <!--.row-->
+                                </div>
+                                <!-- .container-fluid -->
+                            </div>
+                            <!-- .copyright-section -->
+                        </footer>
+                        <!-- .footer -->
+                    </div>
+                    <!-- Sticky -->
+                </div>
+            </div>
+            <!-- .right-col-block -->
+        </div>
+        <!-- .columns-block -->
+    </div>
+    <!-- #main-wrapper -->
+
+    <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'home/js/theia-sticky-sidebar.js' %}"></script>
+    <script src="{% static 'home/js/isInViewport.js' %}"></script>
+    <script>
+        // Inject site configuration into JavaScript
+        window.SITE_CONFIG = {
+            githubUsername: '{{ site_config.github_username|escapejs }}',
+            githubUrl: '{{ site_config.github_url|escapejs }}'
+        };
+    </script>
+    <script src="{% static 'home/js/scripts.js' %}"></script>
+</body>
+
+</html>

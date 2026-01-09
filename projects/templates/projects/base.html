@@ -1,0 +1,51 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Karlo Krakan, BSc</title>
+    <link href="{% static 'home/favicon.png' %}" rel=icon>
+    <link href="https://fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4/dist/css/bootstrap.min.css' %}">
+    <link href="{% static 'projects/css/style.css' %}" rel="stylesheet">
+    <script type="text/javascript" src="{% static 'jquery-3/dist/jquery.min.js' %}"></script> 
+    <script type="text/javascript" src="{% static 'bootstrap-4/dist/js/bootstrap.bundle.min.js' %}"></script>
+</head>
+
+<body>
+
+<nav style="border-bottom: 1px solid #FFC107;background-color:#f9fafb !important" class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">Karlo Krakan</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'home:home_page' %}">Home</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'projects:projects_list' %}">Projects</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Blog</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+    {% block content %}
+
+    {% endblock %}
+</div>
+
+</body>
+
+</html>

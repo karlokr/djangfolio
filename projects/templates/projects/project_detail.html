@@ -1,0 +1,23 @@
+{% extends 'projects/base.html' %}
+
+{% load static %}
+
+
+{% block content %}
+    <h1 style="margin-bottom:0px;margin-top:20px;"><a href="{% url 'projects:projects_list' %}">Back</a>&nbsp;{{ project.title }}</h1>
+    <div class="row">
+        <div class="col-md-8">
+	<div id="project-images" style="display:flex;max-width:100%;flex-flow: row wrap;justify-content:space-evenly;">
+         {% for img in project.projectimage_set.all %}
+            	<img style="max-height:400px;max-width:45%;height:auto;width:auto;margin-top:20px;" class="project-image" src="{{ img.image.url }}" alt="{{ project.short_description }}">
+	{% endfor %}
+	</div>
+        </div>
+        <div style="margin-top:20px;" id="about-project" class="col-md-4">
+            <h5>About the project</h5>
+            <p>{% autoescape off %}{{ project.long_description }}{% endautoescape %}</p>
+            <h5>Built with:</h5>
+            <p>{{ project.technology }}</p>
+        </div>
+    </div>
+{% endblock %}

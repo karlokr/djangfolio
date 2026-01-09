@@ -1,0 +1,20 @@
+services:
+  web:
+    build: .
+    command: ./docker-entrypoint.sh python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8888:8000"
+    volumes:
+      # Mount entire project for live development
+      - .:/app:rw
+    env_file:
+      - .env
+    environment:
+      - DEBUG=true
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+    # Optional: add a health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
