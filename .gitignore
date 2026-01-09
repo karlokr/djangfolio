@@ -11,6 +11,7 @@ __pycache__/
 *$py.class
 
 # Django
+db/
 db.sqlite3
 db.sqlite3-journal
 *.log

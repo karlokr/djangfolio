@@ -42,10 +42,11 @@ A Django-based portfolio website with resume and project showcase sections, cont
    ```
    This installs Bootstrap, jQuery, and other frontend dependencies from `package.json` into `node_modules/`.
 
-2. **Create the database file** (first time only):
+2. **Create the database directory** (first time only):
    ```bash
-   touch db.sqlite3
-   chmod 666 db.sqlite3
+   mkdir -p db
+   touch db/db.sqlite3
+   chmod 666 db/db.sqlite3
    ```
 
 3. **Build and start the container**:
@@ -86,7 +87,7 @@ A Django-based portfolio website with resume and project showcase sections, cont
    ```
 
 **Note**: 
-- The database file (`db.sqlite3`) is stored on your host machine and persists between container restarts
+- The database file is stored in the `db/` directory (`db/db.sqlite3`) on your host machine and persists between container restarts
 - Static files are collected into `staticfiles/` and served by Django in development mode
 - The development server auto-reloads when you make changes to Python files or templates - no need to restart!
 - For production deployment, use Gunicorn (configured in Dockerfile) instead of the development server
@@ -150,6 +151,106 @@ The contact form supports SMTP email sending. Configure these environment variab
   - Set to `True` for production (recommended - verifies SSL certificates)
   - Set to `False` only for development/testing with self-signed certificates
   - **Warning**: Disabling verification reduces security
+
+## Docker Hub Image
+
+The portfolio site is available as a pre-built Docker image on Docker Hub:
+
+```bash
+# Pull the latest version
+docker pull karlokr94/portfolio-site:latest
+
+# Or pull a specific version
+docker pull karlokr94/portfolio-site:v1.0.0
+```
+
+## Production Deployment
+
+### Prerequisites for Production
+
+- Docker and Docker Compose installed
+- A domain name configured to point to your server
+- SSL/TLS certificates (recommended: Let's Encrypt via Traefik or similar)
+- Email SMTP credentials for contact form
+
+### Production Docker Compose Example
+
+Create a `docker-compose.yml` file for production deployment:
+
+```yaml
+services:
+  portfolio:
+    image: karlokr94/portfolio-site:latest
+    container_name: portfolio-site
+    restart: unless-stopped
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=False
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - EMAIL_USE_SSL=True
+      - EMAIL_SSL_VERIFY=True
+    volumes:
+      - ./db:/app/db
+      - ./media:/app/media
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+```
+
+### Production Environment Variables
+
+Create a `.env` file with production values:
+
+```bash
+# Django Settings
+SECRET_KEY=your-production-secret-key-here
+DEBUG=False
+ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+CSRF_TRUSTED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+
+# Email Configuration
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=465
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-specific-password
+EMAIL_USE_SSL=True
+EMAIL_SSL_VERIFY=True
+```
+
+### Important Production Configuration Notes
+
+1. **ALLOWED_HOSTS**: Controls which HTTP Host headers Django accepts
+   - Must include all domains/subdomains serving your site
+   - Example: `yourdomain.com,www.yourdomain.com`
+
+2. **CSRF_TRUSTED_ORIGINS**: Required for HTTPS deployments with reverse proxy
+   - Must include the protocol (`https://`)
+   - Must match domains users will access
+   - Example: `https://yourdomain.com,https://www.yourdomain.com`
+
+3. **SECRET_KEY**: Generate a new one for production
+   ```bash
+   python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+   ```
+
+4. **Database and Media Volumes**:
+   - Mount `./db:/app/db` to persist database (database file will be at `./db/db.sqlite3`)
+   - Mount `./media:/app/media` to persist uploaded files
+   - Ensure proper file permissions on the host
+
+### Reverse proxy
+
+- Can be used with any reverse proxy such as nginx or traefik
 
 ## Security Notes
 
