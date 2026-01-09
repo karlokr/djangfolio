@@ -29,6 +29,13 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# CSRF Protection for HTTPS
+# Required when using HTTPS with reverse proxy (like Traefik)
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    'CSRF_TRUSTED_ORIGINS', 
+    'http://localhost:8888,http://127.0.0.1:8888'
+).split(',')
+
 # Application definition
 
 INSTALLED_APPS = [

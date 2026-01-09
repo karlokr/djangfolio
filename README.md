@@ -30,7 +30,9 @@ A Django-based portfolio website with resume and project showcase sections, cont
    - `SECRET_KEY`: Generate a new Django secret key for production
    - Email settings for contact form functionality
    - `DEBUG`: Set to `False` in production
-   - `ALLOWED_HOSTS`: Add your domain names
+   - `ALLOWED_HOSTS`: Add your domain names (comma-separated)
+   - `CSRF_TRUSTED_ORIGINS`: Add your HTTPS URLs (required for production with HTTPS)
+     - Example: `https://example.com,https://www.example.com`
 
 ### Running with Docker
 
