@@ -9,7 +9,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ resume.name }}</title>
-    <link rel="shortcut icon" type="image/png" href="{% static 'home/favicon.png' %}"/>
+    {% if site_config.favicon %}
+        <link rel="shortcut icon" type="image/png" href="{{ site_config.favicon.url }}"/>
+    {% endif %}
     <link href="https://fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'home/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">

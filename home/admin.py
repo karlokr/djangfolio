@@ -20,6 +20,9 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
         ('LinkedIn', {
             'fields': ('linkedin_username', 'linkedin_url')
         }),
+        ('Site Branding', {
+            'fields': ('favicon',)
+        }),
         ('Copyright', {
             'fields': ('copyright_text',)
         }),

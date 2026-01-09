@@ -66,6 +66,14 @@ class SiteConfiguration(models.Model):
         help_text='Alt text for profile image (for accessibility)'
     )
     
+    # Favicon
+    favicon = models.ImageField(
+        upload_to='favicon/',
+        blank=True,
+        null=True,
+        help_text='Site favicon (recommended size: 32x32px or 64x64px, .png or .ico format)'
+    )
+    
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
