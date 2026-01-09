@@ -1,160 +1,197 @@
 # Portfolio Site
 
-A Django-based portfolio website with resume and project showcase sections, containerized with Docker.
+A Django-based portfolio website with resume and project showcase sections, fully containerized for easy deployment.
 
 ## Features
 
-- **Responsive Design**: Works on desktop and high-resolution displays (2K/4K)
-- **Project Portfolio**: Showcase your projects with images, videos, and PDFs
+- **Responsive Design**: Optimized for all screen sizes including high-resolution displays (2K/4K)
+- **Project Portfolio**: Showcase projects with images, videos, and PDF documents
 - **Resume Section**: Display your experience, education, and skills
-- **Contact Form**: Working email contact form with SMTP support
+- **Contact Form**: Integrated email contact form with SMTP support
 - **GitHub Integration**: Automatically fetches and displays your GitHub repositories
-- **Docker Support**: Easy deployment with Docker and Docker Compose
+- **Admin Panel**: Django admin interface for easy content management
+- **Production Ready**: Includes security best practices and HTTPS support
+- **Dockerized**: Complete Docker setup for development and production
 
-## Setup
+## Quick Start (Docker)
+
+The easiest way to run this project is using Docker. All dependencies, migrations, and static files are handled automatically.
 
 ### Prerequisites
 
-- Docker and Docker Compose
-- Python 3.9+ (for local development)
-- Node.js and npm (for local development)
-
-### Environment Configuration
-
-1. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Edit `.env` and configure your settings:
-   - `SECRET_KEY`: Generate a new Django secret key for production
-   - Email settings for contact form functionality
-   - `DEBUG`: Set to `False` in production
-   - `ALLOWED_HOSTS`: Add your domain names (comma-separated)
-   - `CSRF_TRUSTED_ORIGINS`: Add your HTTPS URLs (required for production with HTTPS)
-     - Example: `https://example.com,https://www.example.com`
-
-### Running with Docker
-
-1. **Install npm dependencies** (first time only):
-   ```bash
-   npm install
-   ```
-   This installs Bootstrap, jQuery, and other frontend dependencies from `package.json` into `node_modules/`.
-
-2. **Create the database directory** (first time only):
-   ```bash
-   mkdir -p db
-   touch db/db.sqlite3
-   chmod 666 db/db.sqlite3
-   ```
-
-3. **Build and start the container**:
-   ```bash
-   docker compose up --build -d
-   ```
-
-4. **Run migrations** (first time only):
-   ```bash
-   docker compose exec web python manage.py makemigrations
-   docker compose exec web python manage.py migrate
-   ```
-
-5. **Collect static files** (first time only):
-   ```bash
-   docker compose exec web python manage.py collectstatic --noinput
-   ```
-   This copies static files from `node_modules/` and app directories into `staticfiles/` for serving.
-
-6. **Create an admin user** (first time only):
-   ```bash
-   docker compose exec web python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@localhost', 'admin')"
-   ```
-   Default credentials: `admin` / `admin` (change after first login!)
-
-7. **Access the site**:
-   - Main site: `http://localhost:8888`
-   - Admin panel: `http://localhost:8888/admin`
-
-8. **View logs**:
-   ```bash
-   docker compose logs -f web
-   ```
-
-9. **Stop the container**:
-   ```bash
-   docker compose down
-   ```
-
-**Note**: 
-- The database file is stored in the `db/` directory (`db/db.sqlite3`) on your host machine and persists between container restarts
-- Static files are collected into `staticfiles/` and served by Django in development mode
-- The development server auto-reloads when you make changes to Python files or templates - no need to restart!
-- For production deployment, use Gunicorn (configured in Dockerfile) instead of the development server
-
-## Site Configuration
-
-The site uses a database-backed configuration system for personal information (name, email, social media links, etc.) instead of hardcoding values in templates.
-
-### Configuring Your Site
-
-After initial setup, you can customize your site information via the admin panel:
-
-1. **Via Django Admin** (recommended):
-   - Go to `http://localhost:8888/admin`
-   - Login with admin credentials
-   - Click on "Site Configurations"
-   - Edit the single configuration entry
-   - Update your name, emails, GitHub username, LinkedIn username, etc.
-
-### Configuration Fields
-
-- `full_name`: Your full name displayed on the site
-- `contact_email`: Email where contact form messages are sent
-- `display_email`: Email address shown publicly on the site
-- `github_username`: Your GitHub username (for API integration)
-- `github_url`: Full URL to your GitHub profile
-- `linkedin_username`: Your LinkedIn username
-- `linkedin_url`: Full URL to your LinkedIn profile
-- `copyright_text`: Copyright text in the footer
-- `profile_image`: Upload your profile photo (optional, recommended size: 400x400px or larger, square aspect ratio)
-- `profile_image_alt_text`: Alt text for your profile image (accessibility)
+- **Docker** and **Docker Compose**
 
 ### Local Development
 
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/portfolio-site.git
+   cd portfolio-site
+   ```
+
+2. **Create environment file** (optional for local development):
+   ```bash
+   cp .env.example .env
+   ```
+   The default `.env` settings work for local development. Edit if needed.
+
+3. **Start the application**:
+   ```bash
+   docker compose up --build
+   ```
+
+   That's it! The container automatically:
+   - Installs all Python and npm dependencies
+   - Runs database migrations
+   - Collects static files
+   - Starts the development server
+
+4. **Access the site**:
+   - Main site: http://localhost:8888
+   - Admin panel: http://localhost:8888/admin
+
+5. **Create admin user** (first time only):
+   ```bash
+   docker compose exec web python manage.py createsuperuser
+   ```
+   Follow the prompts to create your admin account.
+
+### Useful Docker Commands
+
 ```bash
-# Install Python dependencies
-pip install -r requirements.txt
+# View logs
+docker compose logs -f web
 
-# Install Node dependencies
-npm install
+# Stop the container
+docker compose down
 
-# Run migrations
-python manage.py migrate
+# Rebuild after changes
+docker compose up --build
 
-# Collect static files
-python manage.py collectstatic
+# Access Django shell
+docker compose exec web python manage.py shell
 
-# Run development server
-python manage.py runserver
+# Run Django commands
+docker compose exec web python manage.py <command>
 ```
+
+**Note**: 
+- The entire project directory is mounted into the container, so code changes are reflected immediately
+- The database (`db.sqlite3`) persists in your project directory
+- The development server auto-reloads when you modify Python files
+- Static files are served by WhiteNoise in both development and production
+
+
+## Site Configuration
+
+The site uses a database-backed configuration system accessible through the Django admin panel.
+
+### Configuring Your Site
+
+1. Go to <http://localhost:8888/admin>
+2. Login with your admin credentials
+3. Click on **"Site Configurations"**
+4. Edit the configuration entry
+5. Update your personal information:
+   - `full_name`: Your full name displayed on the site
+   - `contact_email`: Email where contact form messages are sent
+   - `display_email`: Email address shown publicly on the site
+   - `github_username`: Your GitHub username (for API integration)
+   - `github_url`: Full URL to your GitHub profile
+   - `linkedin_username`: Your LinkedIn username
+   - `linkedin_url`: Full URL to your LinkedIn profile
+   - `copyright_text`: Copyright text in the footer
+   - `profile_image`: Upload your profile photo (recommended: 400x400px or larger, square)
+   - `profile_image_alt_text`: Alt text for accessibility
+
+6. Click **Save**
+
+## Local Development (Without Docker)
+
+If you prefer to run the project without Docker:
+
+### Prerequisites
+
+- Python 3.9+
+- Node.js and npm
+
+### Setup
+
+1. **Create virtual environment**:
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+2. **Install Python dependencies**:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Install Node dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+4. **Run migrations**:
+
+   ```bash
+   python manage.py migrate
+   ```
+
+5. **Collect static files**:
+
+   ```bash
+   python manage.py collectstatic --noinput
+   ```
+
+6. **Create superuser**:
+
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+7. **Run development server**:
+
+   ```bash
+   python manage.py runserver
+   ```
+
+8. **Access the site**:
+   - Main site: <http://localhost:8000>
+   - Admin panel: <http://localhost:8000/admin>
 
 ## Email Configuration
 
-The contact form supports SMTP email sending. Configure these environment variables in `.env`:
+The contact form supports SMTP email sending. Configure these in your `.env` file:
 
-- `EMAIL_HOST`: Your SMTP server
-- `EMAIL_PORT`: SMTP port (usually 465 for SSL)
-- `EMAIL_HOST_USER`: Your email address
-- `EMAIL_HOST_PASSWORD`: Your email password or app-specific password
-- `EMAIL_SSL_VERIFY`: SSL certificate verification (default: `True`)
-  - Set to `True` for production (recommended - verifies SSL certificates)
-  - Set to `False` only for development/testing with self-signed certificates
-  - **Warning**: Disabling verification reduces security
+```bash
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=465
+EMAIL_USE_SSL=True
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-specific-password
+DEFAULT_FROM_EMAIL=noreply@example.com
+CONTACT_EMAIL=contact@example.com
+```
 
-## Docker Hub Image
+**For Gmail**:
+1. Enable 2-factor authentication
+2. Generate an [App Password](https://myaccount.google.com/apppasswords)
+3. Use the app password in `EMAIL_HOST_PASSWORD`
 
-The portfolio site is available as a pre-built Docker image on Docker Hub:
+**For Development**:
+- Use `EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend` to print emails to console instead of sending them
+
+## Production Deployment
+
+### Using Pre-built Docker Image
+
+The portfolio site is available on Docker Hub:
 
 ```bash
 # Pull the latest version
@@ -164,18 +201,9 @@ docker pull karlokr94/portfolio-site:latest
 docker pull karlokr94/portfolio-site:v1.0.0
 ```
 
-## Production Deployment
+### Production Docker Compose
 
-### Prerequisites for Production
-
-- Docker and Docker Compose installed
-- A domain name configured to point to your server
-- SSL/TLS certificates (recommended: Let's Encrypt via Traefik or similar)
-- Email SMTP credentials for contact form
-
-### Production Docker Compose Example
-
-Create a `docker-compose.yml` file for production deployment:
+Create a `docker-compose.yml` for production:
 
 ```yaml
 services:
@@ -193,7 +221,6 @@ services:
       - EMAIL_HOST_USER=${EMAIL_HOST_USER}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
       - EMAIL_USE_SSL=True
-      - EMAIL_SSL_VERIFY=True
     volumes:
       - ./db:/app/db
       - ./media:/app/media
@@ -209,61 +236,213 @@ services:
 
 ### Production Environment Variables
 
-Create a `.env` file with production values:
+Create a `.env` file:
 
 ```bash
 # Django Settings
 SECRET_KEY=your-production-secret-key-here
 DEBUG=False
 ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+
+# CSRF Protection (REQUIRED for HTTPS)
 CSRF_TRUSTED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
 
 # Email Configuration
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=465
-EMAIL_HOST_USER=your-email@gmail.com
-EMAIL_HOST_PASSWORD=your-app-specific-password
 EMAIL_USE_SSL=True
-EMAIL_SSL_VERIFY=True
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+DEFAULT_FROM_EMAIL=noreply@yourdomain.com
+CONTACT_EMAIL=contact@yourdomain.com
 ```
 
-### Important Production Configuration Notes
+### Important Production Settings
 
-1. **ALLOWED_HOSTS**: Controls which HTTP Host headers Django accepts
-   - Must include all domains/subdomains serving your site
-   - Example: `yourdomain.com,www.yourdomain.com`
+1. **SECRET_KEY**: Generate a new one for production
 
-2. **CSRF_TRUSTED_ORIGINS**: Required for HTTPS deployments with reverse proxy
-   - Must include the protocol (`https://`)
-   - Must match domains users will access
-   - Example: `https://yourdomain.com,https://www.yourdomain.com`
-
-3. **SECRET_KEY**: Generate a new one for production
    ```bash
    python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
    ```
 
-4. **Database and Media Volumes**:
-   - Mount `./db:/app/db` to persist database (database file will be at `./db/db.sqlite3`)
-   - Mount `./media:/app/media` to persist uploaded files
-   - Ensure proper file permissions on the host
+2. **ALLOWED_HOSTS**: Comma-separated list of domains Django will accept
 
-### Reverse proxy
+   ```bash
+   ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+   ```
 
-- Can be used with any reverse proxy such as nginx or traefik
+3. **CSRF_TRUSTED_ORIGINS**: **Required for HTTPS** - Include the protocol
+
+   ```bash
+   CSRF_TRUSTED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+   ```
+
+4. **Database and Media**: Mount volumes to persist data
+
+   ```yaml
+   volumes:
+     - ./db:/app/db          # SQLite database
+     - ./media:/app/media    # Uploaded files
+   ```
+
+### HTTPS Setup with Reverse Proxy
+
+This application is designed to work behind a reverse proxy (Traefik, Nginx, Caddy, etc.) for HTTPS.
+
+**Django Security Settings** (automatically enabled in production):
+- `SECURE_PROXY_SSL_HEADER`: Trusts `X-Forwarded-Proto` header from proxy
+- `CSRF_COOKIE_SECURE`: CSRF cookies only sent over HTTPS
+- `SESSION_COOKIE_SECURE`: Session cookies only sent over HTTPS
+- `SECURE_CONTENT_TYPE_NOSNIFF`: Prevents MIME sniffing
+- `SECURE_BROWSER_XSS_FILTER`: Enables XSS filter
+
+**Traefik Example** - Add these labels to your Docker service:
+
+```yaml
+services:
+  portfolio:
+    image: karlokr94/portfolio-site:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portfolio.rule=Host(`yourdomain.com`)"
+      - "traefik.http.routers.portfolio.entrypoints=websecure"
+      - "traefik.http.routers.portfolio.tls.certresolver=letsencrypt"
+      # CRITICAL: Forward HTTPS headers to Django
+      - "traefik.http.middlewares.portfolio-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.portfolio.middlewares=portfolio-headers"
+```
+
+**Nginx Example**:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name yourdomain.com;
+
+    location / {
+        proxy_pass http://localhost:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;  # CRITICAL for Django HTTPS
+    }
+}
+```
+
+### Production Checklist
+
+- [ ] Generate new `SECRET_KEY`
+- [ ] Set `DEBUG=False`
+- [ ] Configure `ALLOWED_HOSTS` with your domain(s)
+- [ ] Configure `CSRF_TRUSTED_ORIGINS` with `https://` prefix
+- [ ] Set up email SMTP credentials
+- [ ] Configure reverse proxy with HTTPS
+- [ ] Ensure proxy forwards `X-Forwarded-Proto: https` header
+- [ ] Mount volumes for database and media files
+- [ ] Set up regular database backups
+- [ ] Test file uploads through admin panel
+- [ ] Test contact form email delivery
+
+## Troubleshooting
+
+### CSRF Verification Failed
+
+If you get "CSRF verification failed" errors when using the admin panel:
+
+1. **Check CSRF_TRUSTED_ORIGINS**: Must include the protocol (`https://`)
+
+   ```bash
+   CSRF_TRUSTED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+   ```
+
+2. **Verify reverse proxy**: Must forward `X-Forwarded-Proto: https` header
+
+3. **Clear browser cookies**: Sometimes needed after configuration changes
+
+### File Upload Fails (ERR_ACCESS_DENIED)
+
+1. **Check reverse proxy upload limits**: Nginx/Traefik may have file size restrictions
+2. **Verify CSRF_TRUSTED_ORIGINS**: Required for POST requests over HTTPS
+3. **Check X-Forwarded-Proto header**: Proxy must forward this header to Django
+
+### Admin Panel Returns 400/500 Error
+
+1. **Check ALLOWED_HOSTS**: Must include all domains serving the site
+2. **Verify CSRF_TRUSTED_ORIGINS**: Required for HTTPS deployments
+3. **Clear CDN/proxy cache**: May be caching old error responses
+4. **Check logs**: `docker logs <container-name>`
 
 ## Security Notes
 
-- Never commit `.env` file to version control
-- Generate a new `SECRET_KEY` for production
-- Use environment-specific email credentials
-- Set `DEBUG=False` in production
-- Configure proper `ALLOWED_HOSTS` for your domain
+- **Never commit `.env` file** to version control
+- **Generate new SECRET_KEY** for production (don't use the default)
+- **Set DEBUG=False** in production
+- **Use strong admin passwords**
+- **Keep dependencies updated**: `pip install -U -r requirements.txt`
+- **Enable HTTPS** in production (use Let's Encrypt)
+- **Configure ALLOWED_HOSTS** properly
+- **Backup your database** regularly
 
-## Recent Updates
+## Project Structure
 
+```text
+portfolio-site/
+├── docker-compose.yml     # Docker Compose for local development
+├── Dockerfile             # Production Docker image
+├── docker-entrypoint.sh   # Container startup script
+├── requirements.txt       # Python dependencies
+├── package.json           # Node.js dependencies (Bootstrap, jQuery)
+├── manage.py              # Django management script
+├── db.sqlite3             # SQLite database (auto-created)
+├── portfolio/             # Django project settings
+│   ├── settings.py        # Main configuration
+│   ├── urls.py            # URL routing
+│   └── wsgi.py            # WSGI application
+├── home/                  # Home app (landing page, contact form)
+│   ├── models.py          # SiteConfiguration model
+│   ├── views.py           # Views
+│   ├── templates/         # Templates
+│   └── static/            # Static files (CSS, JS, images)
+├── projects/              # Projects app (portfolio showcase)
+├── resume/                # Resume app (experience, education)
+└── media/                 # User-uploaded files (auto-created)
+```
+
+## Technologies Used
+
+- **Backend**: Django 4.2.16, Python 3.9
+- **Database**: SQLite (development), compatible with PostgreSQL (production)
+- **Frontend**: Bootstrap 3/4, jQuery
+- **Static Files**: WhiteNoise
+- **WSGI Server**: Gunicorn (production)
+- **Containerization**: Docker, Docker Compose
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is open source and available under the MIT License.
+
+## Support
+
+For issues, questions, or suggestions, please open an issue on GitHub.
+
+---
+
+**Recent Updates**:
+
+- Fixed HTTPS/CSRF issues for production deployments
+- Added support for reverse proxy HTTPS headers
+- Improved Docker setup with automatic initialization
+- Enhanced documentation with production best practices
 - Fixed high-resolution display scrolling issue on portfolio tab
 - Implemented working Django-based email contact form
-- Added support for self-signed SSL certificates in email
 - Dockerized deployment with proper static file handling
-- Fixed PDF modal display with X-Frame-Options configuration

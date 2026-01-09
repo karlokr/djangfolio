@@ -231,3 +231,21 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+# HTTPS/Security settings for production
+if not DEBUG:
+    # Tell Django to trust forwarded proto headers (critical behind proxies)
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    
+    # Recommended for production HTTPS
+    CSRF_COOKIE_SECURE = True    # Only send CSRF cookie over HTTPS
+    SESSION_COOKIE_SECURE = True # Same for session cookie
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # CSRF cookie settings for reverse proxy (Cloudflare + Traefik)
+    CSRF_COOKIE_SAMESITE = 'Lax'  # Allow cross-site for top-level navigation
+    CSRF_COOKIE_HTTPONLY = False  # JavaScript needs to read this for some operations
+    SESSION_COOKIE_SAMESITE = 'Lax'  # Same for session cookies
+    
+    # Note: SECURE_SSL_REDIRECT is handled by Traefik, so we don't need it here
