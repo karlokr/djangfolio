@@ -12,6 +12,7 @@ __pycache__/
 
 # Django
 db/
+*.sqlite3
 db.sqlite3
 db.sqlite3-journal
 *.log
@@ -21,10 +22,6 @@ media/
 # Node
 node_modules/
 package-lock.json
-
-# Migrations (optional - comment out if you want to track them)
-*/migrations/*.py
-!*/migrations/__init__.py
 
 # OS
 .DS_Store

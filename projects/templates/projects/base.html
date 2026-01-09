@@ -7,8 +7,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Karlo Krakan, BSc</title>
-    <link href="{% static 'home/favicon.png' %}" rel=icon>
+    <title>{{ site_config.full_name }}</title>
+    {% if site_config.favicon %}
+        <link rel="shortcut icon" type="image/png" href="{{ site_config.favicon.url }}"/>
+    {% endif %}
     <link href="https://fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4/dist/css/bootstrap.min.css' %}">
@@ -20,7 +22,7 @@
 <body>
 
 <nav style="border-bottom: 1px solid #FFC107;background-color:#f9fafb !important" class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="/">Karlo Krakan</a>
+  <a class="navbar-brand" href="/">{{ site_config.full_name }}</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>

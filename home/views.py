@@ -6,7 +6,6 @@ from django.views.decorators.http import require_POST
 from django.conf import settings
 from projects.models import SoftwareProject, MathPhysicsProject, WebProject
 from resume.models import Resume, SkillGroup
-from .models import SiteConfiguration
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,7 +16,6 @@ def home_page(request):
     mathphysics_projects = MathPhysicsProject.objects.order_by('-pub_date')
     web_projects = WebProject.objects.order_by('-pub_date')
     resume = Resume.objects.first()  # Use .first() instead of [0] to handle empty queryset
-    site_config = SiteConfiguration.get_solo()
     
     skill_groups = SkillGroup.objects.all()
     context = {
@@ -26,7 +24,6 @@ def home_page(request):
         'web_projects': web_projects,
         'resume': resume,
         'skill_groups': skill_groups,
-        'site_config': site_config,
     }
     return render(request, 'home/index.html', context)
 
