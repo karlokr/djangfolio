@@ -112,7 +112,7 @@ If you prefer to run the project without Docker:
 
 ### Prerequisites
 
-- Python 3.9+
+- Python 3.12+ (or 3.8-3.12 for Django 4.2 compatibility)
 - Node.js and npm
 
 ### Setup
@@ -410,7 +410,7 @@ portfolio-site/
 
 ## Technologies Used
 
-- **Backend**: Django 4.2.16, Python 3.9
+- **Backend**: Django 4.2.16, Python 3.12
 - **Database**: SQLite (development), compatible with PostgreSQL (production)
 - **Frontend**: Bootstrap 3/4, jQuery
 - **Static Files**: WhiteNoise
