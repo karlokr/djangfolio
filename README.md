@@ -56,8 +56,8 @@ The easiest way to run this project is using Docker. All dependencies, migration
    - Starts the development server
 
 5. **Access the site**:
-   - Main site: http://localhost:8888
-   - Admin panel: http://localhost:8888/admin
+   - Main site: http://localhost:8000
+   - Admin panel: http://localhost:8000/admin
 
 6. **Create admin user** (first time only):
 
@@ -100,7 +100,7 @@ The site uses a database-backed configuration system accessible through the Djan
 
 ### Configuring Your Site
 
-1. Go to <http://localhost:8888/admin>
+1. Go to <http://localhost:8000/admin>
 2. Login with your admin credentials
 3. Click on **"Site Configurations"**
 4. Edit the configuration entry
