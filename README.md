@@ -212,7 +212,7 @@ The portfolio site is available on Docker Hub:
 docker pull karlokr94/portfolio-site:latest
 
 # Or pull a specific version
-docker pull karlokr94/portfolio-site:v1.0.0
+docker pull karlokr94/portfolio-site:v1.0.1
 ```
 
 ### Production Docker Compose
