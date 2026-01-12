@@ -26,7 +26,7 @@ The easiest way to run this project is using Docker. All dependencies, migration
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/yourusername/djangfolio.git
+   git clone https://github.com/karlokr/djangfolio
    cd djangfolio
    ```
 
