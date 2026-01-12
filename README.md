@@ -26,8 +26,8 @@ The easiest way to run this project is using Docker. All dependencies, migration
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/yourusername/portfolio-site.git
-   cd portfolio-site
+   git clone https://github.com/yourusername/djangfolio.git
+   cd djangfolio
    ```
 
 2. **Create environment file**:
@@ -209,10 +209,10 @@ The portfolio site is available on Docker Hub:
 
 ```bash
 # Pull the latest version
-docker pull karlokr94/portfolio-site:latest
+docker pull karlokr94/djangfolio:latest
 
 # Or pull a specific version
-docker pull karlokr94/portfolio-site:v1.0.1
+docker pull karlokr94/djangfolio:v1.0.1
 ```
 
 ### Production Docker Compose
@@ -222,8 +222,8 @@ Create a `docker-compose.yml` for production:
 ```yaml
 services:
   portfolio:
-    image: karlokr94/portfolio-site:latest
-    container_name: portfolio-site
+    image: karlokr94/djangfolio:latest
+    container_name: djangfolio
     restart: unless-stopped
     environment:
       - SECRET_KEY=${SECRET_KEY}
@@ -316,7 +316,7 @@ This application is designed to work behind a reverse proxy (Traefik, Nginx, Cad
 ```yaml
 services:
   portfolio:
-    image: karlokr94/portfolio-site:latest
+    image: karlokr94/djangfolio:latest
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portfolio.rule=Host(`yourdomain.com`)"
@@ -401,7 +401,7 @@ If you get "CSRF verification failed" errors when using the admin panel:
 ## Project Structure
 
 ```text
-portfolio-site/
+djangfolio/
 ├── docker-compose.yml     # Docker Compose for local development
 ├── Dockerfile             # Production Docker image
 ├── docker-entrypoint.sh   # Container startup script
