@@ -1,4 +1,4 @@
-# Portfolio Site
+# Djangfolio
 
 A Django-based portfolio website with resume and project showcase sections, fully containerized for easy deployment.
 
