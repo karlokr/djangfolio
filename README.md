@@ -24,18 +24,27 @@ The easiest way to run this project is using Docker. All dependencies, migration
 ### Local Development
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/yourusername/portfolio-site.git
    cd portfolio-site
    ```
 
-2. **Create environment file** (optional for local development):
+2. **Create environment file**:
+
    ```bash
    cp .env.example .env
    ```
    The default `.env` settings work for local development. Edit if needed.
 
-3. **Start the application**:
+2. **Install npm packages**:
+
+   ```bash
+   npm install
+   ```
+
+4. **Start the application**:
+
    ```bash
    docker compose up --build
    ```
@@ -46,11 +55,12 @@ The easiest way to run this project is using Docker. All dependencies, migration
    - Collects static files
    - Starts the development server
 
-4. **Access the site**:
+5. **Access the site**:
    - Main site: http://localhost:8888
    - Admin panel: http://localhost:8888/admin
 
-5. **Create admin user** (first time only):
+6. **Create admin user** (first time only):
+
    ```bash
    docker compose exec web python manage.py createsuperuser
    ```
@@ -75,11 +85,13 @@ docker compose exec web python manage.py shell
 docker compose exec web python manage.py <command>
 ```
 
-**Note**: 
+**Note**:
+
 - The entire project directory is mounted into the container, so code changes are reflected immediately
 - The database (`db.sqlite3`) persists in your project directory
 - The development server auto-reloads when you modify Python files
-- Static files are served by WhiteNoise in both development and production
+- Static files are served by Django's development server in development mode
+- WhiteNoise handles static files in production for better performance
 
 
 ## Site Configuration
@@ -180,11 +192,13 @@ CONTACT_EMAIL=contact@example.com
 ```
 
 **For Gmail**:
+
 1. Enable 2-factor authentication
 2. Generate an [App Password](https://myaccount.google.com/apppasswords)
 3. Use the app password in `EMAIL_HOST_PASSWORD`
 
 **For Development**:
+
 - Use `EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend` to print emails to console instead of sending them
 
 ## Production Deployment
@@ -290,6 +304,7 @@ CONTACT_EMAIL=contact@yourdomain.com
 This application is designed to work behind a reverse proxy (Traefik, Nginx, Caddy, etc.) for HTTPS.
 
 **Django Security Settings** (automatically enabled in production):
+
 - `SECURE_PROXY_SSL_HEADER`: Trusts `X-Forwarded-Proto` header from proxy
 - `CSRF_COOKIE_SECURE`: CSRF cookies only sent over HTTPS
 - `SESSION_COOKIE_SECURE`: Session cookies only sent over HTTPS

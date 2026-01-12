@@ -3,7 +3,7 @@ services:
     build: .
     command: ./docker-entrypoint.sh python manage.py runserver 0.0.0.0:8000
     ports:
-      - "8888:8000"
+      - "8000:8000"
     volumes:
       # Mount entire project for live development
       - .:/app:rw

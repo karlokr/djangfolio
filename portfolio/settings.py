@@ -53,14 +53,20 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+]
+
+# Only use WhiteNoise in production
+if not DEBUG:
+    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
+
+MIDDLEWARE.extend([
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+])
 
 ROOT_URLCONF = 'portfolio.urls'
 
@@ -146,30 +152,30 @@ STATICFILES_DIRS = [
 # Directory where collected static files will be stored for production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Whitenoise static files configuration for production
-# Updated for Django 4.2+ compatibility
+# Static files storage configuration
+# In development: use default Django static files handler
+# In production: use WhiteNoise for serving compressed static files
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# WhiteNoise configuration
-WHITENOISE_AUTOREFRESH = DEBUG  # Auto-refresh in development
-WHITENOISE_USE_FINDERS = DEBUG  # Use finders in development
-WHITENOISE_MIMETYPES = {
-    '.css': 'text/css',
-    '.js': 'application/javascript',
-    '.svg': 'image/svg+xml',
-    '.woff': 'font/woff',
-    '.woff2': 'font/woff2',
-}
+# WhiteNoise configuration (only applies in production when WhiteNoise is enabled)
+if not DEBUG:
+    WHITENOISE_MIMETYPES = {
+        '.css': 'text/css',
+        '.js': 'application/javascript',
+        '.svg': 'image/svg+xml',
+        '.woff': 'font/woff',
+        '.woff2': 'font/woff2',
+    }
 
 # Default primary key field type for Django 4.2
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
