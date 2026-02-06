@@ -1,16 +1,18 @@
 # Djangfolio
 
-A Django-based portfolio website with resume, project showcase, and blog sections, fully containerized for easy deployment.
+A Django-based portfolio website with resume, project showcase, and blog sections, fully containerized for easy deployment. Features SPA-like navigation powered by HTMX for a seamless user experience.
 
 ## Features
 
-- **Responsive Design**: Optimized for all screen sizes including high-resolution displays (2K/4K)
-- **Blog System**: Full-featured blog with categories, tags, rich text editing, and HTMX-powered navigation
+- **SPA-Like Navigation**: HTMX-powered navigation that updates only the content area while keeping the navbar fixed—no full page reloads
+- **Responsive Design**: Optimized for all screen sizes including mobile, tablet, and high-resolution displays (2K/4K)
+- **Blog System**: Full-featured blog with categories, tags, CKEditor 5 rich text editing, and seamless navigation
 - **Project Portfolio**: Showcase projects with images, videos, and PDF documents
 - **Resume Section**: Display your experience, education, and skills
 - **Contact Form**: Integrated email contact form with SMTP support
-- **GitHub Integration**: Automatically fetches and displays your GitHub repositories
+- **GitHub Integration**: Automatically fetches and displays your GitHub repositories with language colors
 - **Admin Panel**: Django admin interface for easy content management
+- **Feature Flags**: Toggle navigation elements (like Projects link) via admin panel
 - **Production Ready**: Includes security best practices and HTTPS support
 - **Dockerized**: Complete Docker setup for development and production
 
@@ -95,6 +97,48 @@ docker compose exec web python manage.py <command>
 - WhiteNoise handles static files in production for better performance
 
 
+## SPA-Like Navigation with HTMX
+
+The site uses HTMX to provide a Single Page Application (SPA) experience while keeping the simplicity of server-rendered templates.
+
+### How It Works
+
+- The **navbar stays fixed** at the top of the page and is never reloaded
+- Only the **main content area** (`#main-content`) updates when navigating between pages
+- All navigation links use HTMX attributes (`hx-get`, `hx-target`, `hx-swap`, `hx-push-url`)
+- The browser URL and history update properly, so bookmarks and back/forward buttons work
+- Page transitions are instant with no flash of white/loading
+
+### Technical Implementation
+
+```html
+<!-- Example navigation link -->
+<a href="{% url 'blog:blog_list' %}"
+   hx-get="{% url 'blog:blog_list' %}"
+   hx-target="#main-content"
+   hx-swap="innerHTML"
+   hx-push-url="true">Blog</a>
+```
+
+- **`hx-get`**: Fetches the page content via AJAX
+- **`hx-target="#main-content"`**: Only replaces the content area, not the whole page
+- **`hx-swap="innerHTML"`**: Replaces the inner HTML of the target
+- **`hx-push-url="true"`**: Updates the browser URL for proper history
+
+### Partial Templates
+
+Each view returns either a full page or a partial template based on the request type:
+
+```python
+# In views.py
+template = 'blog/blog_list_partial.html' if request.htmx else 'blog/blog_list.html'
+return render(request, template, context)
+```
+
+- **Full templates** (e.g., `blog_list.html`): Include the base layout with navbar, used for direct URL access
+- **Partial templates** (e.g., `blog_list_partial.html`): Only the content, used for HTMX navigation
+
+
 ## Blog System
 
 The blog system provides a full-featured blogging platform integrated with the portfolio site.
@@ -102,15 +146,16 @@ The blog system provides a full-featured blogging platform integrated with the p
 ### Blog Features
 
 - **Rich Text Editing**: CKEditor 5 integration for creating beautiful blog posts with images, code blocks, and formatting
-- **Categories & Tags**: Organize posts with categories and tags, sortable by post count
+- **Image Alignment**: Support for left, center, and right image alignment in posts
+- **Categories & Tags**: Organize posts with categories and tags, sortable by post count in sidebar
 - **Multi-Filter Support**: Filter posts by multiple categories or tags simultaneously (OR logic)
-- **HTMX Navigation**: Seamless SPA-like experience without page reloads
-- **Related Posts**: Automatically displays related posts based on shared categories
+- **Related Posts**: Automatically displays up to 3 related posts based on shared categories
+- **About the Author**: Sidebar section showing author profile, bio from resume, and social links
 - **Author Attribution**: Default author pulled from Site Configuration, customizable per post
-- **Featured Images**: Support for post thumbnails with graceful fallback
-- **Pagination**: Customizable pagination with consistent page range display
-- **Responsive Design**: Mobile-friendly layout matching the portfolio style
-- **Social Sharing**: Built-in share buttons for Twitter, Facebook, LinkedIn, and copy link
+- **Featured Images**: Support for post thumbnails with optional captions
+- **Pagination**: Smart pagination with consistent 5-page range display (simplified on mobile)
+- **Social Sharing**: Share buttons for X/Twitter, Facebook, LinkedIn, Reddit, and Email
+- **Responsive Design**: Mobile-optimized layout with inline share buttons on narrow screens
 
 ### Managing Blog Posts
 
@@ -120,19 +165,22 @@ The blog system provides a full-featured blogging platform integrated with the p
 4. Fill in the fields:
    - `title`: Post title (slug is auto-generated)
    - `content`: Rich text content using CKEditor 5
-   - `excerpt`: Short summary for list views (auto-generated if left blank)
+   - `excerpt`: Short summary for list views
    - `featured_image`: Optional header image
+   - `featured_image_caption`: Optional caption for the featured image
    - `categories`: Select one or more categories
    - `tags`: Select one or more tags
-   - `status`: Draft or Published
+   - `published`: Check to make the post visible
    - `author`: Defaults to site config full name
 5. Click **Save**
 
 ### Managing Categories & Tags
 
 - Categories and tags are managed separately in the admin panel
-- Posts can be filtered by clicking on category/tag badges
+- Posts can be filtered by clicking on category/tag badges in the blog list
+- Multiple filters can be applied (uses OR logic—shows posts matching any selected filter)
 - Both are sorted by post count in the sidebar
+- Remove individual filters by clicking the X on filter badges
 
 
 ## Site Configuration
@@ -156,8 +204,17 @@ The site uses a database-backed configuration system accessible through the Djan
    - `copyright_text`: Copyright text in the footer
    - `profile_image`: Upload your profile photo (recommended: 400x400px or larger, square)
    - `profile_image_alt_text`: Alt text for accessibility
+   - `favicon`: Upload a site favicon (recommended: 32x32px or 64x64px)
 
 6. Click **Save**
+
+### Feature Flags
+
+The site includes feature flags to toggle certain elements:
+
+- **`show_projects_link`**: Show/hide the Projects link in the navigation bar (default: enabled)
+
+Access feature flags in the Site Configuration admin panel.
 
 ## Local Development (Without Docker)
 
@@ -449,16 +506,23 @@ djangfolio/
 ├── requirements.txt       # Python dependencies
 ├── package.json           # Node.js dependencies (Bootstrap, jQuery)
 ├── manage.py              # Django management script
-├── db.sqlite3             # SQLite database (auto-created)
+├── db/                    # Database directory
+│   └── db.sqlite3         # SQLite database (auto-created)
 ├── portfolio/             # Django project settings
-│   ├── settings.py        # Main configuration
+│   ├── settings.py        # Main configuration (includes CKEditor 5 config)
 │   ├── urls.py            # URL routing
 │   └── wsgi.py            # WSGI application
 ├── home/                  # Home app (landing page, contact form)
-│   ├── models.py          # SiteConfiguration model
-│   ├── views.py           # Views
-│   ├── templates/         # Templates
+│   ├── models.py          # SiteConfiguration model (includes feature flags)
+│   ├── views.py           # Views with HTMX support
+│   ├── templates/         # Templates (base_layout.html, navbar.html, partials)
 │   └── static/            # Static files (CSS, JS, images)
+├── blog/                  # Blog app
+│   ├── models.py          # BlogPost, BlogCategory, BlogTag models
+│   ├── views.py           # Blog list/detail views with HTMX support
+│   ├── admin.py           # Rich admin interface
+│   ├── templates/         # Full and partial templates
+│   └── static/            # Blog-specific CSS
 ├── projects/              # Projects app (portfolio showcase)
 ├── resume/                # Resume app (experience, education)
 └── media/                 # User-uploaded files (auto-created)
@@ -468,8 +532,10 @@ djangfolio/
 
 - **Backend**: Django 4.2.16, Python 3.12
 - **Database**: SQLite (development), compatible with PostgreSQL (production)
-- **Frontend**: Bootstrap 3/4, jQuery
-- **Static Files**: WhiteNoise
+- **Frontend**: Bootstrap 4.5.2, jQuery 3.5.1, Font Awesome 6.5.1
+- **SPA Navigation**: HTMX 1.9.10 with django-htmx middleware
+- **Rich Text Editor**: CKEditor 5 (django-ckeditor-5)
+- **Static Files**: WhiteNoise (production)
 - **WSGI Server**: Gunicorn (production)
 - **Containerization**: Docker, Docker Compose
 
@@ -495,10 +561,13 @@ For issues, questions, or suggestions, please open an issue on GitHub.
 
 **Recent Updates**:
 
+- Added full blog system with CKEditor 5 rich text editing
+- Implemented SPA-like navigation with HTMX (navbar stays fixed, only content updates)
+- Added "About the Author" section in blog posts with resume bio and social links
+- Added social sharing buttons (X/Twitter, Facebook, LinkedIn, Reddit, Email)
+- Added feature flags for toggling navigation elements (e.g., Projects link)
+- Mobile-optimized blog with responsive pagination and inline share buttons
+- Enhanced GitHub integration with language colors and improved styling
 - Fixed HTTPS/CSRF issues for production deployments
 - Added support for reverse proxy HTTPS headers
 - Improved Docker setup with automatic initialization
-- Enhanced documentation with production best practices
-- Fixed high-resolution display scrolling issue on portfolio tab
-- Implemented working Django-based email contact form
-- Dockerized deployment with proper static file handling

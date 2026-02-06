@@ -55,23 +55,23 @@
             <div class="mobile-share-section d-lg-none mt-4">
                 <h6 class="mb-3">Share this post</h6>
                 <div class="d-flex flex-wrap" style="gap: 0.75rem;">
-                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title }}" 
-                       target="_blank" class="social-share-btn twitter-share" title="Share on X (Twitter)">
+                    <a href="https://x.com/intent/tweet?url={{ canonical_url|urlencode }}&text={{ post.title|urlencode }}" 
+                       target="_blank" class="social-share-btn twitter-share" title="Share on X">
                         <i class="fa-brands fa-x-twitter"></i>
                     </a>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ canonical_url|urlencode }}&quote={{ post.title|urlencode }}" 
                        target="_blank" class="social-share-btn facebook-share" title="Share on Facebook">
                         <i class="fa-brands fa-facebook-f"></i>
                     </a>
-                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ post.title }}&summary={{ post.excerpt }}&source={{ site_config.full_name }}" 
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}&summary={{ post.excerpt|urlencode }}" 
                        target="_blank" class="social-share-btn linkedin-share" title="Share on LinkedIn">
                         <i class="fa-brands fa-linkedin-in"></i>
                     </a>
-                    <a href="https://reddit.com/submit?url={{ request.build_absolute_uri }}&title={{ post.title }}" 
+                    <a href="https://reddit.com/submit?url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}" 
                        target="_blank" class="social-share-btn reddit-share" title="Share on Reddit">
                         <i class="fa-brands fa-reddit-alien"></i>
                     </a>
-                    <a href="mailto:?subject={{ post.title }}&body=Check out this blog post: {{ request.build_absolute_uri }}" 
+                    <a href="mailto:?subject={{ post.title|urlencode }}&body=Check out this blog post: {{ canonical_url }}" 
                        class="social-share-btn email-share" title="Share via Email">
                         <i class="fa-solid fa-envelope"></i>
                     </a>
@@ -127,23 +127,23 @@
             </div>
             <div class="card-body">
                 <div class="d-flex flex-wrap" style="gap: 0.75rem;">
-                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title }}" 
-                       target="_blank" class="social-share-btn twitter-share" title="Share on X (Twitter)">
+                    <a href="https://x.com/intent/tweet?url={{ canonical_url|urlencode }}&text={{ post.title|urlencode }}" 
+                       target="_blank" class="social-share-btn twitter-share" title="Share on X">
                         <i class="fa-brands fa-x-twitter"></i>
                     </a>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ canonical_url|urlencode }}&quote={{ post.title|urlencode }}" 
                        target="_blank" class="social-share-btn facebook-share" title="Share on Facebook">
                         <i class="fa-brands fa-facebook-f"></i>
                     </a>
-                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ post.title }}&summary={{ post.excerpt }}&source={{ site_config.full_name }}" 
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}&summary={{ post.excerpt|urlencode }}" 
                        target="_blank" class="social-share-btn linkedin-share" title="Share on LinkedIn">
                         <i class="fa-brands fa-linkedin-in"></i>
                     </a>
-                    <a href="https://reddit.com/submit?url={{ request.build_absolute_uri }}&title={{ post.title }}" 
+                    <a href="https://reddit.com/submit?url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}" 
                        target="_blank" class="social-share-btn reddit-share" title="Share on Reddit">
                         <i class="fa-brands fa-reddit-alien"></i>
                     </a>
-                    <a href="mailto:?subject={{ post.title }}&body=Check out this blog post: {{ request.build_absolute_uri }}" 
+                    <a href="mailto:?subject={{ post.title|urlencode }}&body=Check out this blog post: {{ canonical_url }}" 
                        class="social-share-btn email-share" title="Share via Email">
                         <i class="fa-solid fa-envelope"></i>
                     </a>
@@ -155,7 +155,7 @@
             <div class="card-header">
                 <h5 class="mb-0">About the Author</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body about-author-content">
                 {% if site_config.profile_image %}
                 <div class="text-center mb-3">
                     <img src="{{ site_config.profile_image.url }}" alt="{{ site_config.profile_image_alt_text }}" 
@@ -164,7 +164,7 @@
                 {% endif %}
                 <p class="mb-2"><strong>{{ site_config.full_name }}</strong></p>
                 {% if resume.about_text %}
-                <p class="small text-muted mb-3">{{ resume.about_text }}</p>
+                <p class="text-muted mb-3">{{ resume.about_text }}</p>
                 {% endif %}
                 <ul class="social-icon mb-0" style="margin-top: 0;">
                     <li><a href="{{ site_config.linkedin_url }}" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin" aria-hidden="true"></i></a></li>
