@@ -36,6 +36,10 @@ CSRF_TRUSTED_ORIGINS = os.getenv(
     'http://localhost:8888,http://127.0.0.1:8888'
 ).split(',')
 
+# Site URL for canonical links (used in social sharing)
+# Set this to your production URL for proper share links
+SITE_URL = os.getenv('SITE_URL', '')
+
 # Application definition
 
 INSTALLED_APPS = [

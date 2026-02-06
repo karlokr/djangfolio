@@ -467,6 +467,7 @@ a.badge-secondary:focus {
 .tag-cloud {
     max-height: 200px;
     overflow-y: auto;
+    padding: 1.25rem;
 }
 
 .tag-cloud::-webkit-scrollbar {
@@ -575,12 +576,27 @@ a.badge-secondary:focus {
     font-size: 20px;
     transition: all 0.3s ease;
     text-decoration: none;
+    user-select: none;
 }
 
 .social-share-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     text-decoration: none;
+}
+
+.social-share-btn:focus,
+.social-share-btn:active,
+.social-share-btn:visited {
+    color: #fff !important;
+    text-decoration: none;
+    outline: none;
+}
+
+.social-share-btn::selection,
+.social-share-btn *::selection {
+    background-color: transparent;
+    color: #fff;
 }
 
 .twitter-share {
@@ -626,4 +642,18 @@ a.badge-secondary:focus {
 .email-share:hover {
     background-color: #5a6268;
     color: #fff;
+}
+
+/* Mobile share section spacing */
+.mobile-share-section {
+    margin-bottom: 2rem;
+}
+
+/* About the Author section */
+.about-author-content {
+    font-size: 0.95rem;
+}
+
+.about-author-content p {
+    line-height: 1.6;
 }
