@@ -1,18 +1,4 @@
-body {
-    font-family: 'Hind', sans-serif;
-    font-size: 15px;
-    line-height: 1.8em;
-    color: #3d3d50;
-    font-weight: 300;
-    background: url("../img/pattern-bg.png") fixed;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-body::-webkit-scrollbar {
-   display:none;
-}
-
+/* Projects Styles */
 
 
 /* --------------------------------------
@@ -282,7 +268,7 @@ button:focus,
 }
 
 .header .profile-img {
-    margin-bottom: 50px;
+    margin-bottom: 25px;
 }
 
 .header .content {
@@ -859,23 +845,4 @@ p.res-strengths {
 
 #about-project {
     margin-top: 20px;
-}
-
-.navbar-collapse {
-    flex-grow: unset !important;
-}
-
-.navbar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 4000;
-}
-
-.navbar-nav {
-  display:flex;
-}
-
-.container {
-  margin-top: 80px;
 }

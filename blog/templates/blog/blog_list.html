@@ -1,0 +1,8 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+
+{% block title %}Blog - {{ site_config.full_name }}{% endblock %}
+
+{% block content %}
+{% include 'blog/blog_list_partial.html' %}
+{% endblock %}

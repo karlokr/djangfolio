@@ -24,8 +24,12 @@ def home_page(request):
         'web_projects': web_projects,
         'resume': resume,
         'skill_groups': skill_groups,
+        'active_page': 'home',
     }
-    return render(request, 'home/index.html', context)
+    
+    # Return partial template for HTMX requests
+    template = 'home/index_partial.html' if request.htmx else 'home/index.html'
+    return render(request, template, context)
 
 
 @csrf_exempt

@@ -20,6 +20,8 @@ from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('ckeditor5/', include('django_ckeditor_5.urls')),
+    path('blog/', include('blog.urls')),
     path('projects/', include('projects.urls')),
     path('', include('home.urls')),
     # Serve media files manually for production

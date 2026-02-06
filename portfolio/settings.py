@@ -45,10 +45,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_ckeditor_5',
     'nested_inline',
     'projects',
     'home',
     'resume',
+    'blog',
+    'django_htmx',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +69,7 @@ MIDDLEWARE.extend([
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ])
 
 ROOT_URLCONF = 'portfolio.urls'
@@ -166,6 +170,57 @@ STORAGES = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# CKEditor 5 Configuration
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': ['heading', '|', 'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|',
+                    'alignment', '|', 'link', 'blockQuote', 'insertImage', 'mediaEmbed',
+                    'insertTable', 'horizontalLine', '|', 'code', 'codeBlock', '|',
+                    'sourceEditing', '|', 'undo', 'redo'],
+        'image': {
+            'toolbar': ['imageTextAlternative', 'imageStyle:alignLeft',
+                       'imageStyle:alignCenter', 'imageStyle:alignRight'],
+            'styles': ['alignLeft', 'alignCenter', 'alignRight'],
+        },
+        'table': {
+            'contentToolbar': ['tableColumn', 'tableRow', 'mergeTableCells'],
+        },
+        'height': 400,
+        'width': '100%',
+    },
+    'extends': {
+        'toolbar': ['heading', '|', 'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|',
+                    'alignment', '|', 'link', 'blockQuote', 'insertImage', 'mediaEmbed',
+                    'insertTable', 'horizontalLine', '|', 'code', 'codeBlock', '|',
+                    'sourceEditing', '|', 'undo', 'redo'],
+        'image': {
+            'toolbar': ['imageTextAlternative', 'imageStyle:alignLeft',
+                       'imageStyle:alignCenter', 'imageStyle:alignRight'],
+            'styles': ['alignLeft', 'alignCenter', 'alignRight'],
+        },
+        'table': {
+            'contentToolbar': ['tableColumn', 'tableRow', 'mergeTableCells'],
+        },
+        'height': 400,
+        'width': '100%',
+    },
+}
+
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
+CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'jpg', 'png', 'gif', 'webp']
+
+# CKEditor 5 custom CSS (optional)
+customColorPalette = [
+    {'color': 'hsl(4, 90%, 58%)', 'label': 'Red'},
+    {'color': 'hsl(340, 82%, 52%)', 'label': 'Pink'},
+    {'color': 'hsl(291, 64%, 42%)', 'label': 'Purple'},
+    {'color': 'hsl(262, 52%, 47%)', 'label': 'Deep Purple'},
+    {'color': 'hsl(231, 48%, 48%)', 'label': 'Indigo'},
+    {'color': 'hsl(207, 90%, 54%)', 'label': 'Blue'},
+]
 
 # WhiteNoise configuration (only applies in production when WhiteNoise is enabled)
 if not DEBUG:
