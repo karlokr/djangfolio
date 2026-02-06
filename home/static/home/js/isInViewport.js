@@ -89,11 +89,20 @@ function isInViewport(element, options) {
   // Safely handle viewport selector - use find() to prevent XSS
   var $viewport;
   if (settings.viewport.jquery) {
+    // Already a jQuery object
     $viewport = settings.viewport;
   } else if (typeof settings.viewport === 'string') {
+    // String selector - use find() to prevent XSS
     $viewport = $(document).find(settings.viewport);
-  } else {
+  } else if (settings.viewport === window || settings.viewport instanceof Window) {
+    // Window object
+    $viewport = $(window);
+  } else if (settings.viewport instanceof Element || settings.viewport instanceof HTMLDocument) {
+    // DOM element
     $viewport = $(settings.viewport);
+  } else {
+    // Unknown type - default to window
+    $viewport = $(window);
   }
 
   if (!$viewport.length) {
