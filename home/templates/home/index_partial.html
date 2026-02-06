@@ -1,7 +1,7 @@
 {% load static %}
 {% load custom_filters %}
 
-<div id="main-wrapper" style="padding-top: 70px;">
+<div id="main-wrapper" style="padding-top: 80px;">
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -116,24 +116,22 @@
 
                             </div>
                             <div class="row">
-                                <div class="col-md-12">
+                                {% for skill_group in skill_groups %}
+                                <div class="col-md-6">
                                     <div class="progress-wrapper">
-                                        {% for skill_group in skill_groups %}
-                                        <div class="col-md-6">
-                                            <p><b>{{ skill_group }}</b></p>
-                                            <p class="res-strengths">
-                                            {% for skill in resume.skill_set.all %}
-                                            
-                                                {% if skill_group == skill.skill_group %}
-                                                    {{ skill.skill }} &nbsp;
-                                                {% endif %}
-                                            
-                                            {% endfor %}
-                                            </p>
-                                         </div>
+                                        <p><b>{{ skill_group }}</b></p>
+                                        <p class="res-strengths">
+                                        {% for skill in resume.skill_set.all %}
+                                        
+                                            {% if skill_group == skill.skill_group %}
+                                                {{ skill.skill }} &nbsp;
+                                            {% endif %}
+                                        
                                         {% endfor %}
+                                        </p>
                                     </div>
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </section>

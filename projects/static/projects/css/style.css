@@ -695,7 +695,7 @@ p.res-strengths {
     /* Hidden by default */
     position: fixed;
     /* Stay in place */
-    z-index: 1;
+    z-index: 5000;
     /* Sit on top */
     padding-top: 100px;
     /* Location of the box */
@@ -719,7 +719,7 @@ p.res-strengths {
     /* Hidden by default */
     position: fixed;
     /* Stay in place */
-    z-index: 1;
+    z-index: 5000;
     /* Sit on top */
     padding-top: 0;
     /* Location of the box */
@@ -743,7 +743,7 @@ p.res-strengths {
     display: block;
     width: 80%;
     max-width: 1000px;
-    z-index: 99;
+    z-index: 5001;
 }
 
 /* Caption of Modal Image (Image Text) - Same Width as the Image */
