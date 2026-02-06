@@ -49,8 +49,8 @@ class SiteConfiguration(models.Model):
     # Copyright Information
     copyright_text = models.CharField(
         max_length=200,
-        default='Your Name. All rights reserved',
-        help_text='Copyright text displayed in footer'
+        default='Your Name. All rights reserved.',
+        help_text='Copyright text displayed in footer (year is added automatically)'
     )
     
     # Profile Image

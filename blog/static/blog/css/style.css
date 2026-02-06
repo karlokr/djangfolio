@@ -657,3 +657,14 @@ a.badge-secondary:focus {
 .about-author-content p {
     line-height: 1.6;
 }
+
+/* Blog Footer */
+.blog-footer {
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.blog-footer p {
+    font-size: 13px;
+    color: #888888;
+}
