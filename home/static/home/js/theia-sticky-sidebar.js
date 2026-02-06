@@ -85,8 +85,12 @@
                 // Save options
                 o.options = options || {};
 
-                // Get container
-                o.container = $(o.options.containerSelector);
+                // Get container - use find() to prevent XSS from containerSelector
+                if (o.options.containerSelector) {
+                    o.container = o.sidebar.closest('body').find(o.options.containerSelector);
+                } else {
+                    o.container = $([]);
+                }
                 if (o.container.length == 0) {
                     o.container = o.sidebar.parent();
                 }

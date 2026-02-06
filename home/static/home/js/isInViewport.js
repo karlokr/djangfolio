@@ -86,7 +86,18 @@ function isInViewport(element, options) {
     viewport: window
   }, options);
   var isVisibleFlag = false;
-  var $viewport = settings.viewport.jquery ? settings.viewport : $(settings.viewport);
+  // Safely handle viewport selector - use find() to prevent XSS
+  var $viewport;
+  if (settings.viewport.jquery) {
+    // Already a jQuery object
+    $viewport = settings.viewport;
+  } else if (typeof settings.viewport === 'string') {
+    // String selector - use find() to prevent XSS, never $() directly
+    $viewport = $(document).find(settings.viewport);
+  } else {
+    // DOM element or window - safe to wrap with $()
+    $viewport = $(settings.viewport);
+  }
 
   if (!$viewport.length) {
     console.warn('isInViewport: The viewport selector you have provided matches no element on page.');
@@ -160,7 +171,9 @@ function getSelectorArgs(argsString) {
 
     return {
       tolerance: args[0] ? args[0].trim() : void 0,
-      viewport: args[1] ? $(args[1].trim()) : void 0
+      // Pass viewport through as a raw selector string; normalization and
+      // safe resolution (using .find for strings) is handled in isInViewport.
+      viewport: args[1] ? args[1].trim() : void 0
     }
   }
   return {}
