@@ -92,17 +92,11 @@ function isInViewport(element, options) {
     // Already a jQuery object
     $viewport = settings.viewport;
   } else if (typeof settings.viewport === 'string') {
-    // String selector - use find() to prevent XSS
+    // String selector - use find() to prevent XSS, never $() directly
     $viewport = $(document).find(settings.viewport);
-  } else if (settings.viewport === window || settings.viewport instanceof Window) {
-    // Window object
-    $viewport = $(window);
-  } else if (settings.viewport instanceof Element || settings.viewport instanceof HTMLDocument) {
-    // DOM element
-    $viewport = $(settings.viewport);
   } else {
-    // Unknown type - default to window
-    $viewport = $(window);
+    // DOM element or window - safe to wrap with $()
+    $viewport = $(settings.viewport);
   }
 
   if (!$viewport.length) {
@@ -177,7 +171,9 @@ function getSelectorArgs(argsString) {
 
     return {
       tolerance: args[0] ? args[0].trim() : void 0,
-      viewport: args[1] ? $(args[1].trim()) : void 0
+      // Pass viewport through as a raw selector string; normalization and
+      // safe resolution (using .find for strings) is handled in isInViewport.
+      viewport: args[1] ? args[1].trim() : void 0
     }
   }
   return {}
