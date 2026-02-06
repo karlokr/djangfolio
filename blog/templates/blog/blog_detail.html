@@ -11,6 +11,10 @@
 <meta property="og:description" content="{{ post.excerpt }}">
 {% if post.featured_image %}
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}">
+<meta property="og:image:alt" content="{{ post.featured_image_caption|default:post.title }}">
+{% elif site_config.favicon %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site_config.favicon.url }}">
+<meta property="og:image:alt" content="{{ site_config.full_name }}">
 {% endif %}
 
 <!-- Twitter -->
@@ -20,6 +24,10 @@
 <meta property="twitter:description" content="{{ post.excerpt }}">
 {% if post.featured_image %}
 <meta property="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}">
+<meta property="twitter:image:alt" content="{{ post.featured_image_caption|default:post.title }}">
+{% elif site_config.favicon %}
+<meta property="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site_config.favicon.url }}">
+<meta property="twitter:image:alt" content="{{ site_config.full_name }}">
 {% endif %}
 
 <!-- LinkedIn -->
