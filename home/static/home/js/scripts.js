@@ -2,6 +2,12 @@ jQuery(function ($) {
 
     'use strict';
 
+    // Safe text sanitization function using DOMPurify
+    function sanitizeText(text) {
+        // Use DOMPurify to remove all HTML tags and return only text
+        return DOMPurify.sanitize(text, { ALLOWED_TAGS: [], KEEP_CONTENT: true });
+    }
+
     // --------------------------------------------------------------------
     // PreLoader
     // --------------------------------------------------------------------
@@ -261,7 +267,7 @@ jQuery(function ($) {
                     if (response.status === 'success') {
                         // Show success message
                         var successMsg = $('<div class="form-message success show">' + 
-                            response.message.replace(/<[^>]*>/g, '') + '</div>');
+                            sanitizeText(response.message) + '</div>');
                         messageContainer.html(successMsg);
                         
                         // Mark fields as success
@@ -275,7 +281,7 @@ jQuery(function ($) {
                     } else {
                         // Show error message
                         var errorMsg = $('<div class="form-message error show">' + 
-                            response.message.replace(/<[^>]*>/g, '') + '</div>');
+                            sanitizeText(response.message) + '</div>');
                         messageContainer.html(errorMsg);
                         
                         // Mark fields as error
@@ -287,7 +293,7 @@ jQuery(function ($) {
                 error: function(xhr, status, error) {
                     var errorMsg = "Sorry, there was an error sending your message.";
                     if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMsg = xhr.responseJSON.message.replace(/<[^>]*>/g, '');
+                        errorMsg = sanitizeText(xhr.responseJSON.message);
                     }
                     
                     // Show error message
@@ -337,7 +343,7 @@ jQuery(function ($) {
                     if (response.status === 'success') {
                         // Show success message
                         var successMsg = $('<div class="form-message success show">' + 
-                            response.message.replace(/<[^>]*>/g, '') + '</div>');
+                            sanitizeText(response.message) + '</div>');
                         messageContainer.html(successMsg);
                         
                         // Mark fields as success
@@ -351,7 +357,7 @@ jQuery(function ($) {
                     } else {
                         // Show error message
                         var errorMsg = $('<div class="form-message error show">' + 
-                            response.message.replace(/<[^>]*>/g, '') + '</div>');
+                            sanitizeText(response.message) + '</div>');
                         messageContainer.html(errorMsg);
                         
                         // Mark fields as error
@@ -363,7 +369,7 @@ jQuery(function ($) {
                 error: function(xhr, status, error) {
                     var errorMsg = "Sorry, there was an error sending your message.";
                     if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMsg = xhr.responseJSON.message.replace(/<[^>]*>/g, '');
+                        errorMsg = sanitizeText(xhr.responseJSON.message);
                     }
                     
                     // Show error message

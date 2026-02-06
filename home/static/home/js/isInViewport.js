@@ -86,7 +86,15 @@ function isInViewport(element, options) {
     viewport: window
   }, options);
   var isVisibleFlag = false;
-  var $viewport = settings.viewport.jquery ? settings.viewport : $(settings.viewport);
+  // Safely handle viewport selector - use find() to prevent XSS
+  var $viewport;
+  if (settings.viewport.jquery) {
+    $viewport = settings.viewport;
+  } else if (typeof settings.viewport === 'string') {
+    $viewport = $(document).find(settings.viewport);
+  } else {
+    $viewport = $(settings.viewport);
+  }
 
   if (!$viewport.length) {
     console.warn('isInViewport: The viewport selector you have provided matches no element on page.');
