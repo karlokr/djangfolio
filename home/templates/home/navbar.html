@@ -28,6 +28,7 @@
            hx-push-url="true"
            data-toggle="collapse" data-target="#navbarSupportedContent.show">Blog</a>
       </li>
+      {% if site_config.show_projects_link %}
       <li class="nav-item {% if active_page == 'projects' %}active{% endif %}">
         <a class="nav-link" href="{% url 'projects:projects_list' %}"
            hx-get="{% url 'projects:projects_list' %}"
@@ -36,6 +37,7 @@
            hx-push-url="true"
            data-toggle="collapse" data-target="#navbarSupportedContent.show">Projects</a>
       </li>
+      {% endif %}
     </ul>
   </div>
 </nav>

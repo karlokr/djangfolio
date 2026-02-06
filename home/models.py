@@ -74,6 +74,12 @@ class SiteConfiguration(models.Model):
         help_text='Site favicon (recommended size: 32x32px or 64x64px, .png or .ico format)'
     )
     
+    # Feature Flags
+    show_projects_link = models.BooleanField(
+        default=True,
+        help_text='Show the Projects link in the navigation bar'
+    )
+    
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -770,6 +770,14 @@ p.res-strengths {
     padding: 10px;
 }
 
+.github-item h3 {
+    font-size: 16px;
+}
+
+.github-item small {
+    font-size: 13px;
+}
+
 .col-md-4 {
     padding-left: 5px;
     padding-right: 5px;
