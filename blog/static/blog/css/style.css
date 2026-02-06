@@ -658,6 +658,10 @@ a.badge-secondary:focus {
     line-height: 1.6;
 }
 
+.about-author-content .author-name {
+    font-size: 1.1rem;
+}
+
 /* About the Author - centered on mobile/narrow screens */
 @media (max-width: 991.98px) {
     .about-author-content {
