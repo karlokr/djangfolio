@@ -658,6 +658,17 @@ a.badge-secondary:focus {
     line-height: 1.6;
 }
 
+/* About the Author - centered on mobile/narrow screens */
+@media (max-width: 991.98px) {
+    .about-author-content {
+        text-align: center;
+    }
+    
+    .about-author-content .social-icon {
+        justify-content: center;
+    }
+}
+
 /* Blog Footer */
 .blog-footer {
     border-top: 1px solid #dee2e6;
