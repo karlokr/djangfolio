@@ -94,9 +94,15 @@ function isInViewport(element, options) {
   } else if (typeof settings.viewport === 'string') {
     // String selector - use find() to prevent XSS, never $() directly
     $viewport = $(document).find(settings.viewport);
-  } else {
-    // DOM element or window - safe to wrap with $()
+  } else if (settings.viewport === window || 
+             settings.viewport instanceof Window ||
+             settings.viewport instanceof Element ||
+             settings.viewport instanceof HTMLDocument) {
+    // Only wrap verified safe DOM objects/window - not arbitrary values
     $viewport = $(settings.viewport);
+  } else {
+    // Unknown/unsafe type - default to window instead of wrapping potentially tainted value
+    $viewport = $(window);
   }
 
   if (!$viewport.length) {
