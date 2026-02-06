@@ -5,6 +5,54 @@ body {
     color: #3d3d50;
     font-weight: 300;
     background: url("../img/pattern-bg.png") fixed;
+    user-select: none;
+}
+
+/* Navbar styling - only for main navbar, not resume/portfolio switcher */
+.navbar-expand-lg .navbar-collapse {
+    flex-grow: unset !important;
+}
+
+.navbar-expand-lg.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 4000;
+  margin: 0;
+  background: #fff;
+}
+
+.navbar-expand-lg .navbar-nav {
+    float: none;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+    border-radius: 0px;
+}
+
+.navbar-expand-lg .navbar-nav>li {
+    display: inline-block;
+    float: none;
+}
+
+.navbar-expand-lg .navbar-nav {
+  display:flex;
+}
+
+/* Active nav link highlighting */
+.navbar-expand-lg .navbar-nav .nav-item.active .nav-link {
+    color: #212529;
+}
+
+.navbar-expand-lg .navbar-nav .nav-link {
+    color: rgba(0, 0, 0, 0.5);
+    user-select: none;
+}
+
+.navbar-expand-lg .navbar-nav .nav-link:hover {
+    color: #212529;
 }
 
 
@@ -55,6 +103,10 @@ h5 {
 h6 {
     font-size: 15px;
     line-height: 1.5em;
+}
+
+strong, b {
+    font-weight: 700;
 }
 
 
@@ -108,6 +160,7 @@ ul {
     border-radius: 0;
     border: 0;
     text-transform: uppercase;
+    user-select: none;
 }
 
 .btn-lg {
@@ -165,6 +218,9 @@ button:focus,
     margin: 40px auto;
     padding: 0;
     box-shadow: 0 0 0 1px #FFC107;
+    max-width: 1200px !important;
+    position: relative;
+    z-index: 1;
 }
 
 .blocks {
@@ -275,7 +331,13 @@ button:focus,
 }
 
 .header .profile-img {
-    margin-bottom: 50px;
+    margin-bottom: 25px;
+}
+
+.header .profile-img img {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
 .header .content {
@@ -351,6 +413,7 @@ button:focus,
     text-align: center;
     border-radius: 2px;
     border: 1px solid #FFC107;
+    user-select: none;
 }
 
 .social-icon li a:hover {
@@ -385,6 +448,7 @@ button:focus,
     font-weight: 400;
     display: inline-block;
     margin-bottom: 5px;
+    user-select: none;
 }
 
 .progress-item .progress {
@@ -406,6 +470,7 @@ button:focus,
     top: 5px;
     padding: 0 8px;
     border-radius: 3px;
+    user-select: none;
 }
 
 .progress-item .progress-percent::before {
@@ -674,6 +739,7 @@ p.res-strengths {
     color: #FFC107;
     border-bottom: 1px solid transparent;
     border-top: 2px solid transparent;
+    user-select: none;
 }
 
 .navbar-default .navbar-nav>li>a:hover {
@@ -702,6 +768,14 @@ p.res-strengths {
     border: 1px solid #FFC107;
     border-radius: 3px;
     padding: 10px;
+}
+
+.github-item h3 {
+    font-size: 16px;
+}
+
+.github-item small {
+    font-size: 13px;
 }
 
 .col-md-4 {
@@ -851,6 +925,7 @@ p.res-strengths {
     font-size: 40px;
     font-weight: bold;
     transition: 0.3s;
+    user-select: none;
 }
 
 .close:hover,

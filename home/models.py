@@ -49,8 +49,8 @@ class SiteConfiguration(models.Model):
     # Copyright Information
     copyright_text = models.CharField(
         max_length=200,
-        default='Your Name. All rights reserved',
-        help_text='Copyright text displayed in footer'
+        default='Your Name. All rights reserved.',
+        help_text='Copyright text displayed in footer (year is added automatically)'
     )
     
     # Profile Image
@@ -72,6 +72,12 @@ class SiteConfiguration(models.Model):
         blank=True,
         null=True,
         help_text='Site favicon (recommended size: 32x32px or 64x64px, .png or .ico format)'
+    )
+    
+    # Feature Flags
+    show_projects_link = models.BooleanField(
+        default=True,
+        help_text='Show the Projects link in the navigation bar'
     )
     
     # Metadata

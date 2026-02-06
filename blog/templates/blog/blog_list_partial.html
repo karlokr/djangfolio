@@ -1,0 +1,247 @@
+{% load static %}
+
+<div class="container" style="padding-top: 70px;">
+<div class="row mt-3">
+    <div class="col-lg-8 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Blog</h1>
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Blog pagination">
+                <ul class="pagination mb-0">
+                    {% if page_obj.number != 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}"
+                               hx-get="{% url 'blog:blog_list' %}?page=1{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}" 
+                               hx-target="#main-content"
+                               hx-swap="innerHTML show:window:top"
+                               hx-push-url="true" title="First">&laquo;&laquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;&laquo;</span>
+                        </li>
+                    {% endif %}
+                    
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}"
+                               hx-get="{% url 'blog:blog_list' %}?page={{ page_obj.previous_page_number }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}" 
+                               hx-target="#main-content"
+                               hx-swap="innerHTML show:window:top"
+                               hx-push-url="true" title="Previous">&laquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;</span>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active page-number">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item page-number">
+                                <a class="page-link" href="?page={{ num }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}"
+                                   hx-get="{% url 'blog:blog_list' %}?page={{ num }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}" 
+                                   hx-target="#main-content"
+                                   hx-swap="innerHTML show:window:top"
+                                   hx-push-url="true">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}"
+                               hx-get="{% url 'blog:blog_list' %}?page={{ page_obj.next_page_number }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}" 
+                               hx-target="#main-content"
+                               hx-swap="innerHTML show:window:top"
+                               hx-push-url="true" title="Next">&raquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;</span>
+                        </li>
+                    {% endif %}
+                    
+                    {% if page_obj.number != page_obj.paginator.num_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}"
+                               hx-get="{% url 'blog:blog_list' %}?page={{ page_obj.paginator.num_pages }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}" 
+                               hx-target="#main-content"
+                               hx-swap="innerHTML show:window:top"
+                               hx-push-url="true" title="Last">&raquo;&raquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;&raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+        
+        {% if selected_categories or selected_tags %}
+        <div class="alert alert-info mb-3 position-relative pr-5">
+            <a href="{% url 'blog:blog_list' %}" class="btn-close-filter"
+               hx-get="{% url 'blog:blog_list' %}"
+               hx-target="#main-content"
+               hx-swap="innerHTML"
+               hx-push-url="true"
+               title="Clear all filters"><i class="fa-solid fa-xmark"></i></a>
+            <div class="filter-content">
+                {% if selected_category_objects %}
+                <div class="filter-group d-flex mb-1">
+                    <strong class="filter-label">Categories:</strong>
+                    <div class="filter-badges">
+                    {% for cat in selected_category_objects %}
+                        {% with remove_url=cat.slug %}
+                        <a href="{% url 'blog:blog_list' %}?{% for c in selected_categories %}{% if c != remove_url %}category={{ c }}&{% endif %}{% endfor %}{% for t in selected_tags %}tag={{ t }}&{% endfor %}"
+                           class="badge badge-filter badge-removable"
+                           hx-get="{% url 'blog:blog_list' %}?{% for c in selected_categories %}{% if c != remove_url %}category={{ c }}&{% endif %}{% endfor %}{% for t in selected_tags %}tag={{ t }}&{% endfor %}"
+                           hx-target="#main-content"
+                           hx-swap="innerHTML"
+                           hx-push-url="true"
+                           title="Remove {{ cat.name }}">{{ cat.name }} <i class="fa-solid fa-xmark ml-1"></i></a>
+                        {% endwith %}
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                {% if selected_tag_objects %}
+                <div class="filter-group d-flex">
+                    <strong class="filter-label">Tags:</strong>
+                    <div class="filter-badges">
+                    {% for tag in selected_tag_objects %}
+                        {% with remove_url=tag.slug %}
+                        <a href="{% url 'blog:blog_list' %}?{% for c in selected_categories %}category={{ c }}&{% endfor %}{% for t in selected_tags %}{% if t != remove_url %}tag={{ t }}&{% endif %}{% endfor %}"
+                           class="badge badge-filter badge-removable"
+                           hx-get="{% url 'blog:blog_list' %}?{% for c in selected_categories %}category={{ c }}&{% endfor %}{% for t in selected_tags %}{% if t != remove_url %}tag={{ t }}&{% endif %}{% endfor %}"
+                           hx-target="#main-content"
+                           hx-swap="innerHTML"
+                           hx-push-url="true"
+                           title="Remove {{ tag.name }}">{{ tag.name }} <i class="fa-solid fa-xmark ml-1"></i></a>
+                        {% endwith %}
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if page_obj %}
+            <div class="row">
+                {% for post in page_obj %}
+                <div class="col-md-6 mb-4">
+                    <a href="{% url 'blog:blog_detail' post.slug %}" class="card blog-card-link text-decoration-none"
+                       hx-get="{% url 'blog:blog_detail' post.slug %}" 
+                       hx-target="#main-content"
+                       hx-swap="innerHTML"
+                       hx-push-url="true">
+                        {% if post.featured_image %}
+                        <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
+                        {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-muted">No image</span>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title text-dark">
+                                {{ post.title }}
+                            </h5>
+                            <p class="text-muted small">
+                                <i class="fa-regular fa-calendar"></i> {{ post.created_date|date:"M d, Y" }} | 
+                                <i class="fa-regular fa-user"></i> {{ post.author }}
+                            </p>
+                            <p class="card-text text-dark">{{ post.excerpt }}</p>
+                            
+                            {% if post.categories.all %}
+                            <div class="mb-0">
+                                {% for category in post.categories.all %}
+                                <span class="badge badge-primary">{{ category.name }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <span class="btn btn-xs btn-blog-outline">Read More <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No blog posts available yet.
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <div class="sidebar">
+            <!-- Categories -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Categories</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="category-list">
+                        {% for category in categories %}
+                        {% with is_selected=category.slug|stringformat:"s" %}
+                        <a href="javascript:void(0)" 
+                           class="d-flex justify-content-between align-items-center px-3 py-2 text-decoration-none category-item {% if is_selected in selected_categories %}category-selected{% endif %}"
+                           hx-get="{% url 'blog:blog_list' %}?{% for c in selected_categories %}{% if c != category.slug %}category={{ c }}&{% endif %}{% endfor %}{% if is_selected not in selected_categories %}category={{ category.slug }}&{% endif %}{% for t in selected_tags %}tag={{ t }}&{% endfor %}" 
+                           hx-target="#main-content"
+                           hx-swap="innerHTML"
+                           hx-push-url="true">
+                            <span class="text-dark">{{ category.name }}</span>
+                            <span class="badge {% if is_selected in selected_categories %}badge-primary{% else %}badge-secondary{% endif %}">{{ category.post_count|default:0 }}</span>
+                        </a>
+                        {% endwith %}
+                        {% empty %}
+                        <p class="text-muted mb-0 p-3">No categories yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tags -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Tags</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="tag-cloud">
+                        {% for tag in tags %}
+                        {% with is_selected=tag.slug|stringformat:"s" %}
+                        <a href="javascript:void(0)" 
+                           class="badge mb-2 {% if is_selected in selected_tags %}badge-primary{% else %}badge-secondary{% endif %}"
+                           hx-get="{% url 'blog:blog_list' %}?{% for c in selected_categories %}category={{ c }}&{% endfor %}{% for t in selected_tags %}{% if t != tag.slug %}tag={{ t }}&{% endif %}{% endfor %}{% if is_selected not in selected_tags %}tag={{ tag.slug }}&{% endif %}" 
+                           hx-target="#main-content"
+                           hx-swap="innerHTML"
+                           hx-push-url="true">
+                            {{ tag.name }}
+                        </a>
+                        {% endwith %}
+                        {% empty %}
+                        <p class="text-muted mb-0">No tags yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="blog-footer text-center py-4 mt-4">
+    <div class="container">
+        <p class="text-muted mb-0">&copy; {% now "Y" %} {{ site_config.full_name }}. All rights reserved.</p>
+    </div>
+</footer>
+</div>

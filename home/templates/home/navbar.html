@@ -1,0 +1,43 @@
+{% load static %}
+
+<nav style="border-bottom: 1px solid #FFC107;background-color:#f9fafb !important" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+  <a class="navbar-brand" href="{% url 'home:home_page' %}"
+     hx-get="{% url 'home:home_page' %}"
+     hx-target="#main-content"
+     hx-swap="innerHTML"
+     hx-push-url="true">{{ site_config.full_name }}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item {% if active_page == 'home' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'home:home_page' %}"
+           hx-get="{% url 'home:home_page' %}"
+           hx-target="#main-content"
+           hx-swap="innerHTML"
+           hx-push-url="true"
+           data-toggle="collapse" data-target="#navbarSupportedContent.show">Home</a>
+      </li>
+      <li class="nav-item {% if active_page == 'blog' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'blog:blog_list' %}"
+           hx-get="{% url 'blog:blog_list' %}"
+           hx-target="#main-content"
+           hx-swap="innerHTML"
+           hx-push-url="true"
+           data-toggle="collapse" data-target="#navbarSupportedContent.show">Blog</a>
+      </li>
+      {% if site_config.show_projects_link %}
+      <li class="nav-item {% if active_page == 'projects' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'projects:projects_list' %}"
+           hx-get="{% url 'projects:projects_list' %}"
+           hx-target="#main-content"
+           hx-swap="innerHTML"
+           hx-push-url="true"
+           data-toggle="collapse" data-target="#navbarSupportedContent.show">Projects</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
