@@ -8,13 +8,27 @@
             {% if page_obj.has_other_pages %}
             <nav aria-label="Blog pagination">
                 <ul class="pagination mb-0">
+                    {% if page_obj.number != 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}"
+                               hx-get="{% url 'blog:blog_list' %}?page=1{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}" 
+                               hx-target="#main-content"
+                               hx-swap="innerHTML show:window:top"
+                               hx-push-url="true" title="First">&laquo;&laquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;&laquo;</span>
+                        </li>
+                    {% endif %}
+                    
                     {% if page_obj.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}"
                                hx-get="{% url 'blog:blog_list' %}?page={{ page_obj.previous_page_number }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}" 
                                hx-target="#main-content"
                                hx-swap="innerHTML show:window:top"
-                               hx-push-url="true">&laquo;</a>
+                               hx-push-url="true" title="Previous">&laquo;</a>
                         </li>
                     {% else %}
                         <li class="page-item disabled">
@@ -24,11 +38,11 @@
                     
                     {% for num in page_range %}
                         {% if page_obj.number == num %}
-                            <li class="page-item active">
+                            <li class="page-item active page-number">
                                 <span class="page-link">{{ num }}</span>
                             </li>
                         {% else %}
-                            <li class="page-item">
+                            <li class="page-item page-number">
                                 <a class="page-link" href="?page={{ num }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}"
                                    hx-get="{% url 'blog:blog_list' %}?page={{ num }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}" 
                                    hx-target="#main-content"
@@ -44,11 +58,25 @@
                                hx-get="{% url 'blog:blog_list' %}?page={{ page_obj.next_page_number }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}" 
                                hx-target="#main-content"
                                hx-swap="innerHTML show:window:top"
-                               hx-push-url="true">&raquo;</a>
+                               hx-push-url="true" title="Next">&raquo;</a>
                         </li>
                     {% else %}
                         <li class="page-item disabled">
                             <span class="page-link">&raquo;</span>
+                        </li>
+                    {% endif %}
+                    
+                    {% if page_obj.number != page_obj.paginator.num_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}"
+                               hx-get="{% url 'blog:blog_list' %}?page={{ page_obj.paginator.num_pages }}{% for c in selected_categories %}&category={{ c }}{% endfor %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}" 
+                               hx-target="#main-content"
+                               hx-swap="innerHTML show:window:top"
+                               hx-push-url="true" title="Last">&raquo;&raquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;&raquo;</span>
                         </li>
                     {% endif %}
                 </ul>

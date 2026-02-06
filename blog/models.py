@@ -19,6 +19,7 @@ class BlogPost(models.Model):
     excerpt = models.TextField(max_length=300, help_text="Short description for the blog list")
     content = CKEditor5Field('Content', config_name='extends', help_text="Main blog content with rich text and images")
     featured_image = models.ImageField(upload_to='blog/featured/', blank=True, null=True)
+    featured_image_caption = models.CharField(max_length=300, blank=True, help_text="Caption for the featured image")
     author = models.CharField(max_length=100, default=get_default_author)
     created_date = models.DateTimeField(default=timezone.now)
     updated_date = models.DateTimeField(auto_now=True)
