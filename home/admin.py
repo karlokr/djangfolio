@@ -26,6 +26,9 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
         ('Copyright', {
             'fields': ('copyright_text',)
         }),
+        ('Navigation Settings', {
+            'fields': ('show_projects_link',)
+        }),
     )
     
     def has_add_permission(self, request):

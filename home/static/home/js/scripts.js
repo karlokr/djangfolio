@@ -36,7 +36,8 @@ jQuery(function ($) {
 
     // Only initialize sticky sidebar on visible elements (resume is shown by default)
     $('.left-col-block, #resume').theiaStickySidebar({
-        additionalMarginTop: 70
+        additionalMarginTop: 70,
+        sidebarBehavior: 'stick-to-top'
     });
 
     $(".projects-button").on("click", function (event) {
@@ -50,7 +51,8 @@ jQuery(function ($) {
         $('#projects').delay(500).fadeIn('slow', function() {
             // Initialize sticky sidebar on portfolio now that it's visible
             $('#projects').theiaStickySidebar({
-                additionalMarginTop: 70
+                additionalMarginTop: 70,
+                sidebarBehavior: 'stick-to-top'
             });
         });
         window.scrollTo({
