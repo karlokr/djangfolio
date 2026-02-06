@@ -63,86 +63,52 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* CKEditor image alignment classes */
-.blog-content .image-left,
-.blog-content img[style*="float: left"],
-.blog-content img[style*="float:left"] {
-    float: left;
-    margin: 10px 20px 10px 0;
-}
-
-.blog-content .image-right,
-.blog-content img[style*="float: right"],
-.blog-content img[style*="float:right"] {
-    float: right;
-    margin: 10px 0 10px 20px;
-}
-
-.blog-content .image-center,
-.blog-content img[style*="margin-left: auto"],
-.blog-content img[style*="margin-left:auto"],
-.blog-content p[style*="text-align: center"] img,
-.blog-content p[style*="text-align:center"] img,
-.blog-content div[style*="text-align: center"] img,
-.blog-content div[style*="text-align:center"] img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    float: none;
-}
-
-.blog-content .image-captioned {
-    text-align: center;
-}
-
-.blog-content .image-captioned img {
-    display: inline-block;
-}
-
-/* Handle figure elements from CKEditor */
-.blog-content figure {
-    margin: 20px 0;
-}
+/* CKEditor 5 image alignment classes */
+/* CKEditor 5 wraps images in <figure class="image image-style-align-*"> */
 
 .blog-content figure.image {
-    display: block;
+    display: table;
     clear: both;
+    margin: 20px 0;
 }
 
 .blog-content figure.image img {
     display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Center alignment (default for CKEditor 5) */
+.blog-content figure.image,
+.blog-content figure.image-style-align-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.blog-content figure.image-style-align-center img {
     margin: 0 auto;
 }
 
-.blog-content figure.image.align-left,
-.blog-content figure.image[style*="float: left"],
-.blog-content figure.image[style*="float:left"] {
+/* Left alignment */
+.blog-content figure.image-style-align-left {
     float: left;
     margin: 10px 20px 10px 0;
 }
 
-.blog-content figure.image.align-left img {
+.blog-content figure.image-style-align-left img {
     margin: 0;
 }
 
-.blog-content figure.image.align-right,
-.blog-content figure.image[style*="float: right"],
-.blog-content figure.image[style*="float:right"] {
+/* Right alignment */
+.blog-content figure.image-style-align-right {
     float: right;
     margin: 10px 0 10px 20px;
 }
 
-.blog-content figure.image.align-right img {
+.blog-content figure.image-style-align-right img {
     margin: 0;
-}
-
-.blog-content figure.image.align-center,
-.blog-content figure.image[style*="margin-left: auto"],
-.blog-content figure.image[style*="margin-left:auto"] {
-    margin-left: auto;
-    margin-right: auto;
-    float: none;
-    text-align: center;
 }
 
 .blog-content figcaption {
@@ -158,6 +124,71 @@
     content: "";
     display: table;
     clear: both;
+}
+
+/* Related Posts Grid */
+.related-posts-section {
+    margin-top: 1.5rem !important;
+}
+
+.related-posts-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.related-post-card {
+    flex: 1;
+    min-width: 150px;
+    max-width: calc(33.333% - 0.67rem);
+}
+
+/* Tablet/narrow screens - stacked layout needs more spacing before sidebar */
+@media (max-width: 991.98px) {
+    .related-posts-section {
+        margin-bottom: 2rem !important;
+    }
+    
+    .related-post-card {
+        max-width: calc(50% - 0.5rem);
+    }
+    
+    /* Reduce bottom padding on blog content for narrow screens */
+    .blog-content {
+        padding-bottom: 0;
+    }
+    
+    article.blog-post footer {
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* Mobile - show up to 4 related posts */
+@media (max-width: 767.98px) {
+    .related-post-card {
+        max-width: 100%;
+        flex-basis: 100%;
+    }
+    
+    .related-post-card.d-none {
+        display: block !important;
+    }
+    
+    .related-posts-section {
+        margin-bottom: 2rem !important;
+    }
+    
+    /* Hide non-active page numbers on mobile, keep nav buttons */
+    .pagination .page-number:not(.active) {
+        display: none;
+    }
+}
+
+/* Mobile - add bottom padding to sidebar */
+@media (max-width: 991.98px) {
+    .col-lg-4 .card:last-child {
+        margin-bottom: 2rem;
+    }
 }
 
 .blog-content h2 {
@@ -237,18 +268,18 @@
 
 .badge-primary {
     background-color: #FFC107;
-    color: #000;
+    color: #fff;
 }
 
 a.badge-primary {
-    color: #000;
+    color: #fff;
     text-decoration: none;
 }
 
 a.badge-primary:hover,
 a.badge-primary:focus {
     background-color: #e0a800;
-    color: #000;
+    color: #fff;
     text-decoration: none;
 }
 

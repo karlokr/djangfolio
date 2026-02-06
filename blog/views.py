@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from .models import BlogPost, BlogCategory, BlogTag
+from resume.models import Resume
 
 
 def blog_list(request):
@@ -76,6 +77,7 @@ def blog_list(request):
 def blog_detail(request, slug):
     """Display a single blog post."""
     post = get_object_or_404(BlogPost, slug=slug, published=True)
+    resume = Resume.get_solo()
     
     # Get related posts (same category)
     related_posts = BlogPost.objects.filter(
@@ -86,6 +88,7 @@ def blog_detail(request, slug):
     context = {
         'post': post,
         'related_posts': related_posts,
+        'resume': resume,
         'active_page': 'blog',
     }
     

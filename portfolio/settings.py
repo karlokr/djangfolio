@@ -180,8 +180,8 @@ CKEDITOR_5_CONFIGS = {
                     'insertTable', 'horizontalLine', '|', 'code', 'codeBlock', '|',
                     'sourceEditing', '|', 'undo', 'redo'],
         'image': {
-            'toolbar': ['imageTextAlternative', 'imageStyle:alignLeft',
-                       'imageStyle:alignCenter', 'imageStyle:alignRight'],
+            'toolbar': ['imageTextAlternative', 'toggleImageCaption', '|',
+                       'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight'],
             'styles': ['alignLeft', 'alignCenter', 'alignRight'],
         },
         'table': {
@@ -197,8 +197,8 @@ CKEDITOR_5_CONFIGS = {
                     'insertTable', 'horizontalLine', '|', 'code', 'codeBlock', '|',
                     'sourceEditing', '|', 'undo', 'redo'],
         'image': {
-            'toolbar': ['imageTextAlternative', 'imageStyle:alignLeft',
-                       'imageStyle:alignCenter', 'imageStyle:alignRight'],
+            'toolbar': ['imageTextAlternative', 'toggleImageCaption', '|',
+                       'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight'],
             'styles': ['alignLeft', 'alignCenter', 'alignRight'],
         },
         'table': {
