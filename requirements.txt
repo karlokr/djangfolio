@@ -4,4 +4,4 @@ Pillow==10.4.0
 gunicorn==22.0.0
 whitenoise==6.5.0
 django-ckeditor-5==0.2.19
-django-htmx==1.17.2
+django-htmx==1.27.0
