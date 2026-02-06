@@ -1,0 +1,41 @@
+{% load static %}
+
+<div class="container" style="padding-top: 70px;">
+<div class="row mt-3">
+    <div class="col-lg-8">
+        <h1 class="mb-4">Projects</h1>
+        <div class="row">
+        {% for project in projects %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    {% if project.projectimage_set.all.first %}
+                    <div style="max-height:400px">
+                        <img class="card-img-top" style="object-fit:cover;height:200px;" src="{{ project.projectimage_set.all.first.image.url }}">
+                    </div>
+                    {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <span class="text-muted">No image</span>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        <p class="card-text">{% autoescape off %}{{ project.short_description }}{% endautoescape %}</p>
+                        <a href="{% url 'projects:project_detail' project.pk %}"
+                           hx-get="{% url 'projects:project_detail' project.pk %}"
+                           hx-target="#main-content"
+                           hx-swap="innerHTML"
+                           hx-push-url="true"
+                           class="btn btn-xs btn-blog-outline">
+                            Read More <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <!-- Empty sidebar to match blog layout -->
+    </div>
+</div>
+</div>

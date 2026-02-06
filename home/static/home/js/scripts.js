@@ -12,7 +12,10 @@ jQuery(function ($) {
         $('#content-loading').removeClass('loading');
         $('#preloader').delay(700).fadeOut(700);
         $('.resume-button').addClass('selected');
-        ajaxGetRepos();
+        // Only fetch GitHub repos on the home page
+        if ($('#github-items').length) {
+            ajaxGetRepos();
+        }
         assignModals();
         $(window).resize(function () {
             fixHeights();
@@ -32,7 +35,9 @@ jQuery(function ($) {
     // --------------------------------------------------------------------
 
     // Only initialize sticky sidebar on visible elements (resume is shown by default)
-    $('.left-col-block, #resume').theiaStickySidebar();
+    $('.left-col-block, #resume').theiaStickySidebar({
+        additionalMarginTop: 70
+    });
 
     $(".projects-button").on("click", function (event) {
         $(".projects-button").focus();
@@ -44,7 +49,9 @@ jQuery(function ($) {
         $('#resume').fadeOut('slow');
         $('#projects').delay(500).fadeIn('slow', function() {
             // Initialize sticky sidebar on portfolio now that it's visible
-            $('#projects').theiaStickySidebar();
+            $('#projects').theiaStickySidebar({
+                additionalMarginTop: 70
+            });
         });
         window.scrollTo({
             top: 0,
@@ -123,36 +130,69 @@ jQuery(function ($) {
                         dataType: "json",
                         type: "GET",
                         success: function (data) {
-                            let color = "";
                             let html = "";
+                            let language = Object.keys(data)[0];
 
-                            switch (Object.keys(data)[0]) {
-                                case "HTML":
-                                    color = "#e34c26";
-                                    break;
-                                case "JavaScript":
-                                    color = "#f1e05a";
-                                    break;
-                                case "C":
-                                    color = "#555555";
-                                    break;
-                                case "C#":
-                                    color = "#178600";
-                                    break;
-                                case "Java":
-                                    color = "#b07219";
-                                    break;
-                                case "MATLAB":
-                                    color = "#e16737";
-                                    break;
-                                case "Python":
-                                    color = "#3572A5";
-                                    break;
+                            // GitHub language colors
+                            const languageColors = {
+                                "HTML": "#e34c26",
+                                "CSS": "#563d7c",
+                                "JavaScript": "#f1e05a",
+                                "TypeScript": "#3178c6",
+                                "Python": "#3572A5",
+                                "Java": "#b07219",
+                                "C": "#555555",
+                                "C++": "#f34b7d",
+                                "C#": "#178600",
+                                "Go": "#00ADD8",
+                                "Rust": "#dea584",
+                                "Ruby": "#701516",
+                                "PHP": "#4F5D95",
+                                "Swift": "#F05138",
+                                "Kotlin": "#A97BFF",
+                                "Dart": "#00B4AB",
+                                "Scala": "#c22d40",
+                                "R": "#198CE7",
+                                "MATLAB": "#e16737",
+                                "Shell": "#89e051",
+                                "Bash": "#89e051",
+                                "PowerShell": "#012456",
+                                "Perl": "#0298c3",
+                                "Lua": "#000080",
+                                "Haskell": "#5e5086",
+                                "Elixir": "#6e4a7e",
+                                "Clojure": "#db5855",
+                                "F#": "#b845fc",
+                                "Objective-C": "#438eff",
+                                "Vue": "#41b883",
+                                "Svelte": "#ff3e00",
+                                "SCSS": "#c6538c",
+                                "Sass": "#a53b70",
+                                "Less": "#1d365d",
+                                "CoffeeScript": "#244776",
+                                "Jupyter Notebook": "#DA5B0B",
+                                "Dockerfile": "#384d54",
+                                "Makefile": "#427819",
+                                "CMake": "#DA3434",
+                                "Groovy": "#4298b8",
+                                "Assembly": "#6E4C13",
+                                "Vim Script": "#199f4b",
+                                "Emacs Lisp": "#c065db",
+                                "TeX": "#3D6117",
+                                "Julia": "#a270ba"
+                            };
+
+                            // Handle undefined/null language
+                            let color = "#586069";
+                            if (!language) {
+                                language = "Unknown";
+                            } else {
+                                color = languageColors[language] || "#586069";
                             }
 
                             html += "<div style='margin-bottom: 0px; margin-top: 10px;'>";
                             html += "<span class='repo-language-color' style='background-color: " + color + "'></span>";
-                            html += "<small>  " + Object.keys(data)[0] + "</small>";
+                            html += "<small>  " + language + "</small>";
                             html += `<a target='_blank' style='float:right' href='https://github.com/${githubUsername}/${all_data[i]['name']}/network/members'>`;
                             html += '  <svg class="v-align-middle octicon octicon-git-branch mr-1" viewBox="0 0 10 16" version="1.1" width="10" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10 5c0-1.11-.89-2-2-2a1.993 1.993 0 0 0-1 3.72v.3c-.02.52-.23.98-.63 1.38-.4.4-.86.61-1.38.63-.83.02-1.48.16-2 .45V4.72a1.993 1.993 0 0 0-1-3.72C.88 1 0 1.89 0 3a2 2 0 0 0 1 1.72v6.56c-.59.35-1 .99-1 1.72 0 1.11.89 2 2 2 1.11 0 2-.89 2-2 0-.53-.2-1-.53-1.36.09-.06.48-.41.59-.47.25-.11.56-.17.94-.17 1.05-.05 1.95-.45 2.75-1.25S8.95 7.77 9 6.73h-.02C9.59 6.37 10 5.73 10 5zM2 1.8c.66 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2C1.35 4.2.8 3.65.8 3c0-.65.55-1.2 1.2-1.2zm0 12.41c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2zm6-8c-.66 0-1.2-.55-1.2-1.2 0-.65.55-1.2 1.2-1.2.65 0 1.2.55 1.2 1.2 0 .65-.55 1.2-1.2 1.2z"></path></svg>';
                             html += "<small>  " + all_data[i]['forks_count'] + "</small></a>";

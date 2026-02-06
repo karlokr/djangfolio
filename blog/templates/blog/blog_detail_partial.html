@@ -1,0 +1,185 @@
+{% load static %}
+
+<div class="container" style="padding-top: 70px;">
+<div class="row mt-3">
+    <div class="col-lg-8">
+        <!-- Navigation -->
+        <div class="mb-4">
+            <a href="{% url 'blog:blog_list' %}" class="btn btn-blog-outline-dark"
+               hx-get="{% url 'blog:blog_list' %}"
+               hx-target="#main-content"
+               hx-swap="innerHTML"
+               hx-push-url="true">
+                <i class="fa-solid fa-arrow-left"></i> Back to Blog
+            </a>
+        </div>
+        
+        <article class="blog-post">
+            <header class="mb-4">
+                {% if post.featured_image %}
+                <figure class="mb-4">
+                    <img src="{{ post.featured_image.url }}" class="img-fluid rounded" alt="{{ post.title }}">
+                    {% if post.featured_image_caption %}
+                    <figcaption class="text-muted text-center mt-2" style="font-size: 0.9rem; font-style: italic;">{{ post.featured_image_caption }}</figcaption>
+                    {% endif %}
+                </figure>
+                {% endif %}
+                
+                <h1 class="mb-3">{{ post.title }}</h1>
+                <p class="text-muted">
+                    <i class="fa-regular fa-calendar"></i> {{ post.created_date|date:"F d, Y" }} | 
+                    <i class="fa-regular fa-user"></i> {{ post.author }}
+                    {% if post.updated_date != post.created_date %}
+                    | <i class="fa-regular fa-pen-to-square"></i> Updated: {{ post.updated_date|date:"F d, Y" }}
+                    {% endif %}
+                </p>
+                
+                {% if post.categories.all %}
+                <div class="mb-3">
+                    {% for category in post.categories.all %}
+                    <a href="{% url 'blog:blog_list' %}?category={{ category.slug }}" class="badge badge-primary"
+                       hx-get="{% url 'blog:blog_list' %}?category={{ category.slug }}"
+                       hx-target="#main-content"
+                       hx-swap="innerHTML"
+                       hx-push-url="true">{{ category.name }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </header>
+            
+            <div class="blog-content">
+                {{ post.content|safe }}
+            </div>
+            
+            <!-- Mobile Share Buttons (visible on narrow/mobile only) -->
+            <div class="mobile-share-section d-lg-none mt-4">
+                <h6 class="mb-3">Share this post</h6>
+                <div class="d-flex flex-wrap" style="gap: 0.75rem;">
+                    <a href="https://x.com/intent/tweet?url={{ canonical_url|urlencode }}&text={{ post.title|urlencode }}" 
+                       target="_blank" class="social-share-btn twitter-share" title="Share on X">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ canonical_url|urlencode }}&quote={{ post.title|urlencode }}" 
+                       target="_blank" class="social-share-btn facebook-share" title="Share on Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}&summary={{ post.excerpt|urlencode }}" 
+                       target="_blank" class="social-share-btn linkedin-share" title="Share on LinkedIn">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://reddit.com/submit?url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}" 
+                       target="_blank" class="social-share-btn reddit-share" title="Share on Reddit">
+                        <i class="fa-brands fa-reddit-alien"></i>
+                    </a>
+                    <a href="mailto:?subject={{ post.title|urlencode }}&body=Check out this blog post: {{ canonical_url }}" 
+                       class="social-share-btn email-share" title="Share via Email">
+                        <i class="fa-solid fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+            
+            {% if post.tags.all %}
+            <footer class="mt-5">
+                <hr>
+                <h6>Tags:</h6>
+                {% for tag in post.tags.all %}
+                <a href="{% url 'blog:blog_list' %}?tag={{ tag.slug }}" class="badge badge-secondary"
+                   hx-get="{% url 'blog:blog_list' %}?tag={{ tag.slug }}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   hx-push-url="true">{{ tag.name }}</a>
+                {% endfor %}
+            </footer>
+            {% endif %}
+        </article>
+        
+        <!-- Related Posts -->
+        {% if related_posts %}
+        <div class="related-posts-section mt-4 mb-4">
+            <h3 class="mb-4">Related Posts</h3>
+            <div class="related-posts-grid">
+                {% for related_post in related_posts|slice:":4" %}
+                <div class="related-post-card card {% if forloop.counter == 4 %}d-none d-lg-none d-md-none{% endif %}">
+                    <div class="card-body">
+                        <h6 class="card-title mb-2">
+                            <a href="{% url 'blog:blog_detail' related_post.slug %}" class="text-dark"
+                               hx-get="{% url 'blog:blog_detail' related_post.slug %}"
+                               hx-target="#main-content"
+                               hx-swap="innerHTML"
+                               hx-push-url="true">
+                                {{ related_post.title }}
+                            </a>
+                        </h6>
+                        <p class="card-text small text-muted mb-0">{{ related_post.excerpt|truncatewords:12 }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <div class="card mb-4 d-none d-lg-block">
+            <div class="card-header">
+                <h5 class="mb-0">Share this post</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap" style="gap: 0.75rem;">
+                    <a href="https://x.com/intent/tweet?url={{ canonical_url|urlencode }}&text={{ post.title|urlencode }}" 
+                       target="_blank" class="social-share-btn twitter-share" title="Share on X">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ canonical_url|urlencode }}&quote={{ post.title|urlencode }}" 
+                       target="_blank" class="social-share-btn facebook-share" title="Share on Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}&summary={{ post.excerpt|urlencode }}" 
+                       target="_blank" class="social-share-btn linkedin-share" title="Share on LinkedIn">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://reddit.com/submit?url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}" 
+                       target="_blank" class="social-share-btn reddit-share" title="Share on Reddit">
+                        <i class="fa-brands fa-reddit-alien"></i>
+                    </a>
+                    <a href="mailto:?subject={{ post.title|urlencode }}&body=Check out this blog post: {{ canonical_url }}" 
+                       class="social-share-btn email-share" title="Share via Email">
+                        <i class="fa-solid fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">About the Author</h5>
+            </div>
+            <div class="card-body about-author-content">
+                {% if site_config.profile_image %}
+                <div class="text-center mb-3">
+                    <img src="{{ site_config.profile_image.url }}" alt="{{ site_config.profile_image_alt_text }}" 
+                         class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                </div>
+                {% endif %}
+                <p class="author-name mb-2"><strong>{{ site_config.full_name }}</strong></p>
+                {% if resume.about_text %}
+                <p class="text-muted mb-3">{{ resume.about_text }}</p>
+                {% endif %}
+                <ul class="social-icon mb-0" style="margin-top: 0;">
+                    <li><a href="{{ site_config.linkedin_url }}" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin" aria-hidden="true"></i></a></li>
+                    <li><a href="{{ site_config.github_url }}" target="_blank" title="GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i></a></li>
+                    <li><a href="mailto:{{ site_config.display_email }}" title="Email"><i class="fa-solid fa-envelope" aria-hidden="true"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="blog-footer text-center py-4 mt-4">
+    <div class="container">
+        <p class="text-muted mb-0">&copy; {% now "Y" %} {{ site_config.full_name }}. All rights reserved.</p>
+    </div>
+</footer>
+</div>
