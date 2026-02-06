@@ -1,10 +1,11 @@
 # Djangfolio
 
-A Django-based portfolio website with resume and project showcase sections, fully containerized for easy deployment.
+A Django-based portfolio website with resume, project showcase, and blog sections, fully containerized for easy deployment.
 
 ## Features
 
 - **Responsive Design**: Optimized for all screen sizes including high-resolution displays (2K/4K)
+- **Blog System**: Full-featured blog with categories, tags, rich text editing, and HTMX-powered navigation
 - **Project Portfolio**: Showcase projects with images, videos, and PDF documents
 - **Resume Section**: Display your experience, education, and skills
 - **Contact Form**: Integrated email contact form with SMTP support
@@ -94,6 +95,46 @@ docker compose exec web python manage.py <command>
 - WhiteNoise handles static files in production for better performance
 
 
+## Blog System
+
+The blog system provides a full-featured blogging platform integrated with the portfolio site.
+
+### Blog Features
+
+- **Rich Text Editing**: CKEditor 5 integration for creating beautiful blog posts with images, code blocks, and formatting
+- **Categories & Tags**: Organize posts with categories and tags, sortable by post count
+- **Multi-Filter Support**: Filter posts by multiple categories or tags simultaneously (OR logic)
+- **HTMX Navigation**: Seamless SPA-like experience without page reloads
+- **Related Posts**: Automatically displays related posts based on shared categories
+- **Author Attribution**: Default author pulled from Site Configuration, customizable per post
+- **Featured Images**: Support for post thumbnails with graceful fallback
+- **Pagination**: Customizable pagination with consistent page range display
+- **Responsive Design**: Mobile-friendly layout matching the portfolio style
+- **Social Sharing**: Built-in share buttons for Twitter, Facebook, LinkedIn, and copy link
+
+### Managing Blog Posts
+
+1. Go to <http://localhost:8000/admin>
+2. Click on **"Blog Posts"** under the Blog section
+3. Click **"Add Blog Post"** to create a new post
+4. Fill in the fields:
+   - `title`: Post title (slug is auto-generated)
+   - `content`: Rich text content using CKEditor 5
+   - `excerpt`: Short summary for list views (auto-generated if left blank)
+   - `featured_image`: Optional header image
+   - `categories`: Select one or more categories
+   - `tags`: Select one or more tags
+   - `status`: Draft or Published
+   - `author`: Defaults to site config full name
+5. Click **Save**
+
+### Managing Categories & Tags
+
+- Categories and tags are managed separately in the admin panel
+- Posts can be filtered by clicking on category/tag badges
+- Both are sorted by post count in the sidebar
+
+
 ## Site Configuration
 
 The site uses a database-backed configuration system accessible through the Django admin panel.
@@ -105,7 +146,7 @@ The site uses a database-backed configuration system accessible through the Djan
 3. Click on **"Site Configurations"**
 4. Edit the configuration entry
 5. Update your personal information:
-   - `full_name`: Your full name displayed on the site
+   - `full_name`: Your full name displayed on the site (also used as default blog author)
    - `contact_email`: Email where contact form messages are sent
    - `display_email`: Email address shown publicly on the site
    - `github_username`: Your GitHub username (for API integration)

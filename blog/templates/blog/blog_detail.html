@@ -1,0 +1,33 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} - {{ site_config.full_name }}{% endblock %}
+
+{% block extra_css %}
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:title" content="{{ post.title }}">
+<meta property="og:description" content="{{ post.excerpt }}">
+{% if post.featured_image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}">
+{% endif %}
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="{{ request.build_absolute_uri }}">
+<meta property="twitter:title" content="{{ post.title }}">
+<meta property="twitter:description" content="{{ post.excerpt }}">
+{% if post.featured_image %}
+<meta property="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}">
+{% endif %}
+
+<!-- LinkedIn -->
+<meta property="og:site_name" content="{{ site_config.full_name }}">
+<meta property="article:published_time" content="{{ post.created_date|date:'c' }}">
+<meta property="article:author" content="{{ post.author }}">
+{% endblock %}
+
+{% block content %}
+{% include 'blog/blog_detail_partial.html' %}
+{% endblock %}

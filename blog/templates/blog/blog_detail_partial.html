@@ -1,0 +1,137 @@
+{% load static %}
+
+<div class="container" style="padding-top: 70px;">
+<div class="row mt-3">
+    <div class="col-lg-8">
+        <!-- Navigation -->
+        <div class="mb-4">
+            <a href="{% url 'blog:blog_list' %}" class="btn btn-blog-outline-dark"
+               hx-get="{% url 'blog:blog_list' %}"
+               hx-target="#main-content"
+               hx-swap="innerHTML"
+               hx-push-url="true">
+                <i class="fa-solid fa-arrow-left"></i> Back to Blog
+            </a>
+        </div>
+        
+        <article class="blog-post">
+            <header class="mb-4">
+                <h1 class="mb-3">{{ post.title }}</h1>
+                <p class="text-muted">
+                    <i class="fa-regular fa-calendar"></i> {{ post.created_date|date:"F d, Y" }} | 
+                    <i class="fa-regular fa-user"></i> {{ post.author }}
+                    {% if post.updated_date != post.created_date %}
+                    | <i class="fa-regular fa-pen-to-square"></i> Updated: {{ post.updated_date|date:"F d, Y" }}
+                    {% endif %}
+                </p>
+                
+                {% if post.categories.all %}
+                <div class="mb-3">
+                    {% for category in post.categories.all %}
+                    <a href="{% url 'blog:blog_list' %}?category={{ category.slug }}" class="badge badge-primary"
+                       hx-get="{% url 'blog:blog_list' %}?category={{ category.slug }}"
+                       hx-target="#main-content"
+                       hx-swap="innerHTML"
+                       hx-push-url="true">{{ category.name }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
+                {% endif %}
+            </header>
+            
+            <div class="blog-content">
+                {{ post.content|safe }}
+            </div>
+            
+            {% if post.tags.all %}
+            <footer class="mt-5">
+                <hr>
+                <h6>Tags:</h6>
+                {% for tag in post.tags.all %}
+                <a href="{% url 'blog:blog_list' %}?tag={{ tag.slug }}" class="badge badge-secondary"
+                   hx-get="{% url 'blog:blog_list' %}?tag={{ tag.slug }}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   hx-push-url="true">{{ tag.name }}</a>
+                {% endfor %}
+            </footer>
+            {% endif %}
+        </article>
+        
+        <!-- Related Posts -->
+        {% if related_posts %}
+        <div class="mt-5">
+            <h3 class="mb-4">Related Posts</h3>
+            <div class="row">
+                {% for related_post in related_posts %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        {% if related_post.featured_image %}
+                        <img src="{{ related_post.featured_image.url }}" class="card-img-top" alt="{{ related_post.title }}" style="height: 150px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <a href="{% url 'blog:blog_detail' related_post.slug %}" class="text-dark"
+                                   hx-get="{% url 'blog:blog_detail' related_post.slug %}"
+                                   hx-target="#main-content"
+                                   hx-swap="innerHTML"
+                                   hx-push-url="true">
+                                    {{ related_post.title }}
+                                </a>
+                            </h6>
+                            <p class="card-text small">{{ related_post.excerpt|truncatewords:15 }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Share this post</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap" style="gap: 0.75rem;">
+                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title }}" 
+                       target="_blank" class="social-share-btn twitter-share" title="Share on X (Twitter)">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                       target="_blank" class="social-share-btn facebook-share" title="Share on Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ post.title }}&summary={{ post.excerpt }}&source={{ site_config.full_name }}" 
+                       target="_blank" class="social-share-btn linkedin-share" title="Share on LinkedIn">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://reddit.com/submit?url={{ request.build_absolute_uri }}&title={{ post.title }}" 
+                       target="_blank" class="social-share-btn reddit-share" title="Share on Reddit">
+                        <i class="fa-brands fa-reddit-alien"></i>
+                    </a>
+                    <a href="mailto:?subject={{ post.title }}&body=Check out this blog post: {{ request.build_absolute_uri }}" 
+                       class="social-share-btn email-share" title="Share via Email">
+                        <i class="fa-solid fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">About the Author</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-0"><strong>{{ post.author }}</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
