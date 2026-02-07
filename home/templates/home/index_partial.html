@@ -5,19 +5,21 @@
 
     {% include 'modal.html' %}
 
-    <div class="columns-block container loading" id="right-container">
+    <div class="columns-block container" id="right-container">
         <div class="left-col-block blocks">
             <header class="header theiaStickySidebar">
                 <div class="profile-img">
                     {% if site_config.profile_image %}
-                        <img src="{{ site_config.profile_image.url }}" class="img-responsive loading" alt="{{ site_config.profile_image_alt_text }}"
+                        <img src="{{ site_config.profile_image.url }}" class="img-responsive" alt="{{ site_config.profile_image_alt_text }}"
                             id="profile-image" />
                     {% endif %}
                 </div>
-                <div class="content loading text-center" id="content-loading">
+                <div class="content text-center" id="content-loading">
                     <h1 class="mt-0">{{ resume.name }}</h1>
                     <span class="lead">
                             {{ resume.headline }}
+                        <br>
+                        <a href="mailto:{{ site_config.display_email }}">{{ site_config.display_email|replace:"@, [@] " }}</a>
                     </span>
                     
                     <!-- Resume/Portfolio Switcher -->
