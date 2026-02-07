@@ -6,6 +6,14 @@ body {
     font-weight: 300;
     background: url("../img/pattern-bg.png") fixed;
     user-select: none;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#main-content {
+    flex: 1;
+    padding-top: 56px; /* Height of navbar */
 }
 
 /* Navbar styling - only for main navbar, not resume/portfolio switcher */
@@ -21,7 +29,6 @@ body {
   width: 100%;
   z-index: 4000;
   margin: 0;
-  background: #fff;
 }
 
 .navbar-expand-lg .navbar-nav {
@@ -298,13 +305,13 @@ button:focus,
  *-------------------*/
 
 .section-wrapper {
-    padding: 50px;
+    padding: 50px 50px 0 50px;
     border-bottom: 1px solid #FFC107;
 }
 
 @media (max-width: 480px) {
     .section-wrapper {
-        padding: 30px 20px;
+        padding: 30px 20px 0 20px;
     }
 }
 
@@ -336,6 +343,7 @@ button:focus,
 
 .header .profile-img {
     margin-bottom: 25px;
+    padding-top: 20px;
 }
 
 .header .profile-img img {
@@ -397,9 +405,10 @@ button:focus,
  *-------------------*/
 
 .social-icon {
-    margin: 20px 0;
+    margin: 0;
     padding: 0;
-    display: block;
+    display: flex;
+    align-items: center;
 }
 
 .social-icon li {
@@ -422,6 +431,10 @@ button:focus,
 
 .social-icon li a:hover {
     border-color: #ff9800;
+}
+
+.about-text address {
+    line-height: 34px;
 }
 
 
