@@ -1,9 +1,10 @@
 from django.contrib import admin
+from markdownx.admin import MarkdownxModelAdmin
 from .models import BlogPost, BlogCategory, BlogTag
 
 
 @admin.register(BlogPost)
-class BlogPostAdmin(admin.ModelAdmin):
+class BlogPostAdmin(MarkdownxModelAdmin):
     list_display = ['title', 'author', 'created_date', 'published']
     list_filter = ['published', 'created_date', 'categories']
     search_fields = ['title', 'content', 'excerpt']
@@ -16,7 +17,8 @@ class BlogPostAdmin(admin.ModelAdmin):
             'fields': ('title', 'slug', 'author', 'excerpt')
         }),
         ('Content', {
-            'fields': ('content', 'featured_image', 'featured_image_caption')
+            'fields': ('content', 'featured_image', 'featured_image_caption'),
+            'description': 'Use Markdown for formatting. Code blocks: ```python your code here```'
         }),
         ('Organization', {
             'fields': ('categories', 'tags')

@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_ckeditor_5',
+    'markdownx',
     'nested_inline',
     'projects',
     'home',
@@ -315,3 +315,17 @@ if not DEBUG:
     SESSION_COOKIE_SAMESITE = 'Lax'  # Same for session cookies
     
     # Note: SECURE_SSL_REDIRECT is handled by Traefik, so we don't need it here
+
+# MarkdownX Configuration
+MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',       # Tables, footnotes, etc.
+    'markdown.extensions.fenced_code', # Fenced code blocks with ```
+    'markdown.extensions.toc',         # Table of contents
+]
+
+MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS = {}
+
+# Upload settings for MarkdownX
+MARKDOWNX_UPLOAD_CONTENT_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+MARKDOWNX_IMAGE_MAX_SIZE = {'size': (1920, 1920), 'quality': 90}
+MARKDOWNX_MEDIA_PATH = 'markdownx/'  # Uploaded images go to media/markdownx/

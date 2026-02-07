@@ -1,21 +1,9 @@
 {% load static %}
 {% load custom_filters %}
 
-<div id="main-wrapper" style="padding-top: 80px;">
+<div id="main-wrapper">
 
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="img01"></img>
-        <video class="modal-content" id="vid01" autoplay="" loop=""></video>
-        <div id="caption"></div>
-    </div>
-
-    <!-- The Modal for pdf -->
-    <div id="pdfModal" class="modal">
-        <span class="close">&times;</span>
-        <iframe class="modal-content" id="pdf01" style="display:none;height:100%" frameborder="0"></iframe>
-    </div>
+    {% include 'modal.html' %}
 
     <div class="columns-block container loading" id="right-container">
         <div class="left-col-block blocks">
@@ -30,8 +18,6 @@
                     <h1 class="mt-0">{{ resume.name }}</h1>
                     <span class="lead">
                             {{ resume.headline }}
-                        <br>
-                        <a href="mailto:{{ site_config.display_email }}">{{ site_config.display_email|replace:"@, [@] " }}</a>
                     </span>
                     
                     <!-- Resume/Portfolio Switcher -->
@@ -51,22 +37,19 @@
                     <p>
                         {{ resume.about_text }}
                     </p>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <address style="display:inline;">
-                                <strong>Location</strong>
-                                    {{ resume.location }}
-                            </address>
-                        </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <address style="margin: 0; line-height: normal;">
+                            <strong>Location</strong> {{ resume.location }}
+                        </address>
+                        <ul class="social-icon" style="margin: 0; padding: 0; display: flex; align-items: center; list-style: none;">
+                            <li><a href="{{ site_config.linkedin_url }}"><i class="fa-brands fa-linkedin"
+                                        aria-hidden="true"></i></a></li>
+                            <li><a href="{{ site_config.github_url }}"><i class="fa-brands fa-github"
+                                        aria-hidden="true"></i></a></li>
+                            <li><a href="mailto:{{ site_config.display_email }}"><i class="fa-solid fa-envelope"
+                                        aria-hidden="true"></i></a></li>
+                        </ul>
                     </div>
-                    <ul class="social-icon">
-                        <li><a href="{{ site_config.linkedin_url }}"><i class="fa-brands fa-linkedin"
-                                    aria-hidden="true"></i></a></li>
-                        <li><a href="{{ site_config.github_url }}"><i class="fa-brands fa-github"
-                                    aria-hidden="true"></i></a></li>
-                        <li><a href="mailto:{{ site_config.display_email }}"><i class="fa-solid fa-envelope"
-                                    aria-hidden="true"></i></a></li>
-                    </ul>
                 </div>
             </header>
         </div>
@@ -718,5 +701,5 @@
         githubUrl: '{{ site_config.github_url|escapejs }}'
     };
 </script>
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<script src="{% static 'dompurify/dist/purify.min.js' %}"></script>
 <script src="{% static 'home/js/scripts.js' %}"></script>

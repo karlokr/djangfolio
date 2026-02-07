@@ -1,5 +1,7 @@
 {% load static %}
 
+{% include 'modal.html' %}
+
 <div class="container" style="padding-top: 70px;">
 <div class="row mt-3">
     <div class="col-lg-8">
@@ -48,7 +50,7 @@
             </header>
             
             <div class="blog-content">
-                {{ post.content|safe }}
+                {{ post_content_html|safe }}
             </div>
             
             <!-- Mobile Share Buttons (visible on narrow/mobile only) -->

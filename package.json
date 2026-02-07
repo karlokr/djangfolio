@@ -4,9 +4,14 @@
   "description": "Django portfolio site static dependencies",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.1.0",
+    "@highlightjs/cdn-assets": "^11.11.1",
     "bootstrap-4": "npm:bootstrap@4.5.2",
+    "dompurify": "^3.3.1",
+    "htmx.org": "^2.0.8",
     "jquery-3": "npm:jquery@3.5.1",
-    "popper.js": "1.16.1"
+    "popper.js": "1.16.1",
+    "typeface-hind": "^1.1.13"
   },
   "scripts": {
     "postinstall": "echo 'Dependencies installed successfully'"

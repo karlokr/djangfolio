@@ -11,16 +11,19 @@
     {% if site_config.favicon %}
         <link rel="shortcut icon" type="image/png" href="{{ site_config.favicon.url }}"/>
     {% endif %}
-    <link href="https://fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" type="text/css" href="{% static 'typeface-hind/index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static '@fortawesome/fontawesome-free/css/all.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-4/dist/css/bootstrap.min.css' %}">
     <link href="{% static 'home/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'blog/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'projects/css/style.css' %}" rel="stylesheet">
+    <!-- Highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="{% static '@highlightjs/cdn-assets/styles/github.min.css' %}">
     {% block extra_css %}{% endblock %}
     <script type="text/javascript" src="{% static 'jquery-3/dist/jquery.min.js' %}"></script> 
     <script type="text/javascript" src="{% static 'bootstrap-4/dist/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="{% static 'htmx.org/dist/htmx.min.js' %}"></script>
+    <script src="{% static '@highlightjs/cdn-assets/highlight.min.js' %}"></script>
 </head>
 
 <body {% block body_attrs %}{% endblock %}>
@@ -67,16 +70,68 @@
     }
     
     // Run on page load
-    document.addEventListener('DOMContentLoaded', updateActiveNavLink);
+    document.addEventListener('DOMContentLoaded', function() {
+        updateActiveNavLink();
+        // Initialize syntax highlighting
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+    });
     
     // Run after HTMX swaps content
-    document.body.addEventListener('htmx:afterSwap', updateActiveNavLink);
+    document.body.addEventListener('htmx:afterSwap', function() {
+        updateActiveNavLink();
+        // Re-initialize syntax highlighting for new content
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+        // Re-attach modal handlers for blog images
+        assignBlogImageModals();
+    });
     document.body.addEventListener('htmx:pushedIntoHistory', updateActiveNavLink);
     
     // Hide preloader on page load
     $(document).ready(function() {
         $('#preloader').delay(700).fadeOut(700);
+        assignBlogImageModals();
     });
+    
+    // Function to make blog post images clickable for modal view
+    function assignBlogImageModals() {
+        const modal = document.getElementById("myModal");
+        if (!modal) return;
+        
+        const modalImg = document.getElementById("img01");
+        const modalVid = document.getElementById("vid01");
+        const captionText = document.getElementById("caption");
+        
+        // Target images inside blog content
+        document.querySelectorAll('.blog-content img').forEach(function(img) {
+            img.style.cursor = 'pointer';
+            img.onclick = function() {
+                modal.style.display = "block";
+                modalVid.style.display = "none";
+                modalImg.style.display = "block";
+                modalImg.style.width = "80%";
+                modalImg.src = this.src;
+                captionText.innerHTML = this.alt || '';
+            };
+        });
+        
+        // Close modal handlers
+        const closeBtn = modal.querySelector('.close');
+        if (closeBtn) {
+            closeBtn.onclick = function() {
+                modal.style.display = "none";
+            };
+        }
+        
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+    }
 </script>
 
 </body>
