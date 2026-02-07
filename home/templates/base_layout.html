@@ -79,7 +79,7 @@
     });
     
     // Run after HTMX swaps content
-    document.body.addEventListener('htmx:afterSwap', function() {
+    document.body.addEventListener('htmx:afterSwap', function(event) {
         updateActiveNavLink();
         // Re-initialize syntax highlighting for new content
         document.querySelectorAll('pre code').forEach((block) => {
@@ -87,11 +87,28 @@
         });
         // Re-attach modal handlers for blog images
         assignBlogImageModals();
+        
+        // Remove loading classes when navigating to home page
+        if (event.detail.target.id === 'main-content') {
+            $('#preloader').hide(); // Immediately hide preloader on navigation
+        }
     });
     document.body.addEventListener('htmx:pushedIntoHistory', updateActiveNavLink);
     
-    // Hide preloader on page load
+    // Hide preloader and loading classes on initial page load
     $(document).ready(function() {
+        // Add loading classes for initial page load animation
+        $('#right-container').addClass('loading');
+        $('#profile-image').addClass('loading');
+        $('#content-loading').addClass('loading');
+        
+        // Then remove them after delay for animation effect
+        setTimeout(function() {
+            $('#right-container').removeClass('loading');
+            $('#profile-image').removeClass('loading');
+            $('#content-loading').removeClass('loading');
+        }, 100);
+        
         $('#preloader').delay(700).fadeOut(700);
         assignBlogImageModals();
     });
