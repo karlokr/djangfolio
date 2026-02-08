@@ -82,7 +82,6 @@
             
             {% if post.tags.all %}
             <footer class="mt-5">
-                <hr>
                 <h6>Tags:</h6>
                 {% for tag in post.tags.all %}
                 <a href="{% url 'blog:blog_list' %}?tag={{ tag.slug }}" class="badge badge-secondary"
@@ -171,6 +170,7 @@
                 <ul class="social-icon mb-0" style="margin-top: 0;">
                     <li><a href="{{ site_config.linkedin_url }}" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin" aria-hidden="true"></i></a></li>
                     <li><a href="{{ site_config.github_url }}" target="_blank" title="GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i></a></li>
+                    {% if site_config.x_url %}<li><a href="{{ site_config.x_url }}" target="_blank" title="X (Twitter)"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a></li>{% endif %}
                     <li><a href="mailto:{{ site_config.display_email }}" title="Email"><i class="fa-solid fa-envelope" aria-hidden="true"></i></a></li>
                 </ul>
             </div>

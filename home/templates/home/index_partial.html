@@ -48,6 +48,8 @@
                                         aria-hidden="true"></i></a></li>
                             <li><a href="{{ site_config.github_url }}"><i class="fa-brands fa-github"
                                         aria-hidden="true"></i></a></li>
+                            {% if site_config.x_url %}<li><a href="{{ site_config.x_url }}"><i class="fa-brands fa-x-twitter"
+                                        aria-hidden="true"></i></a></li>{% endif %}
                             <li><a href="mailto:{{ site_config.display_email }}"><i class="fa-solid fa-envelope"
                                         aria-hidden="true"></i></a></li>
                         </ul>
@@ -297,8 +299,10 @@
 
                                             <div id="contactFormResumeMessage"></div>
 
-                                            <button type="button" id="resume-mail-button"
-                                                class="btn btn-primary">Submit</button>
+                                            <div class="text-right">
+                                                <button type="button" id="resume-mail-button"
+                                                    class="btn btn-blog-outline">Submit</button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
@@ -669,8 +673,10 @@
 
                                             <div id="contactFormProjectsMessage"></div>
 
-                                            <button type="button" class="btn btn-primary"
-                                                id="projects-mail-button">Submit</button>
+                                            <div class="text-right">
+                                                <button type="button" class="btn btn-blog-outline"
+                                                    id="projects-mail-button">Submit</button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
