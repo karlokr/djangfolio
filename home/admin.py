@@ -20,6 +20,9 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
         ('LinkedIn', {
             'fields': ('linkedin_username', 'linkedin_url')
         }),
+        ('X (Twitter)', {
+            'fields': ('x_username', 'x_url')
+        }),
         ('Site Branding', {
             'fields': ('favicon',)
         }),

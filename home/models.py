@@ -45,6 +45,17 @@ class SiteConfiguration(models.Model):
         default='https://www.linkedin.com/in/yourusername/',
         help_text='Full LinkedIn profile URL'
     )
+    x_username = models.CharField(
+        max_length=100,
+        default='yourusername',
+        blank=True,
+        help_text='X (Twitter) username (without @)'
+    )
+    x_url = models.URLField(
+        default='https://x.com/yourusername',
+        blank=True,
+        help_text='Full X (Twitter) profile URL'
+    )
     
     # Copyright Information
     copyright_text = models.CharField(
