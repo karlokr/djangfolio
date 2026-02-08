@@ -18,18 +18,42 @@
     <link href="{% static 'blog/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'projects/css/style.css' %}" rel="stylesheet">
     <!-- Highlight.js for code syntax highlighting -->
-    <link rel="stylesheet" href="{% static '@highlightjs/cdn-assets/styles/github.min.css' %}">
+    <link id="hljs-theme" rel="stylesheet" href="{% static '@highlightjs/cdn-assets/styles/github.min.css' %}">
     {% block extra_css %}{% endblock %}
+    
+    <!-- Load theme before page renders to prevent flash -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // If no saved preference, don't set data-theme to use system preference
+            // Otherwise use the saved theme
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (prefersDark) {
+                // System prefers dark but no saved preference - let CSS handle it
+                // Update hljs theme for system dark mode
+                document.getElementById('hljs-theme').href = "{% static '@highlightjs/cdn-assets/styles/github-dark.min.css' %}";
+            }
+            
+            // Update hljs theme if saved theme is dark
+            if (savedTheme === 'dark') {
+                document.getElementById('hljs-theme').href = "{% static '@highlightjs/cdn-assets/styles/github-dark.min.css' %}";
+            }
+        })();
+    </script>
+    
     <script type="text/javascript" src="{% static 'jquery-3/dist/jquery.min.js' %}"></script> 
     <script type="text/javascript" src="{% static 'bootstrap-4/dist/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'htmx.org/dist/htmx.min.js' %}"></script>
     <script src="{% static '@highlightjs/cdn-assets/highlight.min.js' %}"></script>
 </head>
 
-<body {% block body_attrs %}{% endblock %}>
+<body {% block body_attrs %}{% endblock %} class="preloader-active">
 
 <!-- Loading Circle - only loads once on initial page load -->
-<div id="preloader" style="background: rgba(255, 255, 255, 1.0)">
+<div id="preloader" style="background: var(--color-bg-white)">
     <div id="status">
         <div class="status-mes"></div>
     </div>
@@ -76,7 +100,95 @@
         document.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightElement(block);
         });
+        
+        // Initialize theme
+        initializeTheme();
     });
+    
+    // Dark mode functionality
+    function initializeTheme() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeToggleDesktop = document.getElementById('theme-toggle-desktop');
+        const htmlElement = document.documentElement;
+        
+        // Get current effective theme (considering system preference)
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const effectiveTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+        
+        updateThemeIcon(effectiveTheme);
+        
+        // Toggle theme function
+        function toggleTheme() {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Determine current effective theme
+            let effectiveCurrentTheme;
+            if (currentTheme) {
+                effectiveCurrentTheme = currentTheme;
+            } else {
+                effectiveCurrentTheme = prefersDark ? 'dark' : 'light';
+            }
+            
+            // Toggle to opposite
+            const newTheme = effectiveCurrentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+            updateSyntaxHighlighting(newTheme);
+        }
+        
+        // Attach event listeners to both buttons
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+        if (themeToggleDesktop) {
+            themeToggleDesktop.addEventListener('click', toggleTheme);
+        }
+        
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            // Only update if user hasn't set a preference
+            if (!localStorage.getItem('theme')) {
+                const newTheme = e.matches ? 'dark' : 'light';
+                updateThemeIcon(newTheme);
+                updateSyntaxHighlighting(newTheme);
+            }
+        });
+    }
+    
+    function updateThemeIcon(theme) {
+        const themeIcon = document.getElementById('theme-icon');
+        const themeIconDesktop = document.getElementById('theme-icon-desktop');
+        
+        const iconClass = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        
+        if (themeIcon) {
+            themeIcon.className = iconClass;
+        }
+        if (themeIconDesktop) {
+            themeIconDesktop.className = iconClass;
+        }
+    }
+    
+    function updateSyntaxHighlighting(theme) {
+        // Remove old highlight.js theme
+        const oldThemeLink = document.getElementById('hljs-theme');
+        if (oldThemeLink) {
+            oldThemeLink.remove();
+        }
+        
+        // Add new theme
+        const newThemeLink = document.createElement('link');
+        newThemeLink.id = 'hljs-theme';
+        newThemeLink.rel = 'stylesheet';
+        newThemeLink.href = theme === 'dark' 
+            ? "{% static '@highlightjs/cdn-assets/styles/github-dark.min.css' %}"
+            : "{% static '@highlightjs/cdn-assets/styles/github.min.css' %}";
+        document.head.appendChild(newThemeLink);
+    }
     
     // Run after HTMX swaps content
     document.body.addEventListener('htmx:afterSwap', function(event) {
@@ -91,6 +203,7 @@
         // Remove loading classes when navigating to home page
         if (event.detail.target.id === 'main-content') {
             $('#preloader').hide(); // Immediately hide preloader on navigation
+            $('body').removeClass('preloader-active');
         }
     });
     document.body.addEventListener('htmx:pushedIntoHistory', updateActiveNavLink);
@@ -108,6 +221,11 @@
             $('#profile-image').removeClass('loading');
             $('#content-loading').removeClass('loading');
         }, 100);
+        
+        // Remove overflow hidden before fadeOut starts
+        setTimeout(function() {
+            $('body').removeClass('preloader-active');
+        }, 700);
         
         $('#preloader').delay(700).fadeOut(700);
         assignBlogImageModals();

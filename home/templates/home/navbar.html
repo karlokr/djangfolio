@@ -1,11 +1,17 @@
 {% load static %}
 
-<nav style="border-bottom: 1px solid #FFC107;" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+<nav style="border-bottom: 1px solid var(--color-border-primary);" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
   <a class="navbar-brand" href="{% url 'home:home_page' %}"
      hx-get="{% url 'home:home_page' %}"
      hx-target="#main-content"
      hx-swap="innerHTML"
      hx-push-url="true">{{ site_config.full_name }}</a>
+  
+  <!-- Dark mode toggle - mobile -->
+  <button id="theme-toggle" class="btn btn-link d-lg-none" style="color: var(--color-text-black); padding: 0.5rem 1rem; margin-left: auto; margin-right: 0.5rem;" aria-label="Toggle dark mode">
+    <i class="fa-solid fa-moon" id="theme-icon"></i>
+  </button>
+  
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -39,5 +45,10 @@
       </li>
       {% endif %}
     </ul>
+    
+    <!-- Dark mode toggle - desktop -->
+    <button id="theme-toggle-desktop" class="btn btn-link d-none d-lg-block" style="color: var(--color-text-black); padding: 0.5rem 1rem;" aria-label="Toggle dark mode">
+      <i class="fa-solid fa-moon" id="theme-icon-desktop"></i>
+    </button>
   </div>
 </nav>
