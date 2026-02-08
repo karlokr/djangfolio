@@ -310,7 +310,7 @@ The portfolio site is available on Docker Hub:
 docker pull karlokr94/djangfolio:latest
 
 # Or pull a specific version
-docker pull karlokr94/djangfolio:v1.1.2
+docker pull karlokr94/djangfolio:v1.2.0
 ```
 
 ### Production Docker Compose
@@ -414,7 +414,7 @@ This application is designed to work behind a reverse proxy (Traefik, Nginx, Cad
 ```yaml
 services:
   portfolio:
-    image: karlokr94/djangfolio:v1.1.2
+    image: karlokr94/djangfolio:v1.2.0
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portfolio.rule=Host(`yourdomain.com`)"
