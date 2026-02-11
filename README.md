@@ -6,7 +6,7 @@ A Django-based portfolio website with resume, project showcase, and blog section
 
 - **SPA-Like Navigation**: HTMX-powered navigation that updates only the content area while keeping the navbar fixed—no full page reloads
 - **Responsive Design**: Optimized for all screen sizes including mobile, tablet, and high-resolution displays (2K/4K)
-- **Blog System**: Full-featured blog with categories, tags, CKEditor 5 rich text editing, and seamless navigation
+- **Blog System**: Full-featured blog with categories, tags, posts with Markdown, and seamless navigation
 - **Project Portfolio**: Showcase projects with images, videos, and PDF documents
 - **Resume Section**: Display your experience, education, and skills
 - **Contact Form**: Integrated email contact form with SMTP support
@@ -145,7 +145,7 @@ The blog system provides a full-featured blogging platform integrated with the p
 
 ### Blog Features
 
-- **Rich Text Editing**: CKEditor 5 integration for creating beautiful blog posts with images, code blocks, and formatting
+- **Rich Text Editing**: MarkdownX integration for creating beautiful blog posts with images, code blocks, and formatting
 - **Image Alignment**: Support for left, center, and right image alignment in posts
 - **Categories & Tags**: Organize posts with categories and tags, sortable by post count in sidebar
 - **Multi-Filter Support**: Filter posts by multiple categories or tags simultaneously (OR logic)
@@ -164,7 +164,7 @@ The blog system provides a full-featured blogging platform integrated with the p
 3. Click **"Add Blog Post"** to create a new post
 4. Fill in the fields:
    - `title`: Post title (slug is auto-generated)
-   - `content`: Rich text content using CKEditor 5
+   - `content`: Markdown
    - `excerpt`: Short summary for list views
    - `featured_image`: Optional header image
    - `featured_image_caption`: Optional caption for the featured image
@@ -509,7 +509,7 @@ djangfolio/
 ├── db/                    # Database directory
 │   └── db.sqlite3         # SQLite database (auto-created)
 ├── portfolio/             # Django project settings
-│   ├── settings.py        # Main configuration (includes CKEditor 5 config)
+│   ├── settings.py        # Main configuration
 │   ├── urls.py            # URL routing
 │   └── wsgi.py            # WSGI application
 ├── home/                  # Home app (landing page, contact form)
@@ -534,7 +534,7 @@ djangfolio/
 - **Database**: SQLite (development), compatible with PostgreSQL (production)
 - **Frontend**: Bootstrap 4.5.2, jQuery 3.5.1, Font Awesome 6.5.1
 - **SPA Navigation**: HTMX 1.9.10 with django-htmx middleware
-- **Rich Text Editor**: CKEditor 5 (django-ckeditor-5)
+- **Markdown Editor**: MarkdownX (django-markdownx)
 - **Static Files**: WhiteNoise (production)
 - **WSGI Server**: Gunicorn (production)
 - **Containerization**: Docker, Docker Compose
@@ -561,7 +561,7 @@ For issues, questions, or suggestions, please open an issue on GitHub.
 
 **Recent Updates**:
 
-- Added full blog system with CKEditor 5 rich text editing
+- Added full blog system with Markdown format blog posts
 - Implemented SPA-like navigation with HTMX (navbar stays fixed, only content updates)
 - Added "About the Author" section in blog posts with resume bio and social links
 - Added social sharing buttons (X/Twitter, Facebook, LinkedIn, Reddit, Email)
