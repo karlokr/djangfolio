@@ -200,6 +200,22 @@
         // Re-attach modal handlers for blog images
         assignBlogImageModals();
         
+        // Re-render KaTeX math if available
+        if (typeof renderMathInElement === 'function') {
+            const el = document.querySelector('.blog-content');
+            if (el) {
+                renderMathInElement(el, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+        
         // Remove loading classes when navigating to home page
         if (event.detail.target.id === 'main-content') {
             $('#preloader').hide(); // Immediately hide preloader on navigation
