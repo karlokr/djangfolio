@@ -10,6 +10,7 @@
     "dompurify": "^3.3.1",
     "htmx.org": "^2.0.8",
     "jquery-3": "npm:jquery@3.5.1",
+    "katex": "^0.16.28",
     "popper.js": "1.16.1",
     "typeface-hind": "^1.1.13"
   },

@@ -1,9 +1,43 @@
+import re
+import hashlib
+
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from markdownx.utils import markdownify
 from .models import BlogPost, BlogCategory, BlogTag
 from resume.models import Resume
+
+
+def _markdownify_with_math(content):
+    """Convert Markdown to HTML while preserving LaTeX math blocks.
+
+    The standard Markdown processor treats backslashes as escape characters
+    and underscores as emphasis markers, which corrupts LaTeX.  This helper
+    extracts ``$$…$$`` and ``$…$`` spans before processing, replaces them
+    with unique placeholders, runs *markdownify*, then restores the originals.
+    """
+    placeholders = {}
+
+    def _placeholder(match):
+        raw = match.group(0)
+        key = f"MATH_{hashlib.md5(raw.encode()).hexdigest()}"
+        placeholders[key] = raw
+        return key
+
+    # Protect display math ($$...$$) first, then inline math ($...$).
+    # Use DOTALL so $$ blocks can span multiple lines.
+    # For inline math: require no spaces at boundaries to avoid matching
+    # currency symbols like $HACHI or $100 as math delimiters.
+    protected = re.sub(r'\$\$.+?\$\$', _placeholder, content, flags=re.DOTALL)
+    protected = re.sub(r'\$(?!\$)(\S(?:[^$]*?\S)?)\$', _placeholder, protected)
+
+    html = markdownify(protected)
+
+    for key, raw in placeholders.items():
+        html = html.replace(key, raw)
+
+    return html
 
 
 def blog_list(request):
@@ -88,7 +122,7 @@ def blog_detail(request, slug):
     
     context = {
         'post': post,
-        'post_content_html': markdownify(post.content),
+        'post_content_html': _markdownify_with_math(post.content),
         'related_posts': related_posts,
         'resume': resume,
         'active_page': 'blog',

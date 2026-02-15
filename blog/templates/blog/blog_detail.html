@@ -4,6 +4,9 @@
 {% block title %}{{ post.title }} - {{ site_config.full_name }}{% endblock %}
 
 {% block extra_css %}
+<!-- KaTeX for LaTeX math rendering -->
+<link rel="stylesheet" href="{% static 'katex/dist/katex.min.css' %}">
+
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="article">
 <meta property="og:url" content="{{ request.build_absolute_uri }}">
@@ -38,4 +41,26 @@
 
 {% block content %}
 {% include 'blog/blog_detail_partial.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'katex/dist/katex.min.js' %}"></script>
+<script src="{% static 'katex/dist/contrib/auto-render.min.js' %}"></script>
+<script>
+    function renderMath() {
+        const el = document.querySelector('.blog-content');
+        if (el) {
+            renderMathInElement(el, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', renderMath);
+</script>
 {% endblock %}
