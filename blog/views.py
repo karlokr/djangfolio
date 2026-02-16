@@ -1,5 +1,4 @@
 import re
-import hashlib
 
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
@@ -16,26 +15,61 @@ def _markdownify_with_math(content):
     and underscores as emphasis markers, which corrupts LaTeX.  This helper
     extracts ``$$…$$`` and ``$…$`` spans before processing, replaces them
     with unique placeholders, runs *markdownify*, then restores the originals.
+
+    Dollar-sign delimiters are converted to ``\\[…\\]`` (display) and
+    ``\\(…\\)`` (inline) so that literal ``$`` in the final HTML is never
+    ambiguous with currency symbols like $100 or $HACHI.
     """
     placeholders = {}
+    counter = [0]
 
-    def _placeholder(match):
+    def _placeholder(match, display=False):
+        """Replace a math span with a unique key and store the converted form."""
         raw = match.group(0)
-        key = f"MATH_{hashlib.md5(raw.encode()).hexdigest()}"
-        placeholders[key] = raw
+        inner = match.group(1)
+        counter[0] += 1
+        key = f"MATHBLOCK{counter[0]}"
+        if display:
+            placeholders[key] = f"\\[{inner}\\]"
+        else:
+            placeholders[key] = f"\\({inner}\\)"
         return key
 
-    # Protect display math ($$...$$) first, then inline math ($...$).
-    # Use DOTALL so $$ blocks can span multiple lines.
-    # For inline math: require no spaces at boundaries to avoid matching
-    # currency symbols like $HACHI or $100 as math delimiters.
-    protected = re.sub(r'\$\$.+?\$\$', _placeholder, content, flags=re.DOTALL)
-    protected = re.sub(r'\$(?!\$)(\S(?:[^$]*?\S)?)\$', _placeholder, protected)
+    # 1. Display math  $$…$$  (may span multiple lines)
+    protected = re.sub(
+        r'\$\$(.+?)\$\$',
+        lambda m: _placeholder(m, display=True),
+        content,
+        flags=re.DOTALL,
+    )
+
+    # 2. Inline math  $…$  – must contain a backslash OR be short & start
+    #    with a letter so we never match currency like $100 or $HACHI.
+    def _inline_placeholder(match):
+        return _placeholder(match, display=False)
+
+    #    Pattern A: contains a backslash  (e.g. $\frac{a}{b}$)
+    protected = re.sub(r'\$(?!\$)([^$\n]*?\\[^$\n]*?)\$', _inline_placeholder, protected)
+    #    Pattern B: short (1-10 chars), starts with a letter  (e.g. $k$, $x_i$)
+    protected = re.sub(r'\$(?!\$)([a-zA-Z][^$\n]{0,8}?)\$', _inline_placeholder, protected)
+
+    # 3. Also protect existing \[…\] and \(…\) from Markdown mangling
+    protected = re.sub(
+        r'\\\[(.+?)\\\]',
+        lambda m: _placeholder(m, display=True),
+        protected,
+        flags=re.DOTALL,
+    )
+    protected = re.sub(
+        r'\\\((.+?)\\\)',
+        lambda m: _placeholder(m, display=False),
+        protected,
+    )
 
     html = markdownify(protected)
 
-    for key, raw in placeholders.items():
-        html = html.replace(key, raw)
+    for key, converted in placeholders.items():
+        html = html.replace(key, converted)
 
     return html
 
