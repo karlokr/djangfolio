@@ -261,10 +261,39 @@
 .blog-content ol {
     margin-bottom: 1.2rem;
     padding-left: 2rem;
+    list-style-position: outside;
+}
+
+.blog-content ul {
+    list-style-type: disc;
+}
+
+.blog-content ol {
+    list-style-type: decimal;
 }
 
 .blog-content li {
     margin-bottom: 0.5rem;
+    display: list-item;
+}
+
+/* Nested lists */
+.blog-content ul ul {
+    list-style-type: circle;
+    margin-top: 0.5rem;
+}
+
+.blog-content ul ul ul {
+    list-style-type: square;
+}
+
+.blog-content ol ol {
+    list-style-type: lower-alpha;
+    margin-top: 0.5rem;
+}
+
+.blog-content ol ol ol {
+    list-style-type: lower-roman;
 }
 
 .blog-content blockquote {
@@ -273,9 +302,46 @@
     margin: 1.5rem 0;
     font-style: italic;
     color: var(--color-text-primary);
-    background-color: #f9f9f9;
+    background-color: var(--color-bg-gray);
     padding: 1rem 1.5rem;
     border-radius: 4px;
+}
+
+/* Table styles */
+.blog-content table {
+    width: auto;
+    max-width: 100%;
+    margin: 2rem auto;
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: table;
+    text-align: left;
+    font-size: 0.95em;
+    border: 1px solid var(--color-border-light);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.blog-content table th,
+.blog-content table td {
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--color-border-light);
+    vertical-align: top;
+    color: var(--color-text-primary);
+}
+
+.blog-content table th {
+    font-weight: 600;
+    background-color: var(--color-bg-gray);
+    color: var(--color-heading);
+}
+
+.blog-content table tbody tr:nth-child(even) {
+    background-color: var(--color-bg-gray);
+}
+
+.blog-content table tbody tr:nth-child(odd) {
+    background-color: var(--color-bg-white);
 }
 
 .blog-content p code,

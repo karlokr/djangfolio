@@ -206,8 +206,6 @@
             if (el) {
                 renderMathInElement(el, {
                     delimiters: [
-                        {left: '$$', right: '$$', display: true},
-                        {left: '$', right: '$', display: false},
                         {left: '\\(', right: '\\)', display: false},
                         {left: '\\[', right: '\\]', display: true}
                     ],
@@ -267,6 +265,18 @@
                 modalImg.src = this.src;
                 captionText.innerHTML = this.alt || '';
             };
+
+            // Add visible figcaption below images that have alt text
+            if (img.alt && !img.closest('figure')) {
+                const figure = document.createElement('figure');
+                figure.className = 'image';
+                img.parentNode.insertBefore(figure, img);
+                figure.appendChild(img);
+
+                const figcaption = document.createElement('figcaption');
+                figcaption.textContent = img.alt;
+                figure.appendChild(figcaption);
+            }
         });
         
         // Close modal handlers
