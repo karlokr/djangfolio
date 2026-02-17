@@ -48,6 +48,10 @@
     <script type="text/javascript" src="{% static 'bootstrap-4/dist/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'htmx.org/dist/htmx.min.js' %}"></script>
     <script src="{% static '@highlightjs/cdn-assets/highlight.min.js' %}"></script>
+    <!-- KaTeX for LaTeX math rendering -->
+    <link rel="stylesheet" href="{% static 'katex/dist/katex.min.css' %}">
+    <script src="{% static 'katex/dist/katex.min.js' %}"></script>
+    <script src="{% static 'katex/dist/contrib/auto-render.min.js' %}"></script>
 </head>
 
 <body {% block body_attrs %}{% endblock %} class="preloader-active">
