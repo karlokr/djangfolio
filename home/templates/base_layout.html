@@ -197,6 +197,10 @@
     // Run after HTMX swaps content
     document.body.addEventListener('htmx:afterSwap', function(event) {
         updateActiveNavLink();
+        // Scroll to top when navigating via HTMX
+        if (event.detail.target.id === 'main-content') {
+            window.scrollTo(0, 0);
+        }
         // Re-initialize syntax highlighting for new content
         document.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightElement(block);
