@@ -68,8 +68,8 @@ def _markdownify_with_math(content):
 
     html = markdownify(protected)
 
-    for key, converted in placeholders.items():
-        html = html.replace(key, converted)
+    for key in sorted(placeholders, key=len, reverse=True):
+        html = html.replace(key, placeholders[key])
 
     return html
 
