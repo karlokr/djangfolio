@@ -4,8 +4,6 @@
 {% block title %}{{ post.title }} - {{ site_config.full_name }}{% endblock %}
 
 {% block extra_css %}
-<!-- KaTeX for LaTeX math rendering -->
-<link rel="stylesheet" href="{% static 'katex/dist/katex.min.css' %}">
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="article">
@@ -44,12 +42,11 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'katex/dist/katex.min.js' %}"></script>
-<script src="{% static 'katex/dist/contrib/auto-render.min.js' %}"></script>
 <script>
-    function renderMath() {
+    // Render math on direct page load (HTMX swap is handled in base_layout.html)
+    document.addEventListener('DOMContentLoaded', function() {
         const el = document.querySelector('.blog-content');
-        if (el) {
+        if (el && typeof renderMathInElement === 'function') {
             renderMathInElement(el, {
                 delimiters: [
                     {left: '\\(', right: '\\)', display: false},
@@ -58,7 +55,6 @@
                 throwOnError: false
             });
         }
-    }
-    document.addEventListener('DOMContentLoaded', renderMath);
+    });
 </script>
 {% endblock %}
