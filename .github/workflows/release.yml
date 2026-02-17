@@ -35,6 +35,7 @@ jobs:
             type=semver,pattern=v{{version}}
             type=semver,pattern=v{{major}}.{{minor}}
             type=semver,pattern=v{{major}}
+            type=raw,value=latest
             type=sha
 
       - name: Set up Docker Buildx
