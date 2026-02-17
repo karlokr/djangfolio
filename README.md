@@ -312,14 +312,14 @@ CONTACT_EMAIL=contact@example.com
 
 ### Using Pre-built Docker Image
 
-The portfolio site is available on Docker Hub:
+The portfolio site is available on GitHub Container Registry (ghcr.io):
 
 ```bash
 # Pull the latest version
-docker pull karlokr94/djangfolio:latest
+docker pull ghcr.io/karlokr/djangfolio:latest
 
 # Or pull a specific version
-docker pull karlokr94/djangfolio:v1.2.1
+docker pull ghcr.io/karlokr/djangfolio:v1.2.2
 ```
 
 ### Production Docker Compose
@@ -329,7 +329,7 @@ Create a `docker-compose.yml` for production:
 ```yaml
 services:
   portfolio:
-    image: karlokr94/djangfolio:latest
+    image: ghcr.io/karlokr/djangfolio:latest
     container_name: djangfolio
     restart: unless-stopped
     environment:
@@ -423,7 +423,7 @@ This application is designed to work behind a reverse proxy (Traefik, Nginx, Cad
 ```yaml
 services:
   portfolio:
-    image: karlokr94/djangfolio:v1.2.1
+    image: ghcr.io/karlokr/djangfolio:v1.2.2
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portfolio.rule=Host(`yourdomain.com`)"
