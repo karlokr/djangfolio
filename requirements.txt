@@ -3,5 +3,5 @@ django-nested-inline==0.4.6
 Pillow==12.1.0
 gunicorn==25.0.2
 whitenoise==6.11.0
-django-markdownx==4.0.7
+django-markdownx==4.0.9
 django-htmx==1.27.0
