@@ -319,7 +319,7 @@ The portfolio site is available on GitHub Container Registry (ghcr.io):
 docker pull ghcr.io/karlokr/djangfolio:latest
 
 # Or pull a specific version
-docker pull ghcr.io/karlokr/djangfolio:v1.2.2
+docker pull ghcr.io/karlokr/djangfolio:v1.2.4
 ```
 
 ### Production Docker Compose
@@ -423,7 +423,7 @@ This application is designed to work behind a reverse proxy (Traefik, Nginx, Cad
 ```yaml
 services:
   portfolio:
-    image: ghcr.io/karlokr/djangfolio:v1.2.2
+    image: ghcr.io/karlokr/djangfolio:v1.2.4
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portfolio.rule=Host(`yourdomain.com`)"
