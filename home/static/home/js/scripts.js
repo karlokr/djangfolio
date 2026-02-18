@@ -405,8 +405,10 @@ jQuery(function ($) {
                 } else {
                     modalImg.style.width = "80%";
                 }
-                modal.style.display = "block";
+                document.body.dataset.scrollY = window.scrollY;
+                document.body.style.top = '-' + window.scrollY + 'px';
                 document.body.classList.add('modal-open');
+                modal.style.display = "block";
                 modalVid.style.display = "none";
                 modalPdf.style.display = "none";
                 modalImg.style.display = "block";
@@ -429,8 +431,10 @@ jQuery(function ($) {
                     videos[i].pause();
                 }
                 captionText.innerHTML = $(this).children(".alt").first().html();
-                modal.style.display = "block";
+                document.body.dataset.scrollY = window.scrollY;
+                document.body.style.top = '-' + window.scrollY + 'px';
                 document.body.classList.add('modal-open');
+                modal.style.display = "block";
                 modalImg.style.display = "none";
                 modalPdf.style.display = "none";
                 modalVid.style.display = "block";
@@ -450,8 +454,10 @@ jQuery(function ($) {
                     videos[i].pause();
                 }
                 captionText.innerHTML = this.alt;
-                pdfmodal.style.display = "block";
+                document.body.dataset.scrollY = window.scrollY;
+                document.body.style.top = '-' + window.scrollY + 'px';
                 document.body.classList.add('modal-open');
+                pdfmodal.style.display = "block";
                 modalImg.style.display = "none";
                 modalVid.style.display = "none";
                 modalPdf.style.display = "block";
@@ -465,7 +471,10 @@ jQuery(function ($) {
         document.getElementsByClassName("close")[0].onclick = function () {
             modal.style.display = "none";
             pdfmodal.style.display = "none";
+            var scrollY = document.body.dataset.scrollY || '0';
             document.body.classList.remove('modal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, parseInt(scrollY));
             let videos = document.getElementsByClassName('portfolio-vid');
             for (let i = 0; i < videos.length; i++) {
                 videos[i].play();
@@ -475,7 +484,10 @@ jQuery(function ($) {
         // When the user clicks on the background, close the modal
         document.getElementById("myModal").onclick = function () {
             modal.style.display = "none";
+            var scrollY = document.body.dataset.scrollY || '0';
             document.body.classList.remove('modal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, parseInt(scrollY));
             let videos = document.getElementsByClassName('portfolio-vid');
             for (let i = 0; i < videos.length; i++) {
                 videos[i].play();
@@ -485,7 +497,10 @@ jQuery(function ($) {
         // When the user clicks on the background, close the modal
         document.getElementById("pdfModal").onclick = function () {
             pdfmodal.style.display = "none";
+            var scrollY = document.body.dataset.scrollY || '0';
             document.body.classList.remove('modal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, parseInt(scrollY));
             let videos = document.getElementsByClassName('portfolio-vid');
             for (let i = 0; i < videos.length; i++) {
                 videos[i].play();

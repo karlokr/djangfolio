@@ -266,11 +266,13 @@
         document.querySelectorAll('.blog-content img').forEach(function(img) {
             img.style.cursor = 'pointer';
             img.onclick = function() {
-                modal.style.display = "block";
+                // Save scroll position before locking
+                document.body.dataset.scrollY = window.scrollY;
+                document.body.style.top = '-' + window.scrollY + 'px';
                 document.body.classList.add('modal-open');
+                modal.style.display = "block";
                 modalVid.style.display = "none";
                 modalImg.style.display = "block";
-                modalImg.style.width = "80%";
                 modalImg.src = this.src;
                 captionText.innerHTML = this.alt || '';
             };
@@ -293,14 +295,20 @@
         if (closeBtn) {
             closeBtn.onclick = function() {
                 modal.style.display = "none";
+                const scrollY = document.body.dataset.scrollY || '0';
                 document.body.classList.remove('modal-open');
+                document.body.style.top = '';
+                window.scrollTo(0, parseInt(scrollY));
             };
         }
         
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
+                const scrollY = document.body.dataset.scrollY || '0';
                 document.body.classList.remove('modal-open');
+                document.body.style.top = '';
+                window.scrollTo(0, parseInt(scrollY));
             }
         };
     }
