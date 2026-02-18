@@ -323,7 +323,7 @@
     margin: 2rem auto;
     border-collapse: collapse;
     border-spacing: 0;
-    display: block;
+    display: table;
     overflow-x: auto;
     text-align: left;
     font-size: 0.95em;
