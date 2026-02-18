@@ -1195,11 +1195,6 @@ body.modal-open {
     min-height: 0;
 }
 
-/* Tall/narrow images get forced to fill viewport height */
-.modal-content.tall-image {
-    height: calc(100vh - 100px);
-}
-
 /* Caption of Modal Image (Image Text) - directly under image */
 #caption {
     display: block;
