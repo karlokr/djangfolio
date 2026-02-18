@@ -316,15 +316,19 @@
     border-radius: 4px;
 }
 
+/* Table wrapper - enables horizontal scroll on narrow screens */
+.table-scroll-wrapper {
+    overflow-x: auto;
+    max-width: 100%;
+    margin: 2rem auto;
+}
+
 /* Table styles */
 .blog-content table {
     width: auto;
-    max-width: 100%;
-    margin: 2rem auto;
+    margin: 0 auto;
     border-collapse: collapse;
     border-spacing: 0;
-    display: table;
-    overflow-x: auto;
     text-align: left;
     font-size: 0.95em;
     border: 1px solid var(--color-border-light);

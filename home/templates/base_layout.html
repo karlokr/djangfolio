@@ -107,6 +107,9 @@
         
         // Initialize theme
         initializeTheme();
+        
+        // Wrap tables for scrollable overflow
+        wrapTablesForScroll();
     });
     
     // Dark mode functionality
@@ -221,6 +224,9 @@
                 });
             }
         }
+
+        // Wrap tables in scrollable div
+        wrapTablesForScroll();
         
         // Remove loading classes when navigating to home page
         if (event.detail.target.id === 'main-content') {
@@ -253,6 +259,17 @@
         assignBlogImageModals();
     });
     
+    // Wrap tables in scrollable divs for mobile horizontal scroll
+    function wrapTablesForScroll() {
+        document.querySelectorAll('.blog-content table').forEach(function(table) {
+            if (table.parentElement.classList.contains('table-scroll-wrapper')) return;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'table-scroll-wrapper';
+            table.parentNode.insertBefore(wrapper, table);
+            wrapper.appendChild(table);
+        });
+    }
+
     // Function to make blog post images clickable for modal view
     function assignBlogImageModals() {
         const modal = document.getElementById("myModal");
