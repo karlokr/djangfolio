@@ -1184,13 +1184,15 @@ body.modal-open {
 /* Modal Content (Image) */
 .modal-content {
     display: block;
-    width: 95vw;
+    width: auto;
     max-width: 95vw;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 100px);
     height: auto;
     object-fit: contain;
     z-index: 5001;
     margin: 0 auto;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 /* Caption of Modal Image (Image Text) - directly under image */
@@ -1198,9 +1200,12 @@ body.modal-open {
     display: block;
     text-align: center;
     color: #ccc;
-    padding: 6px 0 0;
+    padding: 6px 10px 0;
     margin: 0;
     font-size: 0.95rem;
+    height: auto;
+    flex: 0 0 auto;
+    line-height: 1.4;
 }
 
 /* Add Animation - Zoom in the Modal */
