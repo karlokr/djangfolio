@@ -1126,10 +1126,16 @@ p.res-strengths {
     flex-direction: column;
     padding: 60px 20px 20px;
     box-sizing: border-box;
+    gap: 0;
 }
 
 .modal[style*="display: block"] {
     display: flex !important;
+}
+
+/* Prevent background scrolling when modal is open */
+body.modal-open {
+    overflow: hidden;
 }
 
 /* The Modal (background) */
@@ -1141,9 +1147,18 @@ p.res-strengths {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: rgba(0, 0, 0, 0.9);
-    padding-top: 0;
+    padding: 40px 0 0;
+    box-sizing: border-box;
+}
+
+#pdfModal .modal-content {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    border: none;
 }
 
 /* Modal Content (Image) */
@@ -1155,18 +1170,18 @@ p.res-strengths {
     height: auto;
     object-fit: contain;
     z-index: 5001;
-    flex-shrink: 0;
+    margin: 0;
 }
 
-/* Caption of Modal Image (Image Text) - Same Width as the Image */
+/* Caption of Modal Image (Image Text) - directly under image */
 #caption {
     display: block;
-    width: 80%;
-    max-width: 700px;
+    width: auto;
+    max-width: 1000px;
     text-align: center;
     color: #ccc;
-    padding: 10px 0;
-    flex-shrink: 0;
+    padding: 8px 0 0;
+    margin: 0;
 }
 
 /* Add Animation - Zoom in the Modal */
@@ -1217,7 +1232,7 @@ p.res-strengths {
     }
     #caption {
         width: 100%;
-        padding: 8px 5px;
+        padding: 6px 5px 0;
     }
     .close {
         font-size: 55px;

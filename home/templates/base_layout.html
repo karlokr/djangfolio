@@ -267,6 +267,7 @@
             img.style.cursor = 'pointer';
             img.onclick = function() {
                 modal.style.display = "block";
+                document.body.classList.add('modal-open');
                 modalVid.style.display = "none";
                 modalImg.style.display = "block";
                 modalImg.style.width = "80%";
@@ -292,12 +293,14 @@
         if (closeBtn) {
             closeBtn.onclick = function() {
                 modal.style.display = "none";
+                document.body.classList.remove('modal-open');
             };
         }
         
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
+                document.body.classList.remove('modal-open');
             }
         };
     }

@@ -406,6 +406,7 @@ jQuery(function ($) {
                     modalImg.style.width = "80%";
                 }
                 modal.style.display = "block";
+                document.body.classList.add('modal-open');
                 modalVid.style.display = "none";
                 modalPdf.style.display = "none";
                 modalImg.style.display = "block";
@@ -429,6 +430,7 @@ jQuery(function ($) {
                 }
                 captionText.innerHTML = $(this).children(".alt").first().html();
                 modal.style.display = "block";
+                document.body.classList.add('modal-open');
                 modalImg.style.display = "none";
                 modalPdf.style.display = "none";
                 modalVid.style.display = "block";
@@ -449,6 +451,7 @@ jQuery(function ($) {
                 }
                 captionText.innerHTML = this.alt;
                 pdfmodal.style.display = "block";
+                document.body.classList.add('modal-open');
                 modalImg.style.display = "none";
                 modalVid.style.display = "none";
                 modalPdf.style.display = "block";
@@ -462,6 +465,7 @@ jQuery(function ($) {
         document.getElementsByClassName("close")[0].onclick = function () {
             modal.style.display = "none";
             pdfmodal.style.display = "none";
+            document.body.classList.remove('modal-open');
             let videos = document.getElementsByClassName('portfolio-vid');
             for (let i = 0; i < videos.length; i++) {
                 videos[i].play();
@@ -471,6 +475,7 @@ jQuery(function ($) {
         // When the user clicks on the background, close the modal
         document.getElementById("myModal").onclick = function () {
             modal.style.display = "none";
+            document.body.classList.remove('modal-open');
             let videos = document.getElementsByClassName('portfolio-vid');
             for (let i = 0; i < videos.length; i++) {
                 videos[i].play();
@@ -480,6 +485,7 @@ jQuery(function ($) {
         // When the user clicks on the background, close the modal
         document.getElementById("pdfModal").onclick = function () {
             pdfmodal.style.display = "none";
+            document.body.classList.remove('modal-open');
             let videos = document.getElementsByClassName('portfolio-vid');
             for (let i = 0; i < videos.length; i++) {
                 videos[i].play();
