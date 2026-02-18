@@ -290,27 +290,30 @@
             }
         });
         
+        // Close modal helper
+        function closeBlogModal() {
+            modal.style.display = "none";
+            var scrollY = document.body.dataset.scrollY || '0';
+            document.body.classList.remove('modal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, parseInt(scrollY));
+        }
+
         // Close modal handlers
         const closeBtn = modal.querySelector('.close');
         if (closeBtn) {
-            closeBtn.onclick = function() {
-                modal.style.display = "none";
-                const scrollY = document.body.dataset.scrollY || '0';
-                document.body.classList.remove('modal-open');
-                document.body.style.top = '';
-                window.scrollTo(0, parseInt(scrollY));
+            closeBtn.onclick = function(e) {
+                e.stopPropagation();
+                closeBlogModal();
             };
         }
         
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-                const scrollY = document.body.dataset.scrollY || '0';
-                document.body.classList.remove('modal-open');
-                document.body.style.top = '';
-                window.scrollTo(0, parseInt(scrollY));
+        // Only close when clicking the dark backdrop itself
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeBlogModal();
             }
-        };
+        });
     }
 </script>
 
