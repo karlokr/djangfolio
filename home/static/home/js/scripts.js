@@ -400,11 +400,6 @@ jQuery(function ($) {
             let captionText = document.getElementById("caption");
             obj.onclick = function () {
                 captionText.innerHTML = this.alt;
-                if (this.alt=="Kraken App") {
-                    modalImg.style.width = "20%";
-                } else {
-                    modalImg.style.width = "80%";
-                }
                 document.body.dataset.scrollY = window.scrollY;
                 document.body.style.top = '-' + window.scrollY + 'px';
                 document.body.classList.add('modal-open');
@@ -413,7 +408,7 @@ jQuery(function ($) {
                 modalPdf.style.display = "none";
                 modalImg.style.display = "block";
                 modalImg.src = this.src;
-                modalVid.style.display = "none"; 
+                modalVid.style.display = "none";
             }
         });
 

@@ -292,20 +292,6 @@
                 modalImg.style.display = "block";
                 modalImg.src = this.src;
                 captionText.innerHTML = this.alt || '';
-                // Detect tall/narrow images and expand them
-                function checkImageAspectRatio() {
-                    if (modalImg.naturalHeight > 0 && modalImg.naturalWidth > 0) {
-                        if (modalImg.naturalHeight > modalImg.naturalWidth) {
-                            modalImg.classList.add('tall-image');
-                        } else {
-                            modalImg.classList.remove('tall-image');
-                        }
-                    }
-                }
-                // Check immediately for cached images
-                checkImageAspectRatio();
-                // Also check on load for non-cached images
-                modalImg.onload = checkImageAspectRatio;
             };
 
             // Add visible figcaption below images that have alt text
