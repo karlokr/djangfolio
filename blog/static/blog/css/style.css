@@ -974,15 +974,6 @@ a.badge-secondary:focus {
     color: #fff;
 }
 
-.linkedin-share {
-    background-color: #0077b5;
-}
-
-.linkedin-share:hover {
-    background-color: #006399;
-    color: #fff;
-}
-
 .reddit-share {
     background-color: #ff4500;
 }
