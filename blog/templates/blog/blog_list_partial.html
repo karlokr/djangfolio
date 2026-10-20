@@ -144,7 +144,7 @@
                        hx-swap="innerHTML"
                        hx-push-url="true">
                         {% if post.featured_image %}
-                        <img src="{{ post.featured_image.url }}" srcset="{% image_srcset post.featured_image '360 480 720 960' %}" sizes="(min-width: 992px) 350px, (min-width: 768px) 50vw, 100vw" class="card-img-top" alt="{{ post.title }}">
+                        <img src="{{ post.featured_image.url }}" srcset="{% image_srcset post.featured_image '360 480 720 960' %}" {% image_dims post.featured_image %} sizes="(min-width: 992px) 350px, (min-width: 768px) 50vw, 100vw" class="card-img-top" alt="{{ post.title }}">
                         {% else %}
                         <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
                             <span class="text-muted">No image</span>
