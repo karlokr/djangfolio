@@ -1,0 +1,13 @@
+# Top-level dependencies. Edit this file, then regenerate the locked
+# requirements.txt (exact versions plus hashes for every package) with:
+#   docker run --rm -v "$PWD":/src -w /src python:3.12-slim sh -c \
+#     "pip install -q pip-tools && pip-compile --generate-hashes --strip-extras -o requirements.txt requirements.in"
+Django~=5.2.18
+django-nested-inline==0.4.6
+Pillow==13.0.0
+gunicorn==26.2.0
+whitenoise==6.12.0
+django-markdownx==4.0.11
+django-htmx==1.29.0
+Markdown==3.11.2
+django-axes==8.3.1

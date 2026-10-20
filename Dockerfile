@@ -1,5 +1,6 @@
-# Use Python 3.12 slim image as base
-FROM python:3.12-slim
+# Use Python 3.12 slim image as base, pinned by digest so every build uses the
+# exact same image. Dependabot (docker ecosystem) proposes digest updates.
+FROM python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -31,11 +32,15 @@ RUN apt-get update \
 
 # Copy package files and install npm dependencies
 COPY package.json package-lock.json* ./
-RUN npm install --production
+# npm ci installs exactly what package-lock.json records (and fails if it
+# doesn't match package.json).
+RUN npm ci --omit=dev
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# requirements.txt is compiled from requirements.in with exact versions and
+# hashes; --require-hashes rejects any package that doesn't match.
+RUN pip install --no-cache-dir --require-hashes -r requirements.txt
 
 # Create non-root user
 RUN addgroup --system django \
@@ -57,7 +62,9 @@ RUN mkdir -p /app/staticfiles \
 # The existing media/ and db.sqlite3 files are already copied with COPY . .
 
 # Collect static files (DEBUG=false is set in ENV above)
-RUN python manage.py collectstatic --noinput --clear
+# settings.py refuses to start without SECRET_KEY when DEBUG is off, so give
+# this build-only step a throwaway key. The real key comes from the runtime env.
+RUN SECRET_KEY=collectstatic-build-only-not-secret python manage.py collectstatic --noinput --clear
 
 # NOTE: Running as root for now to avoid SQLite permission issues with mounted volumes
 # In production, consider using PostgreSQL and running as non-root user
