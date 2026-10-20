@@ -162,9 +162,9 @@
                 <p class="text-muted mb-3">{{ resume.about_text }}</p>
                 {% endif %}
                 <ul class="social-icon mb-0" style="margin-top: 0;">
-                    <li><a href="{{ site_config.github_url }}" target="_blank" title="GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i></a></li>
-                    {% if site_config.x_url %}<li><a href="{{ site_config.x_url }}" target="_blank" title="X (Twitter)"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a></li>{% endif %}
-                    <li><a href="mailto:{{ site_config.display_email }}" title="Email"><i class="fa-solid fa-envelope" aria-hidden="true"></i></a></li>
+                    <li><a href="{{ site_config.github_url }}" target="_blank" title="GitHub" aria-label="GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i></a></li>
+                    {% if site_config.x_url %}<li><a href="{{ site_config.x_url }}" target="_blank" title="X (Twitter)" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a></li>{% endif %}
+                    <li><a href="mailto:{{ site_config.display_email }}" title="Email" aria-label="Email"><i class="fa-solid fa-envelope" aria-hidden="true"></i></a></li>
                 </ul>
             </div>
         </div>

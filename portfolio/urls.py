@@ -20,6 +20,7 @@ from django.urls import include, path, re_path
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.views.static import serve
+from django.views.decorators.http import require_safe
 from markdownx.views import ImageUploadView, MarkdownifyView
 
 
@@ -33,6 +34,24 @@ def staff_only(view):
     return wrapped
 
 
+# Uploaded files get a new name when replaced, and resized copies carry a
+# ?v=<timestamp> that changes when they're regenerated, so both can be cached
+# for a long time by browsers and Cloudflare (which otherwise default to 4h).
+MEDIA_MAX_AGE = 60 * 60 * 24 * 30         # 30 days for uploads
+VERSIONED_MEDIA_MAX_AGE = 60 * 60 * 24 * 365  # a year for ?v= copies
+
+
+@require_safe
+def serve_media(request, path):
+    response = serve(request, path, document_root=settings.MEDIA_ROOT)
+    if response.status_code in (200, 304):
+        if path.startswith('resized/') and 'v' in request.GET:
+            response['Cache-Control'] = f'public, max-age={VERSIONED_MEDIA_MAX_AGE}, immutable'
+        else:
+            response['Cache-Control'] = f'public, max-age={MEDIA_MAX_AGE}'
+    return response
+
+
 urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # The markdown editor's image upload and preview endpoints are only used
@@ -43,5 +62,5 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('', include('home.urls')),
     # Serve media files manually for production
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^media/(?P<path>.*)$', serve_media),
 ]

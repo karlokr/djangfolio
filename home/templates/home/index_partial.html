@@ -13,7 +13,7 @@
                     {% if site_config.profile_image %}
                         <img src="{{ site_config.profile_image.url }}" class="img-responsive" alt="{{ site_config.profile_image_alt_text }}"
                             srcset="{% image_srcset site_config.profile_image '240 360 480 720' %}" {% image_dims site_config.profile_image %}
-                            sizes="(min-width: 992px) 360px, calc(100vw - 60px)"
+                            sizes="(min-width: 992px) 360px, calc(100vw - 60px)" fetchpriority="high"
                             id="profile-image" />
                     {% endif %}
                 </div>
@@ -48,11 +48,11 @@
                             <strong>Location</strong> {{ resume.location }}
                         </address>
                         <ul class="social-icon" style="margin: 0; padding: 0; display: flex; align-items: center; list-style: none;">
-                            <li><a href="{{ site_config.github_url }}"><i class="fa-brands fa-github"
+                            <li><a href="{{ site_config.github_url }}" aria-label="GitHub"><i class="fa-brands fa-github"
                                         aria-hidden="true"></i></a></li>
-                            {% if site_config.x_url %}<li><a href="{{ site_config.x_url }}"><i class="fa-brands fa-x-twitter"
+                            {% if site_config.x_url %}<li><a href="{{ site_config.x_url }}" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"
                                         aria-hidden="true"></i></a></li>{% endif %}
-                            <li><a href="mailto:{{ site_config.display_email }}"><i class="fa-solid fa-envelope"
+                            <li><a href="mailto:{{ site_config.display_email }}" aria-label="Email"><i class="fa-solid fa-envelope"
                                         aria-hidden="true"></i></a></li>
                         </ul>
                     </div>
@@ -369,7 +369,7 @@
                                             <div class="{% if project.projectimage_set.count == 4 %}col-md-6{% else %}col-md-4{% endif %}">
                                                 <a class="portfolio-item" style="margin-bottom:10px">
                                                     <div class="portfolio-thumb">
-                                                        <img class="portfolio-img" src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} sizes="(min-width: 992px) 370px, 100vw"
+                                                        <img class="portfolio-img" src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} loading="lazy" sizes="(min-width: 992px) 370px, 100vw"
                                                             alt="{{project.title}}">
                                                         </img>
                                                     </div>
@@ -383,7 +383,7 @@
                                                 <a class="portfolio-item">
                                                     <div class="portfolio-thumb">
                                                         <video class="portfolio-vid" src="{{video.video}}"
-                                                            loop="" muted preload="auto">
+                                                            loop="" muted preload="none">
                                                             <div class="alt" style="display: none">{{project.title}}</div>
                                                         </video>
                                                     </div>
@@ -394,7 +394,7 @@
                                             <div class="col-md-6">
                                                 <a class="portfolio-item" style="margin-bottom:10px">
                                                     <div class="portfolio-thumb">
-                                                        <img class="portfolio-img" src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} sizes="(min-width: 992px) 370px, 100vw"
+                                                        <img class="portfolio-img" src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} loading="lazy" sizes="(min-width: 992px) 370px, 100vw"
                                                             alt="{{project.title}}">
                                                         </img>
                                                     </div>
@@ -409,7 +409,7 @@
                                                     <a class="portfolio-item">
                                                         <div class="portfolio-thumb">
                                                             <video class="portfolio-vid" src="{{video.video}}"
-                                                                loop="" muted preload="auto">
+                                                                loop="" muted preload="none">
                                                                 <div class="alt" style="display: none">{{project.title}}</div>
                                                             </video>
                                                         </div>
@@ -421,7 +421,7 @@
                                                     <a class="portfolio-item">
                                                         <div class="portfolio-thumb">
                                                             <video class="portfolio-vid" src="{{video.video}}"
-                                                                loop="" muted preload="auto">
+                                                                loop="" muted preload="none">
                                                                 <div class="alt" style="display: none">{{project.title}}</div>
                                                             </video>
                                                         </div>
@@ -433,7 +433,7 @@
                                             <div class="col-md-6">
                                                 <a class="portfolio-item" style="margin-bottom:10px">
                                                     <div class="portfolio-thumb">
-                                                        <img class="portfolio-img" src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} sizes="(min-width: 992px) 370px, 100vw"
+                                                        <img class="portfolio-img" src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} loading="lazy" sizes="(min-width: 992px) 370px, 100vw"
                                                             alt="{{project.title}}">
                                                         </img>
                                                     </div>
@@ -448,7 +448,7 @@
                                                     <a class="portfolio-item">
                                                         <div class="portfolio-thumb">
                                                             <video class="portfolio-vid" src="{{video.video}}"
-                                                                loop="" muted preload="auto">
+                                                                loop="" muted preload="none">
                                                                 <div class="alt" style="display: none">{{project.title}}</div>
                                                             </video>
                                                         </div>
@@ -460,7 +460,7 @@
                                                     <a class="portfolio-item">
                                                         <div class="portfolio-thumb">
                                                             <video class="portfolio-vid" src="{{video.video}}"
-                                                                loop="" muted preload="auto">
+                                                                loop="" muted preload="none">
                                                                 <div class="alt" style="display: none">{{project.title}}</div>
                                                             </video>
                                                         </div>
@@ -540,7 +540,7 @@
                                     <div class="portfolio-item">
                                         <div class="portfolio-thumb">
                                             {% with project.projectimage_set.all|first as img %}
-                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
+                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} loading="lazy" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
                                                 class="portfolio-img">
                                             {% endwith %}
                                         </div>
@@ -577,7 +577,7 @@
                                     <a class="portfolio-item">
                                         <div class="portfolio-thumb web-thumb">
                                             {% with project.projectimage_set.all|first as img %}
-                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
+                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} loading="lazy" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
                                                 class="portfolio-img" style="border: 1px solid lightgrey">
                                             {% endwith %}
                                         </div>
@@ -605,7 +605,7 @@
                                     <a class="portfolio-item">
                                         <div class="portfolio-thumb">
                                             {% with project.projectimage_set.all|first as img %}
-                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
+                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} loading="lazy" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
                                                 class={% if project.preview_type == 'pdf' %}"portfolio-pdf"{% else %}"portfolio-img"{%endif%} style="border: 1px solid lightgrey">
                                             {% endwith %}
                                         </div>
@@ -634,7 +634,7 @@
                                     <a class="portfolio-item">
                                         <div class="portfolio-thumb web-thumb">
                                             {% with project.projectimage_set.all|first as img %}
-                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
+                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} loading="lazy" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
                                                 class={% if project.preview_type == 'pdf' %}"portfolio-pdf"{% else %}"portfolio-img"{%endif%} style="border: 1px solid lightgrey">
                                             {% endwith %}
                                         </div>
@@ -712,7 +712,7 @@
     </div>
 </div>
 
-<script src="{% static 'home/js/theia-sticky-sidebar.js' %}"></script>
-<script src="{% static 'home/js/isInViewport.js' %}"></script>
-<script src="{% static 'dompurify/dist/purify.min.js' %}"></script>
-<script src="{% static 'home/js/scripts.js' %}"></script>
+<script defer src="{% static 'home/js/theia-sticky-sidebar.js' %}"></script>
+<script defer src="{% static 'home/js/isInViewport.js' %}"></script>
+<script defer src="{% static 'dompurify/dist/purify.min.js' %}"></script>
+<script defer src="{% static 'home/js/scripts.js' %}"></script>

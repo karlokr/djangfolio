@@ -69,7 +69,7 @@ def _make_copy(storage, name, path, width, fmt):
     if storage.exists(copy_name) and (
         os.path.getmtime(storage.path(copy_name)) >= os.path.getmtime(path)
     ):
-        return storage.url(copy_name)
+        return _versioned_url(storage, copy_name)
 
     with Image.open(path) as source:
         image = ImageOps.exif_transpose(source)
@@ -100,7 +100,13 @@ def _make_copy(storage, name, path, width, fmt):
         if os.path.exists(tmp):
             os.remove(tmp)
         raise
-    return storage.url(copy_name)
+    return _versioned_url(storage, copy_name)
+
+
+def _versioned_url(storage, name):
+    """URL with ?v=<modified time>, so a regenerated copy gets a new URL and
+    the old one can be cached for a long time (see portfolio/urls.py)."""
+    return f'{storage.url(name)}?v={int(os.path.getmtime(storage.path(name)))}'
 
 
 def srcset_for(name, widths=DEFAULT_WIDTHS, storage=default_storage):

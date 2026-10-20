@@ -4,6 +4,8 @@
 
 {% block title %}{{ resume.name }}{% endblock %}
 
+{% block meta_description %}<meta name="description" content="{{ resume.about_text|default:site_config.full_name|truncatechars:300 }}">{% endblock %}
+
 {% block extra_css %}
 {# Arriving at /#some-project (the "Back to portfolio" link): pick the Portfolio view before the first paint, so the page doesn't flash the preloader and Resume before switching. scripts.js finishes the job and removes the class if the anchor isn't a project. #}
 <script nonce="{{ request.csp_nonce }}">
