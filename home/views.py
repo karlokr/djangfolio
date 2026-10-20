@@ -9,6 +9,7 @@ from home.security import client_ip, rate_limited
 from projects.models import SoftwareProject, MathPhysicsProject, WebProject
 from resume.models import Resume, SkillGroup
 import logging
+from portfolio.htmx import wants_partial
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +31,7 @@ def home_page(request):
     }
     
     # Return partial template for HTMX requests
-    template = 'home/index_partial.html' if request.htmx else 'home/index.html'
+    template = 'home/index_partial.html' if wants_partial(request) else 'home/index.html'
     return render(request, template, context)
 
 

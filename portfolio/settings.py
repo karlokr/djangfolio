@@ -87,6 +87,8 @@ MIDDLEWARE.extend([
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
+    # Keeps browser caches from serving an htmx partial as a full page.
+    'portfolio.htmx.VaryOnHtmxMiddleware',
     'portfolio.middleware.ContentSecurityPolicyMiddleware',
     # Must be last: blocks locked-out login attempts (see AXES_* below).
     'axes.middleware.AxesMiddleware',
