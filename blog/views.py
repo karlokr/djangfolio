@@ -7,6 +7,7 @@ from markdownx.utils import markdownify
 from home.templatetags.image_tags import add_srcset_to_media_images
 from .models import BlogPost, BlogCategory, BlogTag
 from resume.models import Resume
+from portfolio.htmx import wants_partial
 
 
 def _markdownify_with_math(content):
@@ -140,7 +141,7 @@ def blog_list(request):
     }
     
     # Return partial template for HTMX requests
-    template = 'blog/blog_list_partial.html' if request.htmx else 'blog/blog_list.html'
+    template = 'blog/blog_list_partial.html' if wants_partial(request) else 'blog/blog_list.html'
     return render(request, template, context)
 
 
@@ -168,5 +169,5 @@ def blog_detail(request, slug):
     }
     
     # Return partial template for HTMX requests
-    template = 'blog/blog_detail_partial.html' if request.htmx else 'blog/blog_detail.html'
+    template = 'blog/blog_detail_partial.html' if wants_partial(request) else 'blog/blog_detail.html'
     return render(request, template, context)
