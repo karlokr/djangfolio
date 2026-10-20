@@ -191,9 +191,15 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
+        # Production: hashed, compressed file names (style.3f2a1c.css). The
+        # name changes whenever the content does, so WhiteNoise can let
+        # browsers and Cloudflare cache them for a year.
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+# If a template asks for a static file missing from the manifest, serve the
+# unhashed name instead of failing the whole page with a server error.
+WHITENOISE_MANIFEST_STRICT = False
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
