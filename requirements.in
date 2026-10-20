@@ -2,7 +2,7 @@
 # requirements.txt (exact versions plus hashes for every package) with:
 #   docker run --rm -v "$PWD":/src -w /src python:3.12-slim sh -c \
 #     "pip install -q pip-tools && pip-compile --generate-hashes --strip-extras -o requirements.txt requirements.in"
-Django~=5.2.18
+Django~=6.1.2
 django-nested-inline==0.4.6
 Pillow==13.0.0
 gunicorn==26.2.0
