@@ -29,7 +29,8 @@
                     <nav class="navbar navbar-default" role="navigation">
                         <div class="container-fluid" style="padding: 0">
                             <ul class="nav navbar-nav " style="padding: 0;">
-                                <li><a class="resume-button" style="padding-right: 40px; padding-left:40px"
+                                {# Rendered already selected: adding the class by script after the page appears made the underline animate in. #}
+                                <li><a class="resume-button selected" style="padding-right: 40px; padding-left:40px"
                                         href="#" role="button">Resume</a></li>
                                 <li><a class="projects-button" style="padding-left: 40px; padding-right:40px"
                                         href="#" role="button">Portfolio</a></li>
@@ -108,15 +109,8 @@
                                 <div class="col-md-6">
                                     <div class="progress-wrapper">
                                         <p><b>{{ skill_group }}</b></p>
-                                        <p class="res-strengths">
-                                        {% for skill in resume.skill_set.all %}
-                                        
-                                            {% if skill_group == skill.skill_group %}
-                                                {{ skill.skill }} &nbsp;
-                                            {% endif %}
-                                        
-                                        {% endfor %}
-                                        </p>
+                                        {# Each skill is its own unit spaced by margin, so a line wrap can't leave a stray space at the start of a line. #}
+                                        <p class="res-strengths">{% for skill in resume.skill_set.all %}{% if skill_group == skill.skill_group %}<span class="res-skill">{{ skill.skill }}</span>{% endif %}{% endfor %}</p>
                                     </div>
                                 </div>
                                 {% endfor %}
