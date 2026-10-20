@@ -1461,3 +1461,28 @@ body.modal-open {
 [data-theme="dark"] .form-control.success {
     border-color: var(--color-success-text) !important;
 }
+
+/* Theme toggle icon: both icons are in the markup and CSS shows the right one
+   (moon in light mode, sun in dark mode) using the same rules as the theme
+   colours, so it is correct from the first paint with no script needed. */
+.theme-icon-dark {
+    display: none;
+}
+
+[data-theme="dark"] .theme-icon-light {
+    display: none;
+}
+
+[data-theme="dark"] .theme-icon-dark {
+    display: inline-block;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-icon-light {
+        display: none;
+    }
+
+    :root:not([data-theme="light"]) .theme-icon-dark {
+        display: inline-block;
+    }
+}

@@ -877,3 +877,23 @@ p.res-strengths {
 #about-project {
     margin-top: 20px;
 }
+
+/* Subtle "Back to projects" link above a project's title */
+.project-back-link {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--color-text-muted);
+    text-decoration: none;
+}
+
+.project-back-link:hover,
+.project-back-link:focus {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.project-back-link i {
+    margin-right: 4px;
+    font-size: 12px;
+}
