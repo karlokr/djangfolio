@@ -14,6 +14,8 @@ import os
 import ssl
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -21,11 +23,21 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', '5f2e!@#b1#$%6"?d6%^&ekf32%@!#$-*STe3n@#Piemt&^LeSg')
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+
+# SECURITY WARNING: keep the secret key used in production secret!
+# There is deliberately no fallback outside DEBUG: this repository is public,
+# so any hard-coded key would be known to everyone. Generate one with:
+#   python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+SECRET_KEY = os.getenv('SECRET_KEY', '')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'django-insecure-local-development-only-key'
+    else:
+        raise ImproperlyConfigured(
+            'The SECRET_KEY environment variable must be set when DEBUG is off.'
+        )
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
@@ -56,6 +68,7 @@ INSTALLED_APPS = [
     'resume',
     'blog',
     'django_htmx',
+    'axes',
 ]
 
 MIDDLEWARE = [
@@ -74,7 +87,17 @@ MIDDLEWARE.extend([
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
+    'portfolio.middleware.ContentSecurityPolicyMiddleware',
+    # Must be last: blocks locked-out login attempts (see AXES_* below).
+    'axes.middleware.AxesMiddleware',
 ])
+
+# Brute-force protection for the admin login (django-axes). Must come first so
+# a locked-out visitor is rejected before the password is checked.
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 ROOT_URLCONF = 'portfolio.urls'
 
@@ -310,8 +333,58 @@ if not DEBUG:
     CSRF_COOKIE_SAMESITE = 'Lax'  # Allow cross-site for top-level navigation
     CSRF_COOKIE_HTTPONLY = False  # JavaScript needs to read this for some operations
     SESSION_COOKIE_SAMESITE = 'Lax'  # Same for session cookies
-    
+
+    # HTTP Strict Transport Security: browsers only ever use HTTPS for this
+    # site once they've seen the header. Defaults to one year, without
+    # includeSubDomains or preload, which both affect other subdomains.
+    SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '31536000'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False').lower() == 'true'
+    SECURE_HSTS_PRELOAD = os.getenv('SECURE_HSTS_PRELOAD', 'False').lower() == 'true'
+
     # Note: SECURE_SSL_REDIRECT is handled by Traefik, so we don't need it here
+
+# Admin address. Set ADMIN_URL (for example 'manage-7f3k/') to move the admin
+# away from the well-known /admin/ path that bots target.
+ADMIN_URL = os.getenv('ADMIN_URL', 'admin/').strip('/') + '/'
+
+# django-axes: lock out an IP address for an hour after 5 failed admin logins.
+# Unlock early with: python manage.py axes_reset
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # hours
+AXES_LOCKOUT_PARAMETERS = ['ip_address']
+AXES_RESET_ON_SUCCESS = True
+# Behind Cloudflare and Traefik, REMOTE_ADDR is the proxy, not the visitor.
+AXES_CLIENT_IP_CALLABLE = 'home.security.client_ip'
+
+# A file-based cache shared by all gunicorn workers in the container, used by
+# the contact form's rate limit.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.getenv('CACHE_DIR', '/tmp/djangfolio-cache'),
+    }
+}
+
+# Content Security Policy, sent by portfolio.middleware.ContentSecurityPolicyMiddleware.
+# Inline <script> tags carry a per-request nonce ({{ request.csp_nonce }}).
+# style-src needs 'unsafe-inline' because templates and KaTeX use style
+# attributes; injected styles can't run code, so this keeps the main protection.
+CONTENT_SECURITY_POLICY = {
+    'default-src': ["'self'"],
+    'script-src': ["'self'", "'nonce-{nonce}'"],
+    'style-src': ["'self'", "'unsafe-inline'"],
+    'img-src': ["'self'", 'data:', 'https:'],
+    'font-src': ["'self'", 'data:'],
+    'connect-src': ["'self'", 'https://api.github.com'],
+    'media-src': ["'self'"],
+    'frame-src': ["'self'"],
+    'frame-ancestors': ["'self'"],
+    'object-src': ["'none'"],
+    'base-uri': ["'self'"],
+    'form-action': ["'self'"],
+}
+# Set CSP_REPORT_ONLY=true to report violations without blocking anything.
+CSP_REPORT_ONLY = os.getenv('CSP_REPORT_ONLY', 'False').lower() == 'true'
 
 # MarkdownX Configuration
 MARKDOWNX_MARKDOWN_EXTENSIONS = [
@@ -324,5 +397,7 @@ MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS = {}
 
 # Upload settings for MarkdownX
 MARKDOWNX_UPLOAD_CONTENT_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+# Uploads are resized to 1920px anyway; 10 MB is ample (markdownx default: 50 MB).
+MARKDOWNX_UPLOAD_MAX_SIZE = 10 * 1024 * 1024
 MARKDOWNX_IMAGE_MAX_SIZE = {'size': (1920, 1920), 'quality': 90}
 MARKDOWNX_MEDIA_PATH = 'markdownx/'  # Uploaded images go to media/markdownx/

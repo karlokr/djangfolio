@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from markdownx.utils import markdownify
+from home.templatetags.image_tags import add_srcset_to_media_images
 from .models import BlogPost, BlogCategory, BlogTag
 from resume.models import Resume
 
@@ -156,7 +157,11 @@ def blog_detail(request, slug):
     
     context = {
         'post': post,
-        'post_content_html': _markdownify_with_math(post.content),
+        'post_content_html': add_srcset_to_media_images(
+            _markdownify_with_math(post.content),
+            # Post images fill the main column.
+            '(min-width: 1200px) 730px, (min-width: 992px) 610px, 100vw',
+        ),
         'related_posts': related_posts,
         'resume': resume,
         'active_page': 'blog',

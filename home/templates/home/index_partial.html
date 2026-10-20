@@ -30,9 +30,9 @@
                         <div class="container-fluid" style="padding: 0">
                             <ul class="nav navbar-nav " style="padding: 0;">
                                 <li><a class="resume-button" style="padding-right: 40px; padding-left:40px"
-                                        href="javascript:void(0);">Resume</a></li>
+                                        href="#" role="button">Resume</a></li>
                                 <li><a class="projects-button" style="padding-left: 40px; padding-right:40px"
-                                        href="javascript:void(0);">Portfolio</a></li>
+                                        href="#" role="button">Portfolio</a></li>
                             </ul>
                         </div>
                     </nav>
@@ -278,7 +278,12 @@
                                     </div>
 
                                     <div class="feedback-form">
-                                        <form id="contactFormResume">
+                                        <form id="contactFormResume" method="post" action="{% url 'home:send_contact_email' %}">
+                                            {% csrf_token %}
+                                            {# Honeypot: hidden from people, filled in by bots (see send_contact_email). #}
+                                            <div class="contact-hp" aria-hidden="true">
+                                                <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+                                            </div>
                                             <div class="form-group">
                                                 <label for="InputName">Name</label>
                                                 <input type="text" name="name" required="" class="form-control"
@@ -372,7 +377,7 @@
                                             <div class="{% if project.projectimage_set.count == 4 %}col-md-6{% else %}col-md-4{% endif %}">
                                                 <a class="portfolio-item" style="margin-bottom:10px">
                                                     <div class="portfolio-thumb">
-                                                        <img class="portfolio-img" src="{{ img.image.url }}"
+                                                        <img class="portfolio-img" src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" sizes="(min-width: 992px) 370px, 100vw"
                                                             alt="{{project.title}}">
                                                         </img>
                                                     </div>
@@ -397,7 +402,7 @@
                                             <div class="col-md-6">
                                                 <a class="portfolio-item" style="margin-bottom:10px">
                                                     <div class="portfolio-thumb">
-                                                        <img class="portfolio-img" src="{{ img.image.url }}"
+                                                        <img class="portfolio-img" src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" sizes="(min-width: 992px) 370px, 100vw"
                                                             alt="{{project.title}}">
                                                         </img>
                                                     </div>
@@ -436,7 +441,7 @@
                                             <div class="col-md-6">
                                                 <a class="portfolio-item" style="margin-bottom:10px">
                                                     <div class="portfolio-thumb">
-                                                        <img class="portfolio-img" src="{{ img.image.url }}"
+                                                        <img class="portfolio-img" src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" sizes="(min-width: 992px) 370px, 100vw"
                                                             alt="{{project.title}}">
                                                         </img>
                                                     </div>
@@ -543,7 +548,7 @@
                                     <div class="portfolio-item">
                                         <div class="portfolio-thumb">
                                             {% with project.projectimage_set.all|first as img %}
-                                            <img src="{{ img.image.url }}" alt="{{ project.title }}"
+                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
                                                 class="portfolio-img">
                                             {% endwith %}
                                         </div>
@@ -580,7 +585,7 @@
                                     <a class="portfolio-item">
                                         <div class="portfolio-thumb web-thumb">
                                             {% with project.projectimage_set.all|first as img %}
-                                            <img src="{{ img.image.url }}" alt="{{ project.title }}"
+                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
                                                 class="portfolio-img" style="border: 1px solid lightgrey">
                                             {% endwith %}
                                         </div>
@@ -608,7 +613,7 @@
                                     <a class="portfolio-item">
                                         <div class="portfolio-thumb">
                                             {% with project.projectimage_set.all|first as img %}
-                                            <img src="{{ img.image.url }}" alt="{{ project.title }}"
+                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
                                                 class={% if project.preview_type == 'pdf' %}"portfolio-pdf"{% else %}"portfolio-img"{%endif%} style="border: 1px solid lightgrey">
                                             {% endwith %}
                                         </div>
@@ -637,7 +642,7 @@
                                     <a class="portfolio-item">
                                         <div class="portfolio-thumb web-thumb">
                                             {% with project.projectimage_set.all|first as img %}
-                                            <img src="{{ img.image.url }}" alt="{{ project.title }}"
+                                            <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
                                                 class={% if project.preview_type == 'pdf' %}"portfolio-pdf"{% else %}"portfolio-img"{%endif%} style="border: 1px solid lightgrey">
                                             {% endwith %}
                                         </div>
@@ -658,7 +663,12 @@
                                     </div>
 
                                     <div class="feedback-form">
-                                        <form id="contactFormProjects" action="{% static 'home/php/sendemail.php' %}">
+                                        <form id="contactFormProjects" method="post" action="{% url 'home:send_contact_email' %}">
+                                            {% csrf_token %}
+                                            {# Honeypot: hidden from people, filled in by bots (see send_contact_email). #}
+                                            <div class="contact-hp" aria-hidden="true">
+                                                <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+                                            </div>
                                             <div class="form-group">
                                                 <label for="InputName">Name</label>
                                                 <input type="text" name="name" required="" class="form-control"
@@ -712,7 +722,7 @@
 
 <script src="{% static 'home/js/theia-sticky-sidebar.js' %}"></script>
 <script src="{% static 'home/js/isInViewport.js' %}"></script>
-<script>
+<script nonce="{{ request.csp_nonce }}">
     window.SITE_CONFIG = {
         githubUsername: '{{ site_config.github_username|escapejs }}',
         githubUrl: '{{ site_config.github_url|escapejs }}'
