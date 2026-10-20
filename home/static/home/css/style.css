@@ -531,6 +531,9 @@ button:focus,
 
 .section-title h2 {
     margin-bottom: 5px;
+    /* A step above the 16px entry titles (bold, all caps) below each heading,
+       so sections stand out from their contents. */
+    font-size: 22px;
     color: var(--color-primary-hover-text) !important;
 }
 
