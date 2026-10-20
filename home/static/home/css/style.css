@@ -1527,3 +1527,11 @@ img.img-fade {
         transition: none;
     }
 }
+
+/* Technical Strengths: one unit per skill. Spacing is a margin rather than
+   space characters, so a wrapped line never starts with a stray space.
+   Multi-word skills may still wrap inside themselves if very long. */
+.res-strengths .res-skill {
+    display: inline-block;
+    margin-right: 0.75em;
+}
