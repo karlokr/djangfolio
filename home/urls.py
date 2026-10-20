@@ -8,4 +8,5 @@ app_name = 'home'
 urlpatterns = [
     path('', views.home_page, name='home_page'),
     path('send-email/', views.send_contact_email, name='send_contact_email'),
+    path('github-repos/', views.github_repos, name='github_repos'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

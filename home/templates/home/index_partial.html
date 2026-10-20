@@ -714,11 +714,5 @@
 
 <script src="{% static 'home/js/theia-sticky-sidebar.js' %}"></script>
 <script src="{% static 'home/js/isInViewport.js' %}"></script>
-<script nonce="{{ request.csp_nonce }}">
-    window.SITE_CONFIG = {
-        githubUsername: '{{ site_config.github_username|escapejs }}',
-        githubUrl: '{{ site_config.github_url|escapejs }}'
-    };
-</script>
 <script src="{% static 'dompurify/dist/purify.min.js' %}"></script>
 <script src="{% static 'home/js/scripts.js' %}"></script>
