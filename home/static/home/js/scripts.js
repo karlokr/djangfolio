@@ -46,7 +46,8 @@ jQuery(function ($) {
         sidebarBehavior: 'stick-to-top'
     });
 
-    $(".projects-button").on("click", function (event) {
+    // Show the Portfolio view with the usual fade, scrolled to the top.
+    function showPortfolio() {
         $(".projects-button").focus();
         $(".projects-button").addClass("active")
         $('#preloader').css("background", "");
@@ -67,7 +68,90 @@ jQuery(function ($) {
         });
         $('.resume-button').removeClass('selected');
         $('.projects-button').addClass('selected');
+    }
+
+    $(".projects-button").on("click", function (event) {
+        showPortfolio();
     });
+
+    // A link like /#coaching-platform (the Back link on a project page when
+    // the Projects page is hidden) opens the Portfolio at that project.
+    (function () {
+        if (!window.location.hash) {
+            return;
+        }
+        let $target = $();
+        try {
+            $target = $('#projects').find(window.location.hash);
+        } catch (e) {
+            // Hash is not a valid selector.
+        }
+        if (!$target.length) {
+            // Not a project: undo the early Portfolio styling from
+            // home/index.html and let the page load as normal.
+            document.documentElement.classList.remove('portfolio-jump');
+            return;
+        }
+        // Run after every page-load ready handler (including the one in
+        // base_layout.html that starts the preloader) so it can be undone.
+        setTimeout(function () {
+            showPortfolioInstantly($target.first());
+        }, 0);
+    }());
+
+    // Open the Portfolio at a project with no preloader, fades or smooth
+    // scrolling, for visitors coming back from that project's page.
+    function showPortfolioInstantly($target) {
+        $('#preloader').stop(true, true).hide();
+        $('body').removeClass('preloader-active');
+        $('#right-container, #profile-image, #content-loading').removeClass('loading');
+        $('#resume').stop(true, true).hide();
+        // The sticky-sidebar plugin is deliberately not started on the
+        // Portfolio here: it repositions the column in response to scrolling,
+        // which moves the project away from where we scroll to. The Portfolio
+        // is far taller than the screen, so it never needs to stick anyway.
+        $('#projects').stop(true, true).show();
+        // The views now carry their own inline display, so drop the early
+        // !important styling; otherwise the Resume/Portfolio buttons can't
+        // switch views later.
+        document.documentElement.classList.remove('portfolio-jump');
+        $('.resume-button').removeClass('selected');
+        $('.projects-button').addClass('selected');
+
+        // Leave room for the fixed top navbar.
+        function pin() {
+            window.scrollTo(0, $target.offset().top - 80);
+        }
+        pin();
+
+        // Content above the project (images, the GitHub repo list) is still
+        // loading and pushes it down. Keep it pinned until the visitor
+        // scrolls or a few seconds have passed: re-pin when the page resizes,
+        // when all images have loaded, and when the GitHub request finishes.
+        let pinned = true;
+        const observer = window.ResizeObserver ? new ResizeObserver(pin) : null;
+        if (observer) {
+            observer.observe(document.body);
+        }
+        function repin() {
+            if (pinned) {
+                pin();
+            }
+        }
+        $(window).on('load', repin);
+        $(document).on('ajaxStop', repin);
+        const events = 'wheel touchstart keydown mousedown';
+        function release() {
+            pinned = false;
+            if (observer) {
+                observer.disconnect();
+            }
+            $(window).off('load', repin).off(events, release);
+            $(document).off('ajaxStop', repin);
+        }
+        $(window).on(events, release);
+        setTimeout(release, 8000);
+    }
     $(".resume-button").on("click", function (event) {
         $(".resume-button").focus();
         $('#preloader').css("background", "");

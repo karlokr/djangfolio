@@ -2,6 +2,33 @@
 
 {% load static %}
 
+{% block title %}{{ project.title }} - {{ site_config.full_name }}{% endblock %}
+
+{% block extra_css %}
+{% with description=project.short_description|striptags|truncatechars:300 first_image=project.projectimage_set.first %}
+<meta name="description" content="{{ description }}">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:title" content="{{ project.title }}">
+<meta property="og:description" content="{{ description }}">
+<meta property="og:site_name" content="{{ site_config.full_name }}">
+{% if first_image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ first_image.image.url }}">
+<meta property="og:image:alt" content="{{ project.title }}">
+{% endif %}
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="{{ project.title }}">
+<meta property="twitter:description" content="{{ description }}">
+{% if first_image %}
+<meta property="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ first_image.image.url }}">
+{% endif %}
+{% endwith %}
+{% endblock %}
+
 {% block content %}
 {% include 'projects/project_detail_partial.html' %}
 {% endblock %}
