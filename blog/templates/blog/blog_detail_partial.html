@@ -21,7 +21,7 @@
             <header class="mb-4">
                 {% if post.featured_image %}
                 <figure class="mb-4">
-                    <img src="{{ post.featured_image.url }}" srcset="{% image_srcset post.featured_image '480 720 960 1440' %}" sizes="(min-width: 1200px) 730px, (min-width: 992px) 610px, 100vw" class="img-fluid rounded" alt="{{ post.title }}">
+                    <img src="{{ post.featured_image.url }}" srcset="{% image_srcset post.featured_image '480 720 960 1440' %}" {% image_dims post.featured_image %} sizes="(min-width: 1200px) 730px, (min-width: 992px) 610px, 100vw" class="img-fluid rounded" alt="{{ post.title }}">
                     {% if post.featured_image_caption %}
                     <figcaption class="text-muted text-center mt-2" style="font-size: 0.9rem; font-style: italic;">{{ post.featured_image_caption }}</figcaption>
                     {% endif %}
@@ -153,7 +153,7 @@
                 {% if site_config.profile_image %}
                 <div class="text-center mb-3">
                     <img src="{{ site_config.profile_image.url }}" alt="{{ site_config.profile_image_alt_text }}"
-                         srcset="{% image_srcset site_config.profile_image '120 240 360' %}" sizes="120px"
+                         srcset="{% image_srcset site_config.profile_image '120 240 360' %}" {% image_dims site_config.profile_image %} sizes="120px"
                          class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
                 </div>
                 {% endif %}

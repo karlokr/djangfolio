@@ -24,7 +24,7 @@ from django import template
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.storage import default_storage
-from django.utils.html import escape
+from django.utils.html import escape, format_html
 from PIL import Image, ImageOps
 
 register = template.Library()
@@ -43,21 +43,21 @@ def _resized_name(name, width, ext):
 
 
 def _source_info(path):
-    """Return (width, format, animated) for the image at ``path``.
+    """Return (width, height, format, animated) for the image at ``path``.
 
     Reads only the file header (no decoding) and caches the answer per file
     version, so pages don't reopen every image on every request.
     """
-    cache_key = f'imginfo:{path}:{os.path.getmtime(path)}'
+    cache_key = f'imginfo2:{path}:{os.path.getmtime(path)}'
     info = cache.get(cache_key)
     if info is None:
         with Image.open(path) as source:
             width, height = source.size
-            # EXIF orientations 5-8 are rotated 90 degrees: displayed width is
-            # the stored height.
+            # EXIF orientations 5-8 are rotated 90 degrees: the displayed
+            # width and height are swapped.
             if source.getexif().get(0x0112) in (5, 6, 7, 8):
-                width = height
-            info = (width, source.format, getattr(source, 'is_animated', False))
+                width, height = height, width
+            info = (width, height, source.format, getattr(source, 'is_animated', False))
         cache.set(cache_key, info, timeout=None)
     return info
 
@@ -113,7 +113,7 @@ def srcset_for(name, widths=DEFAULT_WIDTHS, storage=default_storage):
     """
     try:
         path = storage.path(name)
-        width, fmt, animated = _source_info(path)
+        width, _height, fmt, animated = _source_info(path)
         if animated:
             return ''
         entries = [
@@ -125,6 +125,29 @@ def srcset_for(name, widths=DEFAULT_WIDTHS, storage=default_storage):
     except Exception:  # noqa: BLE001 - fall back to plain src
         logger.exception('Could not build srcset for %s', name)
         return ''
+
+
+def dims_for(name, storage=default_storage):
+    """Return the image's displayed (width, height), or None if unreadable."""
+    try:
+        width, height, _fmt, _animated = _source_info(storage.path(name))
+        return width, height
+    except Exception:  # noqa: BLE001 - leave the size unset
+        logger.exception('Could not read dimensions of %s', name)
+        return None
+
+
+@register.simple_tag
+def image_dims(field):
+    """``width``/``height`` attributes for an ImageField/FieldFile.
+
+    They let the browser reserve the image's space (its aspect ratio) before
+    it loads, so the page doesn't jump when the image arrives.
+    """
+    if not field:
+        return ''
+    dims = dims_for(field.name, storage=field.storage)
+    return format_html('width="{}" height="{}"', *dims) if dims else ''
 
 
 @register.simple_tag
@@ -140,7 +163,7 @@ _MEDIA_IMG = re.compile(r'<img\b([^>]*?)\bsrc="([^"]+)"([^>]*)>', re.IGNORECASE)
 
 
 def add_srcset_to_media_images(html, sizes):
-    """Add srcset/sizes to ``<img>`` tags in ``html`` that point at uploads.
+    """Add srcset/sizes and width/height to ``<img>`` tags pointing at uploads.
 
     Only images under MEDIA_URL that don't already have a srcset are changed.
     """
@@ -153,12 +176,15 @@ def add_srcset_to_media_images(html, sizes):
         name = src[len(media_url):]
         if name.startswith('resized/'):
             return match.group(0)
+        attrs = ''
         srcset = srcset_for(name)
-        if not srcset:
+        if srcset:
+            attrs += f' srcset="{escape(srcset)}" sizes="{escape(sizes)}"'
+        dims = dims_for(name)
+        if dims and 'width=' not in before + after:
+            attrs += f' width="{dims[0]}" height="{dims[1]}"'
+        if not attrs:
             return match.group(0)
-        return (
-            f'<img{before}src="{src}" srcset="{escape(srcset)}" '
-            f'sizes="{escape(sizes)}"{after}>'
-        )
+        return f'<img{before}src="{src}"{attrs}{after}>'
 
     return _MEDIA_IMG.sub(replace, html)
