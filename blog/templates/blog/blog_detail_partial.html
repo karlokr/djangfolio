@@ -21,7 +21,7 @@
             <header class="mb-4">
                 {% if post.featured_image %}
                 <figure class="mb-4">
-                    <img src="{{ post.featured_image.url }}" class="img-fluid rounded" alt="{{ post.title }}">
+                    <img src="{{ post.featured_image.url }}" srcset="{% image_srcset post.featured_image '480 720 960 1440' %}" sizes="(min-width: 1200px) 730px, (min-width: 992px) 610px, 100vw" class="img-fluid rounded" alt="{{ post.title }}">
                     {% if post.featured_image_caption %}
                     <figcaption class="text-muted text-center mt-2" style="font-size: 0.9rem; font-style: italic;">{{ post.featured_image_caption }}</figcaption>
                     {% endif %}
@@ -65,10 +65,6 @@
                     <a href="https://www.facebook.com/sharer/sharer.php?u={{ canonical_url|urlencode }}&quote={{ post.title|urlencode }}" 
                        target="_blank" class="social-share-btn facebook-share" title="Share on Facebook">
                         <i class="fa-brands fa-facebook-f"></i>
-                    </a>
-                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}&summary={{ post.excerpt|urlencode }}" 
-                       target="_blank" class="social-share-btn linkedin-share" title="Share on LinkedIn">
-                        <i class="fa-brands fa-linkedin-in"></i>
                     </a>
                     <a href="https://reddit.com/submit?url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}" 
                        target="_blank" class="social-share-btn reddit-share" title="Share on Reddit">
@@ -137,10 +133,6 @@
                        target="_blank" class="social-share-btn facebook-share" title="Share on Facebook">
                         <i class="fa-brands fa-facebook-f"></i>
                     </a>
-                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}&summary={{ post.excerpt|urlencode }}" 
-                       target="_blank" class="social-share-btn linkedin-share" title="Share on LinkedIn">
-                        <i class="fa-brands fa-linkedin-in"></i>
-                    </a>
                     <a href="https://reddit.com/submit?url={{ canonical_url|urlencode }}&title={{ post.title|urlencode }}" 
                        target="_blank" class="social-share-btn reddit-share" title="Share on Reddit">
                         <i class="fa-brands fa-reddit-alien"></i>
@@ -170,7 +162,6 @@
                 <p class="text-muted mb-3">{{ resume.about_text }}</p>
                 {% endif %}
                 <ul class="social-icon mb-0" style="margin-top: 0;">
-                    <li><a href="{{ site_config.linkedin_url }}" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin" aria-hidden="true"></i></a></li>
                     <li><a href="{{ site_config.github_url }}" target="_blank" title="GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i></a></li>
                     {% if site_config.x_url %}<li><a href="{{ site_config.x_url }}" target="_blank" title="X (Twitter)"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a></li>{% endif %}
                     <li><a href="mailto:{{ site_config.display_email }}" title="Email"><i class="fa-solid fa-envelope" aria-hidden="true"></i></a></li>

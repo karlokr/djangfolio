@@ -71,6 +71,7 @@ jQuery(function ($) {
     }
 
     $(".projects-button").on("click", function (event) {
+        event.preventDefault();
         showPortfolio();
     });
 
@@ -103,7 +104,6 @@ jQuery(function ($) {
     // scrolling, for visitors coming back from that project's page.
     function showPortfolioInstantly($target) {
         $('#preloader').stop(true, true).hide();
-        $('body').removeClass('preloader-active');
         $('#right-container, #profile-image, #content-loading').removeClass('loading');
         $('#resume').stop(true, true).hide();
         // The sticky-sidebar plugin is deliberately not started on the
@@ -153,6 +153,7 @@ jQuery(function ($) {
         setTimeout(release, 8000);
     }
     $(".resume-button").on("click", function (event) {
+        event.preventDefault();
         $(".resume-button").focus();
         $('#preloader').css("background", "");
         $('#preloader').css("opacity", "1.0");

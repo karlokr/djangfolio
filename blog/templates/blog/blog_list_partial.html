@@ -1,4 +1,5 @@
 {% load static %}
+{% load image_tags %}
 
 <div class="container blog-list-container" style="padding-top: 20px;">
 <div class="row mt-3">
@@ -143,7 +144,7 @@
                        hx-swap="innerHTML"
                        hx-push-url="true">
                         {% if post.featured_image %}
-                        <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
+                        <img src="{{ post.featured_image.url }}" srcset="{% image_srcset post.featured_image '360 480 720 960' %}" sizes="(min-width: 992px) 350px, (min-width: 768px) 50vw, 100vw" class="card-img-top" alt="{{ post.title }}">
                         {% else %}
                         <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
                             <span class="text-muted">No image</span>
@@ -193,7 +194,7 @@
                     <div class="category-list">
                         {% for category in categories %}
                         {% with is_selected=category.slug|stringformat:"s" %}
-                        <a href="javascript:void(0)" 
+                        <a href="{% url 'blog:blog_list' %}?{% for c in selected_categories %}{% if c != category.slug %}category={{ c }}&{% endif %}{% endfor %}{% if is_selected not in selected_categories %}category={{ category.slug }}&{% endif %}{% for t in selected_tags %}tag={{ t }}&{% endfor %}"
                            class="d-flex justify-content-between align-items-center px-3 py-2 text-decoration-none category-item {% if is_selected in selected_categories %}category-selected{% endif %}"
                            hx-get="{% url 'blog:blog_list' %}?{% for c in selected_categories %}{% if c != category.slug %}category={{ c }}&{% endif %}{% endfor %}{% if is_selected not in selected_categories %}category={{ category.slug }}&{% endif %}{% for t in selected_tags %}tag={{ t }}&{% endfor %}" 
                            hx-target="#main-content"
@@ -219,7 +220,7 @@
                     <div class="tag-cloud">
                         {% for tag in tags %}
                         {% with is_selected=tag.slug|stringformat:"s" %}
-                        <a href="javascript:void(0)" 
+                        <a href="{% url 'blog:blog_list' %}?{% for c in selected_categories %}category={{ c }}&{% endfor %}{% for t in selected_tags %}{% if t != tag.slug %}tag={{ t }}&{% endif %}{% endfor %}{% if is_selected not in selected_tags %}tag={{ tag.slug }}&{% endif %}"
                            class="badge mb-2 {% if is_selected in selected_tags %}badge-primary{% else %}badge-secondary{% endif %}"
                            hx-get="{% url 'blog:blog_list' %}?{% for c in selected_categories %}category={{ c }}&{% endfor %}{% for t in selected_tags %}{% if t != tag.slug %}tag={{ t }}&{% endif %}{% endfor %}{% if is_selected not in selected_tags %}tag={{ tag.slug }}&{% endif %}" 
                            hx-target="#main-content"
