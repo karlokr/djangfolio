@@ -558,11 +558,6 @@ button:focus,
     z-index: 9999;
 }
 
-/* Prevent scrollbar flicker during preloader */
-body.preloader-active {
-    overflow: hidden;
-}
-
 #status,
 .status-mes {
     background-image: url(../img/preloader.svg);

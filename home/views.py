@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.mail import send_mail
-from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.views.decorators.http import require_POST
 from django.conf import settings
+from home.security import client_ip, rate_limited
 from projects.models import SoftwareProject, MathPhysicsProject, WebProject
 from resume.models import Resume, SkillGroup
 import logging
+from portfolio.htmx import wants_partial
 
 logger = logging.getLogger(__name__)
 
@@ -28,39 +31,67 @@ def home_page(request):
     }
     
     # Return partial template for HTMX requests
-    template = 'home/index_partial.html' if request.htmx else 'home/index.html'
+    template = 'home/index_partial.html' if wants_partial(request) else 'home/index.html'
     return render(request, template, context)
 
 
-@csrf_exempt
+# Contact form limits: messages per visitor per hour, and field lengths.
+CONTACT_RATE_LIMIT = 5
+CONTACT_RATE_WINDOW = 60 * 60
+CONTACT_MAX_LENGTHS = {'name': 200, 'email': 254, 'subject': 200, 'message': 5000}
+# Hidden form field real visitors never see; bots that fill it in are dropped.
+CONTACT_HONEYPOT_FIELD = 'website'
+
+
+def _contact_error(message, status=400):
+    return JsonResponse({'status': 'error', 'message': message}, status=status)
+
+
 @require_POST
 def send_contact_email(request):
-    """Handle contact form submissions"""
+    """Handle contact form submissions.
+
+    Protected by CSRF (the forms carry {% csrf_token %}), a per-visitor rate
+    limit and a honeypot field.
+    """
     try:
+        if request.POST.get(CONTACT_HONEYPOT_FIELD):
+            # Pretend it worked so the bot has nothing to learn from.
+            logger.info('Contact form honeypot triggered; message dropped')
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Thank you, your message has been received.'
+            })
+
+        if rate_limited(f'contact:{client_ip(request)}', CONTACT_RATE_LIMIT, CONTACT_RATE_WINDOW):
+            logger.warning('Contact form rate limit hit')
+            return _contact_error(
+                'Too many messages. Please try again later.', status=429
+            )
+
         name = request.POST.get('name', '').strip()
         email = request.POST.get('email', '').strip()
         subject = request.POST.get('subject', '').strip()
         message = request.POST.get('message', '').strip()
-        
+
         # Validate required fields
         if not name:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Name is required'
-            }, status=400)
-        
+            return _contact_error('Name is required')
         if not email:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Email is required'
-            }, status=400)
-        
+            return _contact_error('Email is required')
         if not message:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Message is required'
-            }, status=400)
-        
+            return _contact_error('Message is required')
+
+        values = {'name': name, 'email': email, 'subject': subject, 'message': message}
+        for field, limit in CONTACT_MAX_LENGTHS.items():
+            if len(values[field]) > limit:
+                return _contact_error(f'{field.capitalize()} is too long')
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            return _contact_error('Please enter a valid email address')
+
         # Create email content
         email_subject = f"Portfolio Contact: {subject}" if subject else "Portfolio Contact Form"
         email_body = f"""

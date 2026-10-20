@@ -51,6 +51,9 @@
 .card {
     transition: transform 0.2s, box-shadow 0.2s;
     border: 1px solid var(--color-border-light);
+    /* Match the card body/footer, so the sub-pixel seam between them that the
+       hover lift can expose shows this colour, not Bootstrap's default white. */
+    background-color: var(--color-bg-white);
 }
 
 .card:hover {
@@ -968,15 +971,6 @@ a.badge-secondary:focus {
 
 .facebook-share:hover {
     background-color: #0d65d9;
-    color: #fff;
-}
-
-.linkedin-share {
-    background-color: #0077b5;
-}
-
-.linkedin-share:hover {
-    background-color: #006399;
     color: #fff;
 }
 

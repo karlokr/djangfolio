@@ -36,15 +36,6 @@ class SiteConfiguration(models.Model):
         default='https://github.com/yourusername',
         help_text='Full GitHub profile URL'
     )
-    linkedin_username = models.CharField(
-        max_length=100,
-        default='yourusername',
-        help_text='LinkedIn username'
-    )
-    linkedin_url = models.URLField(
-        default='https://www.linkedin.com/in/yourusername/',
-        help_text='Full LinkedIn profile URL'
-    )
     x_username = models.CharField(
         max_length=100,
         default='yourusername',
