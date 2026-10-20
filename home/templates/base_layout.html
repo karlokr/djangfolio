@@ -49,6 +49,7 @@
     <script type="text/javascript" src="{% static 'jquery-3/dist/jquery.min.js' %}"></script> 
     <script type="text/javascript" src="{% static 'bootstrap-4/dist/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'htmx.org/dist/htmx.min.js' %}"></script>
+    <script src="{% static 'home/js/image-fade.js' %}"></script>
     <script src="{% static '@highlightjs/cdn-assets/highlight.min.js' %}"></script>
     <!-- KaTeX for LaTeX math rendering -->
     <link rel="stylesheet" href="{% static 'katex/dist/katex.min.css' %}">
@@ -217,6 +218,19 @@
         }
     });
     document.body.addEventListener('htmx:pushedIntoHistory', updateActiveNavLink);
+
+    // On the home page already, the navbar's Home link and site name do
+    // nothing: no reload, no scroll, and no switch back to the Resume view.
+    document.body.addEventListener('htmx:beforeRequest', function(event) {
+        const link = event.detail.elt;
+        if (!link.closest || !link.closest('nav.fixed-top')) {
+            return;
+        }
+        const target = new URL(link.getAttribute('hx-get') || '', window.location.href);
+        if (target.pathname === '/' && window.location.pathname === '/') {
+            event.preventDefault();
+        }
+    });
     
     // Hide preloader and loading classes on initial page load
     $(document).ready(function() {
