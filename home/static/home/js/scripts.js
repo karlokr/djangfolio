@@ -59,6 +59,8 @@ jQuery(function ($) {
                     additionalMarginTop: 70,
                     sidebarBehavior: 'stick-to-top'
                 });
+                // Start the videos now in view (they play on scroll otherwise).
+                $(window).trigger('scroll');
             });
         });
         window.scrollTo({
@@ -116,6 +118,9 @@ jQuery(function ($) {
         document.documentElement.classList.remove('portfolio-jump');
         $('.resume-button').removeClass('selected');
         $('.projects-button').addClass('selected');
+
+        // Start the videos now in view (they play on scroll otherwise).
+        setTimeout(function () { $(window).trigger('scroll'); }, 0);
 
         // Leave room for the fixed top navbar.
         function pin() {
@@ -573,9 +578,12 @@ jQuery(function ($) {
             }
         }
 
+        // Play videos that are on screen and pause the rest. Videos use
+        // preload="none", so they only download once played; skipping hidden
+        // ones keeps the Portfolio's videos from loading while it's closed.
         $(window).on("scroll", function () {
             $('video').each(function () {
-                if ($(this).is(":in-viewport")) {
+                if ($(this).is(":visible") && $(this).is(":in-viewport")) {
                     playVideo($(this)[0]);
                 } else {
                     $(this)[0].pause();

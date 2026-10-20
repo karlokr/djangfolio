@@ -4,9 +4,10 @@
 
 {% block title %}{{ project.title }} - {{ site_config.full_name }}{% endblock %}
 
+{% block meta_description %}<meta name="description" content="{{ project.short_description|striptags|truncatechars:300 }}">{% endblock %}
+
 {% block extra_css %}
 {% with description=project.short_description|striptags|truncatechars:300 first_image=project.projectimage_set.first %}
-<meta name="description" content="{{ description }}">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
