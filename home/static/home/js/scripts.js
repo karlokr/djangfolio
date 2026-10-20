@@ -50,16 +50,15 @@ jQuery(function ($) {
     function showPortfolio() {
         $(".projects-button").focus();
         $(".projects-button").addClass("active")
-        $('#preloader').css("background", "");
-        $('#preloader').css("opacity", "1.0");
-        $('#preloader').css("display", "block");
-        $('#preloader').delay(500).fadeOut('slow');
-        $('#resume').fadeOut('slow');
-        $('#projects').delay(500).fadeIn('slow', function() {
-            // Initialize sticky sidebar on portfolio now that it's visible
-            $('#projects').theiaStickySidebar({
-                additionalMarginTop: 70,
-                sidebarBehavior: 'stick-to-top'
+        // Fade the Resume out, then the Portfolio in, so the two are never
+        // on the page at once (no loading overlay hides the switch anymore).
+        $('#resume').stop(true, true).fadeOut(200, function () {
+            $('#projects').stop(true, true).fadeIn(200, function () {
+                // Initialize sticky sidebar on portfolio now that it's visible
+                $('#projects').theiaStickySidebar({
+                    additionalMarginTop: 70,
+                    sidebarBehavior: 'stick-to-top'
+                });
             });
         });
         window.scrollTo({
@@ -155,12 +154,10 @@ jQuery(function ($) {
     $(".resume-button").on("click", function (event) {
         event.preventDefault();
         $(".resume-button").focus();
-        $('#preloader').css("background", "");
-        $('#preloader').css("opacity", "1.0");
-        $('#preloader').css("display", "block");
-        $('#preloader').delay(500).fadeOut('slow');
-        $('#projects').fadeOut('slow');
-        $('#resume').delay(500).fadeIn('slow');
+        // Fade the Portfolio out, then the Resume in (see showPortfolio).
+        $('#projects').stop(true, true).fadeOut(200, function () {
+            $('#resume').stop(true, true).fadeIn(200);
+        });
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
