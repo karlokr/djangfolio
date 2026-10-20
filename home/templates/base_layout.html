@@ -7,6 +7,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {# Lets inline scripts in htmx-swapped pages run under the Content-Security-Policy nonce. #}
+    <meta name="htmx-config" content='{"inlineScriptNonce": "{{ request.csp_nonce }}"}'>
     <title>{% block title %}{{ site_config.full_name }}{% endblock %}</title>
     {% if site_config.favicon %}
         <link rel="shortcut icon" type="image/png" href="{{ site_config.favicon.url }}"/>
@@ -22,7 +24,7 @@
     {% block extra_css %}{% endblock %}
     
     <!-- Load theme before page renders to prevent flash -->
-    <script>
+    <script nonce="{{ request.csp_nonce }}">
         (function() {
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -54,7 +56,7 @@
     <script src="{% static 'katex/dist/contrib/auto-render.min.js' %}"></script>
 </head>
 
-<body {% block body_attrs %}{% endblock %} class="preloader-active">
+<body {% block body_attrs %}{% endblock %}>
 
 <!-- Loading Circle - only loads once on initial page load -->
 <div id="preloader" style="background: var(--color-bg-white)">
@@ -72,7 +74,7 @@
 
 {% block extra_js %}{% endblock %}
 
-<script>
+<script nonce="{{ request.csp_nonce }}">
     function updateActiveNavLink() {
         const path = window.location.pathname;
         const navItems = document.querySelectorAll('.navbar-nav .nav-item');
@@ -212,7 +214,6 @@
         // Remove loading classes when navigating to home page
         if (event.detail.target.id === 'main-content') {
             $('#preloader').hide(); // Immediately hide preloader on navigation
-            $('body').removeClass('preloader-active');
         }
     });
     document.body.addEventListener('htmx:pushedIntoHistory', updateActiveNavLink);
@@ -223,28 +224,14 @@
         // skip the load animation entirely.
         if (document.documentElement.classList.contains('portfolio-jump')) {
             $('#preloader').hide();
-            $('body').removeClass('preloader-active');
             assignBlogImageModals();
             return;
         }
 
-        // Add loading classes for initial page load animation
-        $('#right-container').addClass('loading');
-        $('#profile-image').addClass('loading');
-        $('#content-loading').addClass('loading');
-        
-        // Then remove them after delay for animation effect
-        setTimeout(function() {
-            $('#right-container').removeClass('loading');
-            $('#profile-image').removeClass('loading');
-            $('#content-loading').removeClass('loading');
-        }, 100);
-        
-        // Remove overflow hidden before fadeOut starts
-        setTimeout(function() {
-            $('body').removeClass('preloader-active');
-        }, 700);
-        
+        // The page is no longer hidden (display: none) or scroll-locked
+        // (overflow: hidden) under the preloader: both made the scrollbar vanish
+        // and reappear, shifting the layout, on every full page load. The
+        // fixed preloader overlay alone covers the page while it fades.
         $('#preloader').delay(700).fadeOut(700);
         assignBlogImageModals();
     });

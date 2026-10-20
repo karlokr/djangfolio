@@ -42,7 +42,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ request.csp_nonce }}">
     // Render math on direct page load (HTMX swap is handled in base_layout.html)
     document.addEventListener('DOMContentLoaded', function() {
         const el = document.querySelector('.blog-content');

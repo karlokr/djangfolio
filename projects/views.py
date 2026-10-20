@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from projects.models import Project
 
 # Create your views here.
@@ -13,7 +13,7 @@ def projects_list(request):
     return render(request, template, context)
 
 def project_detail(request, pk):
-    project = Project.objects.get(pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     context = {
         'project': project,
         'active_page': 'projects',

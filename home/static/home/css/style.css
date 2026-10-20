@@ -543,6 +543,9 @@ button:focus,
 }
 
 .header .profile-img img {
+    /* Fill the column explicitly: with srcset, an auto width would come from
+       the sizes hint rather than the column, leaving the photo a few px short. */
+    width: 100%;
     max-width: 100%;
     height: auto;
     display: block;
@@ -894,9 +897,10 @@ button:focus,
     z-index: 9999;
 }
 
-/* Prevent scrollbar flicker during preloader */
-body.preloader-active {
-    overflow: hidden;
+/* Always reserve the scrollbar's space so the layout never shifts sideways
+   when a page gains or loses a scrollbar (page loads, short pages). */
+html {
+    scrollbar-gutter: stable;
 }
 
 #status,
@@ -1485,4 +1489,13 @@ body.modal-open {
     :root:not([data-theme="light"]) .theme-icon-dark {
         display: inline-block;
     }
+}
+
+/* Contact form honeypot: kept off-screen so only bots fill it in. */
+.contact-hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
 }
