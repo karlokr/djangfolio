@@ -3,10 +3,10 @@
 README.md
 Dockerfile
 .dockerignore
-*.pyc
-*.pyo
-*.pyd
-__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/__pycache__
 .pytest_cache
 .coverage
 .tox
@@ -16,3 +16,17 @@ venv/
 env/
 .env
 node_modules/
+# Patterns only match at the top level unless prefixed with **/.
+
+# Local data: never bake a developer's database, uploads or backups into an
+# image (production mounts its own db and media). Keep db/.gitkeep so the
+# folder exists for SQLite in a fresh container.
+db/*
+!db/.gitkeep
+**/*.sqlite3
+**/*.sqlite3-journal
+**/*.sqlite3.*
+media/
+staticfiles/
+**/*.log
+.claude/
