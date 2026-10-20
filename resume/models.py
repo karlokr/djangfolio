@@ -14,7 +14,6 @@ class Resume(models.Model):
     about_text = models.TextField()
     github_link = models.CharField(max_length=256, default='')
     github_username = models.CharField(max_length=30, default='')
-    linkedin_link = models.CharField(max_length=256, default='')
     email = models.CharField(max_length=100, default='')
 
     class Meta:

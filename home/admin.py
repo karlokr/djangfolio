@@ -24,9 +24,6 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
         ('GitHub', {
             'fields': ('github_username', 'github_url')
         }),
-        ('LinkedIn', {
-            'fields': ('linkedin_username', 'linkedin_url')
-        }),
         ('X (Twitter)', {
             'fields': ('x_username', 'x_url')
         }),

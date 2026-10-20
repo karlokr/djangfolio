@@ -163,7 +163,7 @@ The blog system provides a full-featured blogging platform integrated with the p
 - **Author Attribution**: Default author pulled from Site Configuration, customizable per post
 - **Featured Images**: Support for post thumbnails with optional captions
 - **Pagination**: Smart pagination with consistent 5-page range display (simplified on mobile)
-- **Social Sharing**: Share buttons for X/Twitter, Facebook, LinkedIn, Reddit, and Email
+- **Social Sharing**: Share buttons for X/Twitter, Facebook, Reddit, and Email
 - **Responsive Design**: Mobile-optimized layout with inline share buttons on narrow screens
 
 ### Managing Blog Posts
@@ -208,8 +208,6 @@ The site uses a database-backed configuration system accessible through the Djan
    - `display_email`: Email address shown publicly on the site
    - `github_username`: Your GitHub username (for API integration)
    - `github_url`: Full URL to your GitHub profile
-   - `linkedin_username`: Your LinkedIn username
-   - `linkedin_url`: Full URL to your LinkedIn profile
    - `copyright_text`: Copyright text in the footer
    - `profile_image`: Upload your profile photo (recommended: 400x400px or larger, square)
    - `profile_image_alt_text`: Alt text for accessibility
@@ -573,7 +571,7 @@ For issues, questions, or suggestions, please open an issue on GitHub.
 - Added full blog system with Markdown format blog posts
 - Implemented SPA-like navigation with HTMX (navbar stays fixed, only content updates)
 - Added "About the Author" section in blog posts with resume bio and social links
-- Added social sharing buttons (X/Twitter, Facebook, LinkedIn, Reddit, Email)
+- Added social sharing buttons (X/Twitter, Facebook, Reddit, Email)
 - Added feature flags for toggling navigation elements (e.g., Projects link)
 - Mobile-optimized blog with responsive pagination and inline share buttons
 - Enhanced GitHub integration with language colors and improved styling
