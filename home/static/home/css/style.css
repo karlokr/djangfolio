@@ -1003,13 +1003,13 @@ p.res-strengths {
 .navbar-default .navbar-nav>li>a:focus {
     color: var(--color-primary-hover-text);
     background-color: transparent;
-    border-bottom: 1px solid var(--color-primary-hover);
+    border-bottom: 1px solid var(--color-primary-hover-text);
 }
 
 .selected {
     color: var(--color-primary-hover-text) !important;
     background-color: transparent !important;
-    border-bottom: 1px solid var(--color-primary-hover) !important;
+    border-bottom: 1px solid var(--color-primary-hover-text) !important;
 }
 
 .github-item {
@@ -1340,7 +1340,7 @@ body.modal-open {
 .btn-blog-outline {
     color: var(--color-primary-text) !important;
     background-color: transparent !important;
-    border: 2px solid var(--color-primary) !important;
+    border: 2px solid var(--color-primary-text) !important;
     border-radius: 6px !important;
     user-select: none;
     outline: none !important;

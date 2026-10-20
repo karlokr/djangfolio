@@ -841,7 +841,7 @@ a.badge-secondary:focus {
 .btn-blog-outline {
     color: var(--color-primary-text) !important;
     background-color: transparent !important;
-    border: 2px solid var(--color-primary) !important;
+    border: 2px solid var(--color-primary-text) !important;
     border-radius: 6px !important;
     user-select: none;
     outline: none !important;
@@ -907,7 +907,7 @@ a.badge-secondary:focus {
 
 .btn-outline-primary {
     color: var(--color-primary-text);
-    border-color: var(--color-primary);
+    border-color: var(--color-primary-text);
 }
 
 .btn-outline-primary:hover {
