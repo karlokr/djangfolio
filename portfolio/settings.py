@@ -345,6 +345,10 @@ if not DEBUG:
 
     # Note: SECURE_SSL_REDIRECT is handled by Traefik, so we don't need it here
 
+# Optional GitHub token for the home page's repo list (home/github.py). Not
+# needed: the list is fetched at most once an hour per app instance.
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN', '')
+
 # Admin address. Set ADMIN_URL (for example 'manage-7f3k/') to move the admin
 # away from the well-known /admin/ path that bots target.
 ADMIN_URL = os.getenv('ADMIN_URL', 'admin/').strip('/') + '/'
@@ -377,7 +381,7 @@ CONTENT_SECURITY_POLICY = {
     'style-src': ["'self'", "'unsafe-inline'"],
     'img-src': ["'self'", 'data:', 'https:'],
     'font-src': ["'self'", 'data:'],
-    'connect-src': ["'self'", 'https://api.github.com'],
+    'connect-src': ["'self'"],
     'media-src': ["'self'"],
     'frame-src': ["'self'"],
     'frame-ancestors': ["'self'"],

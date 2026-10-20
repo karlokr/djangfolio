@@ -6,6 +6,9 @@ from django.core.validators import validate_email
 from django.views.decorators.http import require_POST
 from django.conf import settings
 from home.security import client_ip, rate_limited
+from home.github import get_repos
+from home.models import SiteConfiguration
+from django.views.decorators.http import require_GET
 from projects.models import SoftwareProject, MathPhysicsProject, WebProject
 from resume.models import Resume, SkillGroup
 import logging
@@ -137,3 +140,19 @@ Message:
             'message': 'An error occurred while sending your message. Please try again later.'
         }, status=500)
 
+
+@require_GET
+def github_repos(request):
+    """The home page's GitHub repo list, served from the server-side cache.
+
+    See home/github.py: GitHub is called at most once an hour, so visitors
+    never hit GitHub's per-IP rate limit.
+    """
+    username = SiteConfiguration.get_solo().github_username
+    repos = get_repos(username)
+    if repos is None:
+        return JsonResponse({'username': username, 'repos': []}, status=503)
+    response = JsonResponse({'username': username, 'repos': repos})
+    # Let browsers reuse it briefly; the server cache does the real work.
+    response['Cache-Control'] = 'public, max-age=300'
+    return response
