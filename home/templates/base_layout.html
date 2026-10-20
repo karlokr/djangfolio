@@ -117,14 +117,11 @@
         const themeToggle = document.getElementById('theme-toggle');
         const themeToggleDesktop = document.getElementById('theme-toggle-desktop');
         const htmlElement = document.documentElement;
-        
-        // Get current effective theme (considering system preference)
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const effectiveTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-        
-        updateThemeIcon(effectiveTheme);
-        
+
+        // The toggle's moon/sun icon is chosen by CSS from data-theme and the
+        // system preference (see .theme-icon-* in home/css/style.css), so it is
+        // right from the first paint and needs no updating here.
+
         // Toggle theme function
         function toggleTheme() {
             const currentTheme = htmlElement.getAttribute('data-theme');
@@ -143,7 +140,6 @@
             
             htmlElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
             updateSyntaxHighlighting(newTheme);
         }
         
@@ -160,24 +156,9 @@
             // Only update if user hasn't set a preference
             if (!localStorage.getItem('theme')) {
                 const newTheme = e.matches ? 'dark' : 'light';
-                updateThemeIcon(newTheme);
                 updateSyntaxHighlighting(newTheme);
             }
         });
-    }
-    
-    function updateThemeIcon(theme) {
-        const themeIcon = document.getElementById('theme-icon');
-        const themeIconDesktop = document.getElementById('theme-icon-desktop');
-        
-        const iconClass = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-        
-        if (themeIcon) {
-            themeIcon.className = iconClass;
-        }
-        if (themeIconDesktop) {
-            themeIconDesktop.className = iconClass;
-        }
     }
     
     function updateSyntaxHighlighting(theme) {
@@ -238,6 +219,15 @@
     
     // Hide preloader and loading classes on initial page load
     $(document).ready(function() {
+        // Returning to a project in the Portfolio (see home/index.html):
+        // skip the load animation entirely.
+        if (document.documentElement.classList.contains('portfolio-jump')) {
+            $('#preloader').hide();
+            $('body').removeClass('preloader-active');
+            assignBlogImageModals();
+            return;
+        }
+
         // Add loading classes for initial page load animation
         $('#right-container').addClass('loading');
         $('#profile-image').addClass('loading');

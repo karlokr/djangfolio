@@ -4,6 +4,23 @@
 
 {% block title %}{{ resume.name }}{% endblock %}
 
+{% block extra_css %}
+{# Arriving at /#some-project (the "Back to portfolio" link): pick the Portfolio view before the first paint, so the page doesn't flash the preloader and Resume before switching. scripts.js finishes the job and removes the class if the anchor isn't a project. #}
+<script>
+    if (window.location.hash.length > 1) {
+        document.documentElement.classList.add('portfolio-jump');
+    }
+</script>
+<style>
+    html.portfolio-jump #preloader { display: none !important; }
+    html.portfolio-jump #resume { display: none !important; }
+    html.portfolio-jump #projects { display: block !important; }
+    html.portfolio-jump body.preloader-active { overflow: auto; }
+    /* Land project anchors below the fixed top navbar. */
+    #projects [id] { scroll-margin-top: 80px; }
+</style>
+{% endblock %}
+
 {% block body_attrs %}id="page-top" data-spy="scroll" data-target=".navbar"{% endblock %}
 
 {% block content %}

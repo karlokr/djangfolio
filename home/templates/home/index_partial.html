@@ -1,5 +1,6 @@
 {% load static %}
 {% load custom_filters %}
+{% load image_tags %}
 
 <div id="main-wrapper">
 
@@ -11,6 +12,8 @@
                 <div class="profile-img">
                     {% if site_config.profile_image %}
                         <img src="{{ site_config.profile_image.url }}" class="img-responsive" alt="{{ site_config.profile_image_alt_text }}"
+                            srcset="{% image_srcset site_config.profile_image '240 360 480 720' %}"
+                            sizes="(min-width: 992px) 360px, calc(100vw - 60px)"
                             id="profile-image" />
                     {% endif %}
                 </div>
@@ -365,7 +368,8 @@
                                     </div>
                                     {% if project.projectvideo_set.count == 0 %}
                                         {% for img in project.projectimage_set.all %}
-                                            <div class="col-md-4">
+                                            {# Four screenshots read best as a 2x2 grid; otherwise three per row. #}
+                                            <div class="{% if project.projectimage_set.count == 4 %}col-md-6{% else %}col-md-4{% endif %}">
                                                 <a class="portfolio-item" style="margin-bottom:10px">
                                                     <div class="portfolio-thumb">
                                                         <img class="portfolio-img" src="{{ img.image.url }}"
@@ -505,7 +509,12 @@
                                     </div>
 
                                     <div class="col-md-12" style="text-align:center;">
-                                        <a href="{% url 'projects:project_detail' project.pk %}">Read more...</a>
+                                        {# Swap the project page in (no full reload, so no loading animation). #}
+                                        <a href="{% url 'projects:project_detail' project.pk %}"
+                                           hx-get="{% url 'projects:project_detail' project.pk %}"
+                                           hx-target="#main-content"
+                                           hx-swap="innerHTML"
+                                           hx-push-url="true">Read more...</a>
                                     </div>
                                 </div>
                             </div>
@@ -529,7 +538,7 @@
 
                             {% for project in web_projects %}
                             {% if not forloop.counter|divisibleby:2 %}
-                            <div class="row">
+                            <div class="row" id="{{ project.css_id }}">
                                 <div class="col-md-6">
                                     <div class="portfolio-item">
                                         <div class="portfolio-thumb">
@@ -554,7 +563,7 @@
                                 </div>
                             </div>
                             {% else %}
-                            <div class="row reverse">
+                            <div class="row reverse" id="{{ project.css_id }}">
                                 <div class="col-md-6 web-thumb">
                                     <div class="portfolio-item left-item">
                                         <div>
@@ -594,7 +603,7 @@
                             </div>
                             {% for project in mathphysics_projects %}
                             {% if not forloop.counter|divisibleby:2 %}
-                            <div class="row">
+                            <div class="row" id="{{ project.css_id }}">
                                 <div class="col-md-6">
                                     <a class="portfolio-item">
                                         <div class="portfolio-thumb">
@@ -615,7 +624,7 @@
                                 </div>
                             </div>
                             {% else %}
-                            <div class="row reverse">
+                            <div class="row reverse" id="{{ project.css_id }}">
                                 <div class="col-md-6 web-thumb">
                                     <div class="portfolio-item left-item">
                                         <div>
