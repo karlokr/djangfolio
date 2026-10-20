@@ -1499,3 +1499,31 @@ body.modal-open {
     height: 1px;
     overflow: hidden;
 }
+
+/* Uploaded images carry width/height attributes so the browser reserves their
+   space before they load (no content jumping down when they arrive). These
+   rules keep the attributes from fixing the displayed size: the image keeps
+   its proportions and never overflows. :where() gives the rule zero
+   specificity, so any class rule (such as a fixed card height) still wins. */
+:where(img[width][height]) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Fade-in for images that weren't loaded yet when htmx swapped a page in
+   (see home/js/image-fade.js). */
+/* Hidden instantly (no transition) while loading... */
+img.img-pending {
+    opacity: 0;
+}
+
+/* ...then faded in once loaded. */
+img.img-fade {
+    transition: opacity 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    img.img-fade {
+        transition: none;
+    }
+}
