@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db import models
 from .models import SiteConfiguration
 
 # Register your models here.
@@ -6,6 +7,12 @@ from .models import SiteConfiguration
 @admin.register(SiteConfiguration)
 class SiteConfigurationAdmin(admin.ModelAdmin):
     """Admin interface for Site Configuration"""
+
+    # Treat scheme-less URLs (e.g. "github.com/me") as https. This matches the
+    # Django 6.0 default and silences the Django 5.x RemovedInDjango60Warning.
+    formfield_overrides = {
+        models.URLField: {'assume_scheme': 'https'},
+    }
     
     fieldsets = (
         ('Personal Information', {

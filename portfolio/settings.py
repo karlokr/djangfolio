@@ -142,13 +142,11 @@ TIME_ZONE = 'America/Edmonton'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
+# https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
 
@@ -236,7 +234,7 @@ if not DEBUG:
         '.woff2': 'font/woff2',
     }
 
-# Default primary key field type for Django 4.2
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Allow iframes from same origin (needed for PDF modal)
@@ -306,7 +304,6 @@ if not DEBUG:
     # Recommended for production HTTPS
     CSRF_COOKIE_SECURE = True    # Only send CSRF cookie over HTTPS
     SESSION_COOKIE_SECURE = True # Same for session cookie
-    SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     
     # CSRF cookie settings for reverse proxy (Cloudflare + Traefik)
