@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -10,6 +10,7 @@
     {# Lets inline scripts in htmx-swapped pages run under the Content-Security-Policy nonce. #}
     <meta name="htmx-config" content='{"inlineScriptNonce": "{{ request.csp_nonce }}"}'>
     <title>{% block title %}{{ site_config.full_name }}{% endblock %}</title>
+    {% block meta_description %}<meta name="description" content="{{ site_config.full_name }}: software engineering portfolio, projects and blog.">{% endblock %}
     {% if site_config.favicon %}
         <link rel="shortcut icon" type="image/png" href="{{ site_config.favicon.url }}"/>
     {% endif %}
@@ -46,15 +47,16 @@
         })();
     </script>
     
-    <script type="text/javascript" src="{% static 'jquery-3/dist/jquery.min.js' %}"></script> 
-    <script type="text/javascript" src="{% static 'bootstrap-4/dist/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'htmx.org/dist/htmx.min.js' %}"></script>
-    <script src="{% static 'home/js/image-fade.js' %}"></script>
-    <script src="{% static '@highlightjs/cdn-assets/highlight.min.js' %}"></script>
+    {# All scripts are deferred: they download in parallel and run after the page is parsed, in this order, so they no longer block the first paint. #}
+    <script defer src="{% static 'jquery-3/dist/jquery.min.js' %}"></script> 
+    <script defer src="{% static 'bootstrap-4/dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script defer src="{% static 'htmx.org/dist/htmx.min.js' %}"></script>
+    <script defer src="{% static 'home/js/image-fade.js' %}"></script>
+    <script defer src="{% static '@highlightjs/cdn-assets/highlight.min.js' %}"></script>
     <!-- KaTeX for LaTeX math rendering -->
     <link rel="stylesheet" href="{% static 'katex/dist/katex.min.css' %}">
-    <script src="{% static 'katex/dist/katex.min.js' %}"></script>
-    <script src="{% static 'katex/dist/contrib/auto-render.min.js' %}"></script>
+    <script defer src="{% static 'katex/dist/katex.min.js' %}"></script>
+    <script defer src="{% static 'katex/dist/contrib/auto-render.min.js' %}"></script>
 </head>
 
 <body {% block body_attrs %}{% endblock %}>
@@ -68,10 +70,10 @@
 
 {% include 'home/navbar.html' with active_page=active_page %}
 
-<div id="main-content" {% block content_attrs %}{% endblock %}>
+<main id="main-content" {% block content_attrs %}{% endblock %}>
     {% block content %}
     {% endblock %}
-</div>
+</main>
 
 {% block extra_js %}{% endblock %}
 
@@ -233,7 +235,8 @@
     });
     
     // Hide preloader and loading classes on initial page load
-    $(document).ready(function() {
+    // Deferred scripts (jQuery etc.) have run by DOMContentLoaded.
+    document.addEventListener('DOMContentLoaded', function() {
         // Returning to a project in the Portfolio (see home/index.html):
         // skip the load animation entirely.
         if (document.documentElement.classList.contains('portfolio-jump')) {

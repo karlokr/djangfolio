@@ -839,7 +839,7 @@ a.badge-secondary:focus {
 }
 
 .btn-blog-outline {
-    color: var(--color-primary) !important;
+    color: var(--color-primary-text) !important;
     background-color: transparent !important;
     border: 2px solid var(--color-primary) !important;
     border-radius: 6px !important;
@@ -881,7 +881,7 @@ a.badge-secondary:focus {
 /* Dark mode styles for back to blog button */
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .btn-blog-outline-dark {
-        color: var(--color-primary) !important;
+        color: var(--color-primary-text) !important;
         border-color: var(--color-border-primary) !important;
     }
     
@@ -894,7 +894,7 @@ a.badge-secondary:focus {
 }
 
 [data-theme="dark"] .btn-blog-outline-dark {
-    color: var(--color-primary) !important;
+    color: var(--color-primary-text) !important;
     border-color: var(--color-border-primary) !important;
 }
 
@@ -906,7 +906,7 @@ a.badge-secondary:focus {
 }
 
 .btn-outline-primary {
-    color: var(--color-primary);
+    color: var(--color-primary-text);
     border-color: var(--color-primary);
 }
 

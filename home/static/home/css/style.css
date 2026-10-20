@@ -2,6 +2,10 @@
     /* Primary colors */
     --color-primary: #FFC107;
     --color-primary-hover: #ff9800;
+    /* Text in the brand colour: a darker gold in light mode so it meets WCAG AA
+       contrast (5.0:1 on white) against the light backgrounds. */
+    --color-primary-text: #946700;
+    --color-primary-hover-text: #7d5700;
     --color-accent: #2a54f5;
     
     /* Text colors */
@@ -55,6 +59,8 @@
         /* Primary colors - keep the amber/yellow theme */
         --color-primary: #FFC107;
         --color-primary-hover: #ffb300;
+        --color-primary-text: #FFC107;
+        --color-primary-hover-text: #ffb300;
         --color-accent: #5c7cfa;
         
         /* Text colors */
@@ -107,6 +113,8 @@
     /* Primary colors - keep the amber/yellow theme */
     --color-primary: #FFC107;
     --color-primary-hover: #ffb300;
+    --color-primary-text: #FFC107;
+    --color-primary-hover-text: #ffb300;
     --color-accent: #5c7cfa;
     
     /* Text colors */
@@ -317,7 +325,7 @@ strong, b {
  *------------------------------------------*/
 
 a {
-    color: var(--color-primary);
+    color: var(--color-primary-text);
     text-decoration: none;
     -webkit-transition: all 0.3s ease 0s;
     -moz-transition: all 0.3s ease 0s;
@@ -336,7 +344,7 @@ a:active {
 a:hover,
 a:focus {
     text-decoration: none;
-    color: var(--color-primary-hover);
+    color: var(--color-primary-hover-text);
 }
 
 p {
@@ -518,12 +526,12 @@ button:focus,
 
 .section-title {
     margin-bottom: 15px;
-    color: var(--color-primary-hover) !important;
+    color: var(--color-primary-hover-text) !important;
 }
 
 .section-title h2 {
     margin-bottom: 5px;
-    color: var(--color-primary-hover) !important;
+    color: var(--color-primary-hover-text) !important;
 }
 
 
@@ -973,14 +981,14 @@ p.res-strengths {
 }
 
 .navbar-default .navbar-nav>li>a {
-    color: var(--color-primary);
+    color: var(--color-primary-text);
     border-bottom: 1px solid transparent;
     border-top: 2px solid transparent;
     user-select: none;
 }
 
 .navbar-default .navbar-nav>li>a:hover {
-    color: var(--color-primary-hover);
+    color: var(--color-primary-hover-text);
 }
 
 .navbar-default {
@@ -990,13 +998,13 @@ p.res-strengths {
 }
 
 .navbar-default .navbar-nav>li>a:focus {
-    color: var(--color-primary-hover);
+    color: var(--color-primary-hover-text);
     background-color: transparent;
     border-bottom: 1px solid var(--color-primary-hover);
 }
 
 .selected {
-    color: var(--color-primary-hover) !important;
+    color: var(--color-primary-hover-text) !important;
     background-color: transparent !important;
     border-bottom: 1px solid var(--color-primary-hover) !important;
 }
@@ -1026,7 +1034,7 @@ p.res-strengths {
 }
 
 .github-item a:hover {
-    color: var(--color-primary-hover);
+    color: var(--color-primary-hover-text);
 }
 
 /* Dark mode GitHub items */
@@ -1327,7 +1335,7 @@ body.modal-open {
 
 /* Submit button styling - yellow outline like Read More */
 .btn-blog-outline {
-    color: var(--color-primary) !important;
+    color: var(--color-primary-text) !important;
     background-color: transparent !important;
     border: 2px solid var(--color-primary) !important;
     border-radius: 6px !important;
@@ -1349,7 +1357,7 @@ body.modal-open {
 /* Dark mode styles for yellow outline button */
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .btn-blog-outline {
-        color: var(--color-primary) !important;
+        color: var(--color-primary-text) !important;
         border-color: var(--color-border-primary) !important;
     }
     
@@ -1362,7 +1370,7 @@ body.modal-open {
 }
 
 [data-theme="dark"] .btn-blog-outline {
-    color: var(--color-primary) !important;
+    color: var(--color-primary-text) !important;
     border-color: var(--color-border-primary) !important;
 }
 
@@ -1397,7 +1405,7 @@ body.modal-open {
 /* Dark mode styles for submit button */
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .btn-blog-outline-dark {
-        color: var(--color-primary) !important;
+        color: var(--color-primary-text) !important;
         border-color: var(--color-border-primary) !important;
     }
     
@@ -1410,7 +1418,7 @@ body.modal-open {
 }
 
 [data-theme="dark"] .btn-blog-outline-dark {
-    color: var(--color-primary) !important;
+    color: var(--color-primary-text) !important;
     border-color: var(--color-border-primary) !important;
 }
 
@@ -1534,4 +1542,31 @@ img.img-fade {
 .res-strengths .res-skill {
     display: inline-block;
     margin-right: 0.75em;
+}
+
+/* Font Awesome declares its fonts with font-display: block, which hides icons
+   (and delays text that waits on them) until the font downloads. Redeclare
+   the same fonts with swap; later @font-face rules for the same face win. */
+@font-face {
+    font-family: "Font Awesome 7 Free";
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url("../../@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Font Awesome 7 Free";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../../@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Font Awesome 7 Brands";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../../@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2") format("woff2");
 }

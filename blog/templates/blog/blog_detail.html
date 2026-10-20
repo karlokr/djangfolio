@@ -3,6 +3,8 @@
 
 {% block title %}{{ post.title }} - {{ site_config.full_name }}{% endblock %}
 
+{% block meta_description %}<meta name="description" content="{{ post.excerpt|truncatechars:300 }}">{% endblock %}
+
 {% block extra_css %}
 
 <!-- Open Graph / Facebook -->
