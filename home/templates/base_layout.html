@@ -79,6 +79,18 @@
 {% block extra_js %}{% endblock %}
 
 <script nonce="{{ request.csp_nonce }}">
+    // htmx runs this script again when Back restores its snapshot of <body>.
+    // Listeners on document and body outlive that swap, so they are added
+    // only on the first run; otherwise each Back would stack another copy.
+    // (var, not const: a second const declaration would throw on the re-run.)
+    var siteScriptRerun = window.siteScriptRan === true;
+    window.siteScriptRan = true;
+    function listenOnce(target, type, handler) {
+        if (!siteScriptRerun) {
+            target.addEventListener(type, handler);
+        }
+    }
+
     function updateActiveNavLink() {
         const path = window.location.pathname;
         const navItems = document.querySelectorAll('.navbar-nav .nav-item');
@@ -104,7 +116,7 @@
     }
     
     // Run on page load
-    document.addEventListener('DOMContentLoaded', function() {
+    listenOnce(document, 'DOMContentLoaded', function() {
         updateActiveNavLink();
         // Initialize syntax highlighting
         document.querySelectorAll('pre code').forEach((block) => {
@@ -119,44 +131,41 @@
     });
     
     // Dark mode functionality
-    function initializeTheme() {
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeToggleDesktop = document.getElementById('theme-toggle-desktop');
+    function toggleTheme() {
         const htmlElement = document.documentElement;
-
-        // The toggle's moon/sun icon is chosen by CSS from data-theme and the
-        // system preference (see .theme-icon-* in home/css/style.css), so it is
-        // right from the first paint and needs no updating here.
-
-        // Toggle theme function
-        function toggleTheme() {
-            const currentTheme = htmlElement.getAttribute('data-theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            // Determine current effective theme
-            let effectiveCurrentTheme;
-            if (currentTheme) {
-                effectiveCurrentTheme = currentTheme;
-            } else {
-                effectiveCurrentTheme = prefersDark ? 'dark' : 'light';
-            }
-            
-            // Toggle to opposite
-            const newTheme = effectiveCurrentTheme === 'dark' ? 'light' : 'dark';
-            
-            htmlElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateSyntaxHighlighting(newTheme);
+        const currentTheme = htmlElement.getAttribute('data-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        // Determine current effective theme
+        let effectiveCurrentTheme;
+        if (currentTheme) {
+            effectiveCurrentTheme = currentTheme;
+        } else {
+            effectiveCurrentTheme = prefersDark ? 'dark' : 'light';
         }
         
-        // Attach event listeners to both buttons
-        if (themeToggle) {
-            themeToggle.addEventListener('click', toggleTheme);
-        }
-        if (themeToggleDesktop) {
-            themeToggleDesktop.addEventListener('click', toggleTheme);
-        }
+        // Toggle to opposite
+        const newTheme = effectiveCurrentTheme === 'dark' ? 'light' : 'dark';
         
+        htmlElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateSyntaxHighlighting(newTheme);
+    }
+
+    // The toggle's moon/sun icon is chosen by CSS from data-theme and the
+    // system preference (see .theme-icon-* in home/css/style.css), so it is
+    // right from the first paint and needs no updating here.
+    //
+    // Clicks are caught on the document rather than on the buttons: going
+    // Back restores htmx's snapshot of the whole <body>, navbar included,
+    // which replaces the buttons and drops listeners bound to them.
+    listenOnce(document, 'click', function(event) {
+        if (event.target.closest('#theme-toggle, #theme-toggle-desktop')) {
+            toggleTheme();
+        }
+    });
+
+    function initializeTheme() {
         // Listen for system theme changes
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
             // Only update if user hasn't set a preference
@@ -185,7 +194,7 @@
     }
     
     // Run after HTMX swaps content
-    document.body.addEventListener('htmx:afterSwap', function(event) {
+    listenOnce(document.body, 'htmx:afterSwap', function(event) {
         updateActiveNavLink();
         // Scroll to top when navigating via HTMX
         if (event.detail.target.id === 'main-content') {
@@ -209,11 +218,11 @@
             $('#preloader').hide(); // Immediately hide preloader on navigation
         }
     });
-    document.body.addEventListener('htmx:pushedIntoHistory', updateActiveNavLink);
+    listenOnce(document.body, 'htmx:pushedIntoHistory', updateActiveNavLink);
 
     // On the home page already, the navbar's Home link and site name do
     // nothing: no reload, no scroll, and no switch back to the Resume view.
-    document.body.addEventListener('htmx:beforeRequest', function(event) {
+    listenOnce(document.body, 'htmx:beforeRequest', function(event) {
         const link = event.detail.elt;
         if (!link.closest || !link.closest('nav.fixed-top')) {
             return;
@@ -226,7 +235,7 @@
     
     // Hide preloader and loading classes on initial page load
     // Deferred scripts (jQuery etc.) have run by DOMContentLoaded.
-    document.addEventListener('DOMContentLoaded', function() {
+    listenOnce(document, 'DOMContentLoaded', function() {
         // Returning to a project in the Portfolio (see home/index.html):
         // skip the load animation entirely.
         if (document.documentElement.classList.contains('portfolio-jump')) {

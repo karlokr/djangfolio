@@ -197,3 +197,34 @@ class GitLabLinkTests(TestCase):
                 # The social-icon lists: GitHub, then GitLab, then X.
                 block = html[html.rindex('aria-label="GitHub"'):]
                 self.assertLess(block.index('aria-label="GitLab"'), block.index('aria-label="X (Twitter)"'))
+
+
+class SiteScriptRerunTests(TestCase):
+    """htmx re-runs base_layout's body script when Back restores <body>."""
+
+    def test_global_listeners_are_added_once(self):
+        from pathlib import Path
+        from django.conf import settings
+
+        source = (Path(settings.BASE_DIR) / 'home/templates/base_layout.html').read_text()
+        # Listeners on document/body survive the restore: re-adding them would
+        # stack duplicates, so top-level ones must go through listenOnce().
+        self.assertIn('var siteScriptRerun', source)
+        self.assertEqual(re.findall(r'^    document(?:\.body)?\.addEventListener\(', source, re.M), [])
+        # The theme buttons are replaced by the restore, so clicks are delegated.
+        self.assertNotIn("getElementById('theme-toggle", source)
+
+    def test_social_buttons_have_tooltips(self):
+        from blog.models import BlogPost
+        from resume.models import Resume
+
+        Resume.objects.create(name='Jane Doe', headline='Engineer', location='Earth', about_text='Hi')
+        BlogPost.objects.create(title='A Post', slug='a-post', excerpt='x', content='Body', published=True)
+        config = SiteConfiguration.get_solo()
+        config.gitlab_url = 'https://gitlab.com/someone'
+        config.save()
+        for url in ['/', '/blog/a-post/']:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                for label in ['GitHub', 'GitLab', 'X', 'Email']:
+                    self.assertContains(response, f'data-tooltip="{label}"', count=1)
