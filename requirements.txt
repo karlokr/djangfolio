@@ -19,9 +19,9 @@ django==5.2.18 \
     #   django-axes
     #   django-htmx
     #   django-markdownx
-django-axes==8.3.1 \
-    --hash=sha256:d57e923c0ba33cf45275253dd1313c3a3ff04bec686b38d677beb2b3d43c7bcd \
-    --hash=sha256:f7887582fd12713064f1602091ff6152752becae5e891a15bf802746cab0f51a
+django-axes==9.0.0 \
+    --hash=sha256:863aef4563673c1e77bb3d21be1ba1d2612b0cf9d5365c27c9af9ae1c614c3c0 \
+    --hash=sha256:fb7b0322a09d8f090d5a980690cb5468dc1903d3d950f1968c4e067348d58059
     # via -r requirements.in
 django-htmx==1.29.0 \
     --hash=sha256:0ec5be1645ed71e6787bd75e0250624f00274ac3bb1730f07b6629a95688929b \
