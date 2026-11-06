@@ -47,16 +47,7 @@
 <script nonce="{{ request.csp_nonce }}">
     // Render math on direct page load (HTMX swap is handled in base_layout.html)
     document.addEventListener('DOMContentLoaded', function() {
-        const el = document.querySelector('.blog-content');
-        if (el && typeof renderMathInElement === 'function') {
-            renderMathInElement(el, {
-                delimiters: [
-                    {left: '\\(', right: '\\)', display: false},
-                    {left: '\\[', right: '\\]', display: true}
-                ],
-                throwOnError: false
-            });
-        }
+        renderBlogMath();
     });
 </script>
 {% endblock %}
