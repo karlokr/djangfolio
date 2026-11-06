@@ -24,6 +24,9 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
         ('GitHub', {
             'fields': ('github_username', 'github_url')
         }),
+        ('GitLab', {
+            'fields': ('gitlab_url',)
+        }),
         ('X (Twitter)', {
             'fields': ('x_username', 'x_url')
         }),
