@@ -1,4 +1,5 @@
 import json
+import re
 import urllib.error
 from unittest import mock
 
@@ -141,3 +142,29 @@ class RobotsTxtTests(TestCase):
         self.assertEqual(response['Content-Type'], 'text/plain')
         self.assertContains(response, 'Disallow: /blog/?*tag=')
         self.assertContains(response, 'Disallow: /blog/?*category=')
+
+
+class HtmxTabTitleTests(TestCase):
+    """htmx navigation must leave the tab with the same title as a full load."""
+
+    def setUp(self):
+        from blog.models import BlogPost
+        from projects.models import Project
+        from resume.models import Resume
+
+        Resume.objects.create(name='Jane Doe', headline='Engineer', location='Earth', about_text='Hi')
+        BlogPost.objects.create(title='A Post', slug='a-post', excerpt='x', content='Body', published=True)
+        self.project = Project.objects.create(
+            title='A Project', short_description='x', long_description='y', css_id='p')
+
+    def titles(self, response):
+        return re.findall(r'<title>(.*?)</title>', response.content.decode(), re.DOTALL)
+
+    def test_partials_carry_the_full_page_title(self):
+        for url in ['/', '/blog/', '/blog/a-post/', '/projects/', f'/projects/{self.project.pk}/']:
+            with self.subTest(url=url):
+                full = self.titles(self.client.get(url))
+                partial = self.titles(self.client.get(url, HTTP_HX_REQUEST='true'))
+                self.assertEqual(len(full), 1)
+                self.assertTrue(full[0].strip())
+                self.assertEqual(partial, full)
