@@ -1,5 +1,7 @@
 {% load static %}
 {% load image_tags %}
+{# htmx swaps only update the browser tab title if the response carries one. #}
+{% if request.htmx %}<title>Blog - {{ site_config.full_name }}</title>{% endif %}
 
 <div class="container blog-list-container" style="padding-top: 20px;">
 <div class="row mt-3">
