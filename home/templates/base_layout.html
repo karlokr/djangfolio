@@ -199,18 +199,7 @@
         assignBlogImageModals();
         
         // Re-render KaTeX math if available
-        if (typeof renderMathInElement === 'function') {
-            const el = document.querySelector('.blog-content');
-            if (el) {
-                renderMathInElement(el, {
-                    delimiters: [
-                        {left: '\\(', right: '\\)', display: false},
-                        {left: '\\[', right: '\\]', display: true}
-                    ],
-                    throwOnError: false
-                });
-            }
-        }
+        renderBlogMath();
 
         // Wrap tables in scrollable div
         wrapTablesForScroll();
@@ -254,6 +243,23 @@
         assignBlogImageModals();
     });
     
+    // Render KaTeX math in a blog post. The server (blog/math_markdown.py)
+    // turns every math span, $…$ and $$…$$ included, into \(…\) or \[…\],
+    // so those are the only delimiters: a $ left in the page is a literal
+    // dollar sign and must never start math here.
+    function renderBlogMath() {
+        const el = document.querySelector('.blog-content');
+        if (el && typeof renderMathInElement === 'function') {
+            renderMathInElement(el, {
+                delimiters: [
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+        }
+    }
+
     // Wrap tables in scrollable divs for mobile horizontal scroll
     function wrapTablesForScroll() {
         document.querySelectorAll('.blog-content table').forEach(function(table) {
