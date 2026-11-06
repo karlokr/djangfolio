@@ -36,6 +36,11 @@ class SiteConfiguration(models.Model):
         default='https://github.com/yourusername',
         help_text='Full GitHub profile URL'
     )
+    gitlab_url = models.URLField(
+        default='',
+        blank=True,
+        help_text='Full GitLab profile URL (leave blank to hide the GitLab link)'
+    )
     x_username = models.CharField(
         max_length=100,
         default='yourusername',

@@ -168,3 +168,32 @@ class HtmxTabTitleTests(TestCase):
                 self.assertEqual(len(full), 1)
                 self.assertTrue(full[0].strip())
                 self.assertEqual(partial, full)
+
+
+class GitLabLinkTests(TestCase):
+    """The GitLab link sits between GitHub and X, and only once it's set."""
+
+    def setUp(self):
+        from blog.models import BlogPost
+        from resume.models import Resume
+
+        Resume.objects.create(name='Jane Doe', headline='Engineer', location='Earth', about_text='Hi')
+        BlogPost.objects.create(title='A Post', slug='a-post', excerpt='x', content='Body', published=True)
+        self.config = SiteConfiguration.get_solo()
+
+    def test_blank_by_default_and_hidden(self):
+        self.assertEqual(self.config.gitlab_url, '')
+        for url in ['/', '/blog/a-post/']:
+            with self.subTest(url=url):
+                self.assertNotContains(self.client.get(url), 'fa-gitlab')
+
+    def test_link_between_github_and_x(self):
+        self.config.gitlab_url = 'https://gitlab.com/someone'
+        self.config.save()
+        for url in ['/', '/blog/a-post/']:
+            with self.subTest(url=url):
+                html = self.client.get(url).content.decode()
+                self.assertIn('href="https://gitlab.com/someone"', html)
+                # The social-icon lists: GitHub, then GitLab, then X.
+                block = html[html.rindex('aria-label="GitHub"'):]
+                self.assertLess(block.index('aria-label="GitLab"'), block.index('aria-label="X (Twitter)"'))
