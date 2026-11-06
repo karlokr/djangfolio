@@ -1,79 +1,11 @@
-import re
-
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
-from markdownx.utils import markdownify
 from home.templatetags.image_tags import add_srcset_to_media_images
+from .math_markdown import markdownify_with_math
 from .models import BlogPost, BlogCategory, BlogTag
 from resume.models import Resume
 from portfolio.htmx import wants_partial
-
-
-def _markdownify_with_math(content):
-    """Convert Markdown to HTML while preserving LaTeX math blocks.
-
-    The standard Markdown processor treats backslashes as escape characters
-    and underscores as emphasis markers, which corrupts LaTeX.  This helper
-    extracts ``$$…$$`` and ``$…$`` spans before processing, replaces them
-    with unique placeholders, runs *markdownify*, then restores the originals.
-
-    Dollar-sign delimiters are converted to ``\\[…\\]`` (display) and
-    ``\\(…\\)`` (inline) so that literal ``$`` in the final HTML is never
-    ambiguous with currency symbols like $100 or $HACHI.
-    """
-    placeholders = {}
-    counter = [0]
-
-    def _placeholder(match, display=False):
-        """Replace a math span with a unique key and store the converted form."""
-        raw = match.group(0)
-        inner = match.group(1)
-        counter[0] += 1
-        key = f"MATHBLOCK{counter[0]}"
-        if display:
-            placeholders[key] = f"\\[{inner}\\]"
-        else:
-            placeholders[key] = f"\\({inner}\\)"
-        return key
-
-    # 1. Display math  $$…$$  (may span multiple lines)
-    protected = re.sub(
-        r'\$\$(.+?)\$\$',
-        lambda m: _placeholder(m, display=True),
-        content,
-        flags=re.DOTALL,
-    )
-
-    # 2. Inline math  $…$  – must contain a backslash OR be short & start
-    #    with a letter so we never match currency like $100 or $HACHI.
-    def _inline_placeholder(match):
-        return _placeholder(match, display=False)
-
-    #    Pattern A: contains a backslash  (e.g. $\frac{a}{b}$)
-    protected = re.sub(r'\$(?!\$)([^$\n]*?\\[^$\n]*?)\$', _inline_placeholder, protected)
-    #    Pattern B: short (1-10 chars), starts with a letter  (e.g. $k$, $x_i$)
-    protected = re.sub(r'\$(?!\$)([a-zA-Z][^$\n]{0,8}?)\$', _inline_placeholder, protected)
-
-    # 3. Also protect existing \[…\] and \(…\) from Markdown mangling
-    protected = re.sub(
-        r'\\\[(.+?)\\\]',
-        lambda m: _placeholder(m, display=True),
-        protected,
-        flags=re.DOTALL,
-    )
-    protected = re.sub(
-        r'\\\((.+?)\\\)',
-        lambda m: _placeholder(m, display=False),
-        protected,
-    )
-
-    html = markdownify(protected)
-
-    for key in sorted(placeholders, key=len, reverse=True):
-        html = html.replace(key, placeholders[key])
-
-    return html
 
 
 def blog_list(request):
@@ -165,7 +97,7 @@ def blog_detail(request, slug):
     context = {
         'post': post,
         'post_content_html': add_srcset_to_media_images(
-            _markdownify_with_math(post.content),
+            markdownify_with_math(post.content),
             # Post images fill the main column.
             '(min-width: 1200px) 730px, (min-width: 992px) 610px, 100vw',
         ),
