@@ -40,7 +40,7 @@
                 {% if post.categories.all %}
                 <div class="mb-3">
                     {% for category in post.categories.all %}
-                    <a href="{% url 'blog:blog_list' %}?category={{ category.slug }}" class="badge badge-primary"
+                    <a rel="nofollow" href="{% url 'blog:blog_list' %}?category={{ category.slug }}" class="badge badge-primary"
                        hx-get="{% url 'blog:blog_list' %}?category={{ category.slug }}"
                        hx-target="#main-content"
                        hx-swap="innerHTML"
@@ -81,7 +81,7 @@
             <footer class="mt-5">
                 <h6>Tags:</h6>
                 {% for tag in post.tags.all %}
-                <a href="{% url 'blog:blog_list' %}?tag={{ tag.slug }}" class="badge badge-secondary"
+                <a rel="nofollow" href="{% url 'blog:blog_list' %}?tag={{ tag.slug }}" class="badge badge-secondary"
                    hx-get="{% url 'blog:blog_list' %}?tag={{ tag.slug }}"
                    hx-target="#main-content"
                    hx-swap="innerHTML"
