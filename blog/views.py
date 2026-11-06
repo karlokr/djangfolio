@@ -142,7 +142,13 @@ def blog_list(request):
     
     # Return partial template for HTMX requests
     template = 'blog/blog_list_partial.html' if wants_partial(request) else 'blog/blog_list.html'
-    return render(request, template, context)
+    response = render(request, template, context)
+    # Tag and category filters combine, so there's no end to the filtered
+    # URLs a crawler can find. Keep them out of search indexes and tell
+    # crawlers not to follow links from them (robots.txt also disallows them).
+    if category_slugs or tag_slugs:
+        response['X-Robots-Tag'] = 'noindex, nofollow'
+    return response
 
 
 def blog_detail(request, slug):
