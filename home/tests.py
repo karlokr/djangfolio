@@ -132,3 +132,12 @@ class GithubReposViewTests(TestCase):
 
     def test_post_not_allowed(self):
         self.assertEqual(self.client.post('/github-repos/').status_code, 405)
+
+
+class RobotsTxtTests(TestCase):
+    def test_disallows_blog_filters(self):
+        response = self.client.get('/robots.txt')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/plain')
+        self.assertContains(response, 'Disallow: /blog/?*tag=')
+        self.assertContains(response, 'Disallow: /blog/?*category=')

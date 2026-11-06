@@ -21,7 +21,7 @@ def site_config(request):
     if settings.SITE_URL:
         canonical_url = settings.SITE_URL.rstrip('/') + request.path
     else:
-        canonical_url = request.build_absolute_uri()
+        canonical_url = request.build_absolute_uri(request.path)
     
     return {
         'site_config': SiteConfiguration.get_solo(),

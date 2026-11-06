@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.core.mail import send_mail
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -155,4 +155,19 @@ def github_repos(request):
     response = JsonResponse({'username': username, 'repos': repos})
     # Let browsers reuse it briefly; the server cache does the real work.
     response['Cache-Control'] = 'public, max-age=300'
+    return response
+
+
+# Blog tag and category filters combine into an endless set of URLs, so
+# crawlers are kept off them. Pagination (?page=N) stays crawlable.
+ROBOTS_TXT = """User-agent: *
+Disallow: /blog/?*category=
+Disallow: /blog/?*tag=
+"""
+
+
+@require_GET
+def robots_txt(request):
+    response = HttpResponse(ROBOTS_TXT, content_type='text/plain')
+    response['Cache-Control'] = 'public, max-age=86400'
     return response
