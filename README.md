@@ -208,6 +208,7 @@ The site uses a database-backed configuration system accessible through the Djan
    - `display_email`: Email address shown publicly on the site
    - `github_username`: Your GitHub username (for API integration)
    - `github_url`: Full URL to your GitHub profile
+   - `gitlab_url`: Full URL to your GitLab profile (optional; the GitLab link is hidden while blank)
    - `copyright_text`: Copyright text in the footer
    - `profile_image`: Upload your profile photo (recommended: 400x400px or larger, square)
    - `profile_image_alt_text`: Alt text for accessibility
