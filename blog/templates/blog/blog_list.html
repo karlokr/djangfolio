@@ -3,6 +3,13 @@
 
 {% block title %}Blog - {{ site_config.full_name }}{% endblock %}
 
+{% block extra_head %}
+{% if selected_categories or selected_tags %}
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="{{ canonical_url }}">
+{% endif %}
+{% endblock %}
+
 {% block content %}
 {% include 'blog/blog_list_partial.html' %}
 {% endblock %}
