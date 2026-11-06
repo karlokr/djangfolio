@@ -51,7 +51,7 @@
     --color-white: #ffffff;
     --color-black: #000000;
     --color-shadow: rgba(0, 0, 0, 0.1);
-    /* Pale amber wash behind hovered nav links and tabs */
+    /* Pale amber wash behind hovered navbar links */
     --color-hover-tint: rgba(255, 193, 7, 0.14);
 }
 
@@ -1021,18 +1021,37 @@ p.res-strengths {
 }
 
 .navbar-default .navbar-nav>li>a {
+    position: relative;
     color: var(--color-primary-text);
     border-bottom: 1px solid transparent;
     border-top: 2px solid transparent;
-    border-radius: 4px 4px 0 0;
     user-select: none;
-    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.navbar-default .navbar-nav>li>a:hover,
-.navbar-default .navbar-nav>li>a.selected:hover {
+/* Resume/Portfolio underline: grows out from the centre on hover and
+   shrinks back to it on leave. The selected tab keeps it at full width, so
+   switching tabs shrinks the old one's underline while the new one's stays. */
+.navbar-default .navbar-nav>li>a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background-color: var(--color-primary-hover-text);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s ease;
+}
+
+.navbar-default .navbar-nav>li>a:hover::after,
+.navbar-default .navbar-nav>li>a:focus-visible::after,
+.navbar-default .navbar-nav>li>a.selected::after {
+    transform: scaleX(1);
+}
+
+.navbar-default .navbar-nav>li>a:hover {
     color: var(--color-primary-hover-text);
-    background-color: var(--color-hover-tint) !important;
 }
 
 .navbar-default {
@@ -1044,13 +1063,11 @@ p.res-strengths {
 .navbar-default .navbar-nav>li>a:focus {
     color: var(--color-primary-hover-text);
     background-color: transparent;
-    border-bottom: 1px solid var(--color-primary-hover-text);
 }
 
 .selected {
     color: var(--color-primary-hover-text) !important;
     background-color: transparent !important;
-    border-bottom: 1px solid var(--color-primary-hover-text) !important;
 }
 
 .github-item {
