@@ -623,33 +623,7 @@ p.res-strengths {
     float: none;
 }
 
-.navbar-default .navbar-nav>li>a {
-    color: var(--color-primary-text);
-    border-bottom: 1px solid transparent;
-    border-top: 2px solid transparent;
-}
-
-.navbar-default .navbar-nav>li>a:hover {
-    color: var(--color-primary-hover-text);
-}
-
-.navbar-default {
-    background-color: var(--color-bg-white);
-    border-radius: 0px;
-    border-color: transparent;
-}
-
-.navbar-default .navbar-nav>li>a:focus {
-    color: var(--color-primary-hover-text);
-    background-color: transparent;
-    border-bottom: 1px solid var(--color-primary-hover-text);
-}
-
-.selected {
-    color: var(--color-primary-hover-text) !important;
-    background-color: transparent !important;
-    border-bottom: 1px solid var(--color-primary-hover-text) !important;
-}
+/* Resume/Portfolio tab styles (.navbar-default, .selected) live in home/css/style.css. */
 
 .github-item {
     border: 1px solid var(--color-border-primary);
