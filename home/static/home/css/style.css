@@ -51,6 +51,8 @@
     --color-white: #ffffff;
     --color-black: #000000;
     --color-shadow: rgba(0, 0, 0, 0.1);
+    /* Pale amber wash behind hovered nav links and tabs */
+    --color-hover-tint: rgba(255, 193, 7, 0.14);
 }
 
 /* Auto dark mode based on system preference */
@@ -106,6 +108,7 @@
         --color-white: #1a1a1a;
         --color-black: #ffffff;
         --color-shadow: rgba(0, 0, 0, 0.3);
+        --color-hover-tint: rgba(255, 193, 7, 0.09);
     }
 }
 
@@ -160,6 +163,7 @@
     --color-white: #1a1a1a;
     --color-black: #ffffff;
     --color-shadow: rgba(0, 0, 0, 0.3);
+    --color-hover-tint: rgba(255, 193, 7, 0.09);
 }
 
 body {
@@ -259,10 +263,13 @@ html, body {
 .navbar-expand-lg .navbar-nav .nav-link {
     color: rgba(0, 0, 0, 0.5);
     user-select: none;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .navbar-expand-lg .navbar-nav .nav-link:hover {
     color: var(--color-text-black);
+    background-color: var(--color-hover-tint);
 }
 
 
@@ -643,6 +650,36 @@ button:focus,
     border-color: var(--color-primary-hover);
 }
 
+/* Small label above a social button on hover or keyboard focus */
+.social-icon li a[data-tooltip] {
+    position: relative;
+}
+
+.social-icon li a[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translate(-50%, 3px);
+    padding: 3px 7px;
+    border-radius: 3px;
+    background-color: var(--color-text-dark);
+    color: var(--color-bg-white);
+    font-size: 11px;
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 10;
+}
+
+.social-icon li a[data-tooltip]:hover::after,
+.social-icon li a[data-tooltip]:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
 .about-text address {
     line-height: 34px;
 }
@@ -987,11 +1024,15 @@ p.res-strengths {
     color: var(--color-primary-text);
     border-bottom: 1px solid transparent;
     border-top: 2px solid transparent;
+    border-radius: 4px 4px 0 0;
     user-select: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.navbar-default .navbar-nav>li>a:hover {
+.navbar-default .navbar-nav>li>a:hover,
+.navbar-default .navbar-nav>li>a.selected:hover {
     color: var(--color-primary-hover-text);
+    background-color: var(--color-hover-tint) !important;
 }
 
 .navbar-default {

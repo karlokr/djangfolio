@@ -50,13 +50,13 @@
                             <strong>Location</strong> {{ resume.location }}
                         </address>
                         <ul class="social-icon" style="margin: 0; padding: 0; display: flex; align-items: center; list-style: none;">
-                            <li><a href="{{ site_config.github_url }}" aria-label="GitHub"><i class="fa-brands fa-github"
+                            <li><a href="{{ site_config.github_url }}" aria-label="GitHub" data-tooltip="GitHub"><i class="fa-brands fa-github"
                                         aria-hidden="true"></i></a></li>
-                            {% if site_config.gitlab_url %}<li><a href="{{ site_config.gitlab_url }}" aria-label="GitLab"><i class="fa-brands fa-gitlab"
+                            {% if site_config.gitlab_url %}<li><a href="{{ site_config.gitlab_url }}" aria-label="GitLab" data-tooltip="GitLab"><i class="fa-brands fa-gitlab"
                                         aria-hidden="true"></i></a></li>{% endif %}
-                            {% if site_config.x_url %}<li><a href="{{ site_config.x_url }}" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"
+                            {% if site_config.x_url %}<li><a href="{{ site_config.x_url }}" aria-label="X (Twitter)" data-tooltip="X"><i class="fa-brands fa-x-twitter"
                                         aria-hidden="true"></i></a></li>{% endif %}
-                            <li><a href="mailto:{{ site_config.display_email }}" aria-label="Email"><i class="fa-solid fa-envelope"
+                            <li><a href="mailto:{{ site_config.display_email }}" aria-label="Email" data-tooltip="Email"><i class="fa-solid fa-envelope"
                                         aria-hidden="true"></i></a></li>
                         </ul>
                     </div>
