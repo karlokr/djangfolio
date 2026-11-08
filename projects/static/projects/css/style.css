@@ -767,10 +767,6 @@ p.res-strengths {
     }
 }
 
-.portfolio-pdf, .portfolio-img, .portfolio-vid {
-    border: 1px solid var(--color-border-primary);
-    cursor: pointer;
-}
 
 .loading {
     display: none;
