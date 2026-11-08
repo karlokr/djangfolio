@@ -196,6 +196,13 @@ html, body {
     overflow-x: hidden;
 }
 
+/* Top of the blog and projects pages: with their first row's .mt-3 (16px),
+   less the 4px the navbar overhangs #main-content's padding, content starts
+   16px below the navbar, like the home page's box. */
+.page-container {
+    padding-top: 4px;
+}
+
 /* Navbar styling - only for main navbar, not resume/portfolio switcher */
 .navbar-expand-lg.navbar.bg-light {
     background-color: var(--color-bg-white) !important;
