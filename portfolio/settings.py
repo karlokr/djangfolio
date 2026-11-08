@@ -90,6 +90,8 @@ MIDDLEWARE.extend([
     # Keeps browser caches from serving an htmx partial as a full page.
     'portfolio.htmx.VaryOnHtmxMiddleware',
     'portfolio.middleware.ContentSecurityPolicyMiddleware',
+    # Keeps Cloudflare and browsers from caching a 404 (see the class).
+    'portfolio.middleware.NeverCacheNotFoundMiddleware',
     # Must be last: blocks locked-out login attempts (see AXES_* below).
     'axes.middleware.AxesMiddleware',
 ])
