@@ -46,10 +46,37 @@ jQuery(function ($) {
         sidebarBehavior: 'stick-to-top'
     });
 
-    // Show the Portfolio view with the usual fade, scrolled to the top.
+    // Side by side, the Resume/Portfolio switch scrolls to the top, where the
+    // view's column starts. Stacked (narrow screens, see .columns-block in
+    // style.css) the buttons sit just above the view, so the visitor stays
+    // where they are. The page's height is held while one view fades out
+    // and the other in: with neither shown the page is much shorter, and
+    // the browser would clamp the scroll position up to it.
+    var stackedLayout = window.matchMedia('(max-width: 768px)');
+    var viewSwitchTimer = null;
+
+    function beginViewSwitch() {
+        if (!stackedLayout.matches) {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            return;
+        }
+        var $container = $('#right-container');
+        clearTimeout(viewSwitchTimer);
+        $container.css('min-height', $container.outerHeight());
+        // Both fades take 200ms; release a little after the new view is in.
+        viewSwitchTimer = setTimeout(function () {
+            $container.css('min-height', '');
+        }, 500);
+    }
+
+    // Show the Portfolio view with the usual fade.
     function showPortfolio() {
         $(".projects-button").focus();
         $(".projects-button").addClass("active")
+        beginViewSwitch();
         // Fade the Resume out, then the Portfolio in, so the two are never
         // on the page at once (no loading overlay hides the switch anymore).
         $('#resume').stop(true, true).fadeOut(200, function () {
@@ -62,10 +89,6 @@ jQuery(function ($) {
                 // Start the videos now in view (they play on scroll otherwise).
                 $(window).trigger('scroll');
             });
-        });
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
         });
         $('.resume-button').removeClass('selected');
         $('.projects-button').addClass('selected');
@@ -159,13 +182,10 @@ jQuery(function ($) {
     $(".resume-button").on("click", function (event) {
         event.preventDefault();
         $(".resume-button").focus();
+        beginViewSwitch();
         // Fade the Portfolio out, then the Resume in (see showPortfolio).
         $('#projects').stop(true, true).fadeOut(200, function () {
             $('#resume').stop(true, true).fadeIn(200);
-        });
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
         });
         $('.projects-button').removeClass('selected');
         $('.resume-button').addClass('selected');
