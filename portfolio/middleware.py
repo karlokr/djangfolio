@@ -2,6 +2,27 @@
 import secrets
 
 from django.conf import settings
+from django.utils.cache import add_never_cache_headers
+
+
+class NeverCacheNotFoundMiddleware:
+    """Mark 404 responses as never cacheable.
+
+    During a deploy, a page from the new container can ask for a static file
+    (``style.<new hash>.css``) that the old container, still answering some
+    requests, doesn't have. Cloudflare cached that 404 and told browsers to
+    keep it for 4 hours, so the site stayed unstyled after the deploy
+    finished. Uncacheable, a 404 only affects the one request.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if response.status_code == 404:
+            add_never_cache_headers(response)
+        return response
 
 
 class ContentSecurityPolicyMiddleware:

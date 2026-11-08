@@ -324,3 +324,20 @@ class ContactTurnstileTests(TestCase):
         with self.settings(TURNSTILE_SITE_KEY='site-key-123', TURNSTILE_SECRET_KEY='secret'):
             self.assertContains(self.client.get('/'),
                                 '<div class="turnstile-slot" data-sitekey="site-key-123"></div>', count=2)
+
+
+class NotFoundCachingTests(TestCase):
+    """A 404 must never be cached (Cloudflare kept one for hours after a deploy)."""
+
+    def test_404s_are_not_cacheable(self):
+        for url in ['/static/home/css/style.000000000000.css', '/no-such-page/']:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 404)
+                self.assertIn('no-store', response['Cache-Control'])
+                self.assertIn('max-age=0', response['Cache-Control'])
+
+    def test_other_responses_keep_their_caching(self):
+        response = self.client.get('/robots.txt')
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('no-store', response.get('Cache-Control', ''))
