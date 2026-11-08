@@ -3,7 +3,7 @@
 {# htmx swaps only update the browser tab title if the response carries one. #}
 {% if request.htmx %}<title>{{ project.title }} - {{ site_config.full_name }}</title>{% endif %}
 
-<div class="container" style="padding-top: 20px;">
+<div class="container page-container">
     {# The Back link sits outside the heading so search engines read the h1 as just the project title. #}
     {% if site_config.show_projects_link %}
     <a class="project-back-link"
