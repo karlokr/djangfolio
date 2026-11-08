@@ -746,6 +746,21 @@ button:focus,
 }
 
 
+/* Contact forms: the Submit button on the left and the Turnstile widget
+   (300 x 65, rendered by home/js/scripts.js) to its right, 20px apart. On
+   narrow screens the widget wraps below the button. */
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+.form-actions .turnstile-slot {
+    /* Hold the widget's place before it renders, so the row doesn't jump. */
+    min-height: 65px;
+}
+
 /*-------------------
  * Social Icon
  *-------------------*/
