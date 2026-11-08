@@ -266,9 +266,10 @@ html, body {
   display:flex;
 }
 
-/* Active nav link highlighting */
+/* Active nav link highlighting: the current page's link takes the section
+   titles' colour (dark gold in light mode, amber in dark mode). */
 .navbar-expand-lg .navbar-nav .nav-item.active .nav-link {
-    color: var(--color-text-black);
+    color: var(--color-primary-hover-text);
 }
 
 .navbar-expand-lg .navbar-nav .nav-link {
