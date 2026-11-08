@@ -17,8 +17,12 @@
     html.portfolio-jump #preloader { display: none !important; }
     html.portfolio-jump #resume { display: none !important; }
     html.portfolio-jump #projects { display: block !important; }
-    /* Land project anchors below the fixed top navbar. */
+    /* Land project anchors below the fixed top navbar; in the desktop frame
+       (style.css), 16px inside its top line. scripts.js pins to the same. */
     #projects [id] { scroll-margin-top: 80px; }
+    @media (min-width: 992px) and (min-height: 600px) {
+        #projects [id] { scroll-margin-top: 93px; }
+    }
 </style>
 {% endblock %}
 

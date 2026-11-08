@@ -10,7 +10,7 @@
 
     <div class="columns-block container" id="right-container">
         <div class="left-col-block blocks">
-            <header class="header theiaStickySidebar">
+            <header class="header">
                 <div class="profile-img">
                     {% if site_config.profile_image %}
                         <img src="{{ site_config.profile_image.url }}" class="img-responsive" alt="{{ site_config.profile_image_alt_text }}"
@@ -63,12 +63,11 @@
                 </div>
             </header>
         </div>
-        {# On desktop this column scrolls on its own (see #right-container in style.css); data-keep-scroll keeps its position across Back. #}
-        <div class="right-col-block blocks" data-keep-scroll>
+        <div class="right-col-block blocks">
             <!-- #resume -->
             <div class="right-col-block blocks" id="resume">
             
-                <div class="theiaStickySidebar">
+                <div>
                     <section class="expertise-wrapper section-wrapper gray-bg">
                         <div class="container-fluid">
                             <div class="row">
@@ -334,7 +333,7 @@
             <!-- #projects -->
             <div class="right-col-block blocks" id="projects" style="display: none">
             
-                <div class="theiaStickySidebar">
+                <div>
                     <section class="section-wrapper portfolio-section" id="github-section"
                         style="padding-bottom:48px;">
                         <div class="container-fluid">
@@ -719,7 +718,5 @@
     </div>
 </div>
 
-<script defer src="{% static 'home/js/theia-sticky-sidebar.js' %}"></script>
-<script defer src="{% static 'home/js/isInViewport.js' %}"></script>
 <script defer src="{% static 'dompurify/dist/purify.min.js' %}"></script>
 <script defer src="{% static 'home/js/scripts.js' %}"></script>
