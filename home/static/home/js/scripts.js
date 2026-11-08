@@ -37,74 +37,24 @@ jQuery(function ($) {
 
 
     // --------------------------------------------------------------------
-    // Layout: a fixed frame side by side, stacked on narrow screens
+    // Layout
     // --------------------------------------------------------------------
 
-    // On desktop the page is a fixed frame that doesn't scroll; the right
-    // column, holding the Resume and Portfolio views, does (see
-    // #right-container in style.css, which uses the same media query).
-    // Otherwise the page scrolls as usual, with the columns side by side or,
-    // on narrow screens, stacked (see .columns-block).
+    // On desktop the home page sits in a fixed frame (see #right-container in
+    // style.css, which uses the same media query): the page scrolls as usual,
+    // the left column is sticky, and only the right column moves. On narrow
+    // screens the columns stack (see .columns-block).
     var fixedFrame = window.matchMedia('(min-width: 992px) and (min-height: 600px)');
     var stackedLayout = window.matchMedia('(max-width: 768px)');
-    var $viewColumn = $('#right-container > .right-col-block');
-
-    // The sticky sidebar plugin follows the page's scrolling, so it's only
-    // needed when the page is what scrolls.
-    function stickySidebar($elements) {
-        if (!fixedFrame.matches) {
-            $elements.theiaStickySidebar({
-                additionalMarginTop: 70,
-                sidebarBehavior: 'stick-to-top'
-            });
-        }
-    }
-
-    // Only initialize sticky sidebar on visible elements (resume is shown by default)
-    stickySidebar($('.left-col-block, #resume'));
-
-    // The right column's scrolling stands in for the page's: the handlers on
-    // window scroll (playing the videos on screen, fixHeights) run on it too.
-    $viewColumn.on('scroll', function () {
-        $(window).trigger('scroll');
-    });
-
-    // In the fixed frame, the mouse wheel anywhere else on the page (the
-    // left column, the margins) scrolls the right column, so the views
-    // scroll wherever the pointer is. Not when the left column has to scroll
-    // itself (short windows), and not while a pop-up is open.
-    $('#main-wrapper').on('wheel', function (event) {
-        var wheel = event.originalEvent;
-        if (!fixedFrame.matches || wheel.ctrlKey || $('body').hasClass('modal-open') ||
-                $(event.target).closest($viewColumn).length) {
-            return;
-        }
-        var left = $(event.target).closest('.left-col-block')[0];
-        if (left && left.scrollHeight > left.clientHeight) {
-            return;
-        }
-        var column = $viewColumn[0];
-        var unit = wheel.deltaMode === 1 ? 40 : (wheel.deltaMode === 2 ? column.clientHeight : 1);
-        column.scrollBy({ top: wheel.deltaY * unit });
-        event.preventDefault();
-    });
 
     // Side by side, the Resume/Portfolio switch scrolls to the top, where the
-    // new view starts: the right column's in the fixed frame, else the
-    // page's. Stacked the buttons sit just above the view, so the visitor
-    // stays where they are. The page's height is held while one view fades
-    // out and the other in: with neither shown the page is much shorter, and
-    // the browser would clamp the scroll position up to it.
+    // new view starts. Stacked the buttons sit just above the view, so the
+    // visitor stays where they are. The page's height is held while one view
+    // fades out and the other in: with neither shown the page is much
+    // shorter, and the browser would clamp the scroll position up to it.
     var viewSwitchTimer = null;
 
     function beginViewSwitch() {
-        if (fixedFrame.matches) {
-            $viewColumn[0].scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-            return;
-        }
         if (!stackedLayout.matches) {
             window.scrollTo({
                 top: 0,
@@ -128,13 +78,10 @@ jQuery(function ($) {
         beginViewSwitch();
         // Fade the Resume out, then the Portfolio in, so the two are never
         // on the page at once (no loading overlay hides the switch anymore).
+        // The videos now on screen start by themselves (see the video
+        // observer in assignModals).
         $('#resume').stop(true, true).fadeOut(200, function () {
-            $('#projects').stop(true, true).fadeIn(200, function () {
-                // Initialize sticky sidebar on portfolio now that it's visible
-                stickySidebar($('#projects'));
-                // Start the videos now in view (they play on scroll otherwise).
-                $(window).trigger('scroll');
-            });
+            $('#projects').stop(true, true).fadeIn(200);
         });
         $('.resume-button').removeClass('selected');
         $('.projects-button').addClass('selected');
@@ -176,10 +123,6 @@ jQuery(function ($) {
         $('#preloader').stop(true, true).hide();
         $('#right-container, #profile-image, #content-loading').removeClass('loading');
         $('#resume').stop(true, true).hide();
-        // The sticky-sidebar plugin is deliberately not started on the
-        // Portfolio here: it repositions the column in response to scrolling,
-        // which moves the project away from where we scroll to. The Portfolio
-        // is far taller than the screen, so it never needs to stick anyway.
         $('#projects').stop(true, true).show();
         // The views now carry their own inline display, so drop the early
         // !important styling; otherwise the Resume/Portfolio buttons can't
@@ -188,17 +131,10 @@ jQuery(function ($) {
         $('.resume-button').removeClass('selected');
         $('.projects-button').addClass('selected');
 
-        // Start the videos now in view (they play on scroll otherwise).
-        setTimeout(function () { $(window).trigger('scroll'); }, 0);
-
-        // In the fixed frame, scroll the right column to put the project near
-        // its top; otherwise scroll the page, leaving room for the navbar.
+        // Leave room for the fixed top navbar; in the fixed frame, put the
+        // project 16px inside the frame's top line (at 76px).
         function pin() {
-            if (fixedFrame.matches) {
-                $viewColumn.scrollTop($target.offset().top - $viewColumn.offset().top + $viewColumn.scrollTop() - 16);
-            } else {
-                window.scrollTo(0, $target.offset().top - 80);
-            }
+            window.scrollTo(0, $target.offset().top - (fixedFrame.matches ? 93 : 80));
         }
         pin();
 
@@ -210,8 +146,6 @@ jQuery(function ($) {
         const observer = window.ResizeObserver ? new ResizeObserver(pin) : null;
         if (observer) {
             observer.observe(document.body);
-            // In the fixed frame the page keeps its size; the Portfolio grows.
-            observer.observe(document.getElementById('projects'));
         }
         function repin() {
             if (pinned) {
@@ -701,10 +635,7 @@ jQuery(function ($) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
             window.scrollTo(0, parseInt(scrollY));
-            let videos = document.getElementsByClassName('portfolio-vid');
-            for (let i = 0; i < videos.length; i++) {
-                videos[i].play();
-            }
+            videosOnScreen.forEach(playVideo);
         }
 
         // When the user clicks on the background, close the modal
@@ -714,10 +645,7 @@ jQuery(function ($) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
             window.scrollTo(0, parseInt(scrollY));
-            let videos = document.getElementsByClassName('portfolio-vid');
-            for (let i = 0; i < videos.length; i++) {
-                videos[i].play();
-            }
+            videosOnScreen.forEach(playVideo);
         }
 
         // When the user clicks on the background, close the modal
@@ -727,10 +655,7 @@ jQuery(function ($) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
             window.scrollTo(0, parseInt(scrollY));
-            let videos = document.getElementsByClassName('portfolio-vid');
-            for (let i = 0; i < videos.length; i++) {
-                videos[i].play();
-            }
+            videosOnScreen.forEach(playVideo);
         }
 
         // Do nothing when the user clicks on the video
@@ -758,18 +683,27 @@ jQuery(function ($) {
             }
         }
 
-        // Play videos that are on screen and pause the rest. Videos use
-        // preload="none", so they only download once played; skipping hidden
-        // ones keeps the Portfolio's videos from loading while it's closed.
-        $(window).on("scroll", function () {
-            $('video').each(function () {
-                if ($(this).is(":visible") && $(this).is(":in-viewport")) {
-                    playVideo($(this)[0]);
-                } else {
-                    $(this)[0].pause();
-                }
+        // Play the Portfolio's videos while they're on screen and pause the
+        // rest. Videos use preload="none", so they only download once played;
+        // hidden ones (the Portfolio while it's closed) are never on screen,
+        // so they don't load until it's opened.
+        var videosOnScreen = new Set();
+        if (window.IntersectionObserver) {
+            var videoObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        videosOnScreen.add(entry.target);
+                        playVideo(entry.target);
+                    } else {
+                        videosOnScreen.delete(entry.target);
+                        entry.target.pause();
+                    }
+                });
             });
-        });
+            $('.portfolio-vid').each(function () {
+                videoObserver.observe(this);
+            });
+        }
 
         var resizeTimeout, sortedReverse = false;
         $(window).resize(function () {
