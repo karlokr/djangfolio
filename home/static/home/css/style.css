@@ -748,8 +748,9 @@ button:focus,
 
 
 /* Contact forms: the Submit button on the left and the Turnstile widget
-   (300 x 65, rendered by home/js/scripts.js) to its right, 20px apart. On
-   narrow screens the widget wraps below the button. */
+   (rendered by home/js/scripts.js, 65px tall, as wide as its slot) to its
+   right, 20px apart. On phones the widget sits above the button instead,
+   across the whole column. */
 .form-actions {
     display: flex;
     flex-wrap: wrap;
@@ -760,18 +761,29 @@ button:focus,
 }
 
 .form-actions .turnstile-slot {
+    width: 300px;
     /* Hold the widget's place before it renders, so the row doesn't jump. */
     min-height: 65px;
 }
 
-/* The widget is a fixed 65px tall (Cloudflare's only other size, compact,
-   is 140px tall, and it mustn't be scaled), so Submit matches it. */
-.form-actions:has(.turnstile-slot) .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 65px;
-    padding: 0 32px;
+@media (min-width: 576px) {
+    /* The widget is a fixed 65px tall (Cloudflare's only other size,
+       compact, is 140px tall, and it mustn't be scaled), so beside it Submit
+       matches it. */
+    .form-actions:has(.turnstile-slot) .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 65px;
+        padding: 0 32px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .form-actions .turnstile-slot {
+        order: -1;
+        width: 100%;
+    }
 }
 
 /*-------------------
