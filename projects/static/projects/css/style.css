@@ -151,66 +151,7 @@ button:focus,
 }
 
 
-/* --------------------
- * Column Block
- * -------------------*/
-
-.columns-block {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-    margin: 40px auto;
-    padding: 0;
-    box-shadow: 0 0 0 1px var(--color-border-primary);
-}
-
-.blocks {
-    box-sizing: border-box;
-}
-
-.left-col-block {
-    overflow: hidden;
-    -webkit-flex: 1 0 0;
-    flex: 1 0 0;
-    position: relative;
-    background: var(--color-bg-white);
-    border-right: 1px solid var(--color-border-primary);
-}
-
-.right-col-block {
-    -webkit-flex: 2 0 0;
-    flex: 2 0 0;
-    position: relative;
-    background: var(--color-bg-white);
-}
-
-@media (max-width: 768px) {
-    .columns-block {
-        display: block;
-        margin: 0;
-        box-shadow: none;
-    }
-
-    .left-col-block {
-        width: 100%;
-        position: relative;
-        border: 0;
-    }
-
-    .right-col-block {
-        width: 100%;
-        position: relative;
-        box-shadow: none;
-    }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    .columns-block {
-        margin-top: 30px;
-        margin-bottom: 30px;
-    }
-}
+/* The home page's column layout (.columns-block etc.) lives in home/css/style.css. */
 
 
 /* --------------------
