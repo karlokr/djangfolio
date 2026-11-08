@@ -458,9 +458,10 @@ button:focus,
     display: flex;
     -webkit-flex-direction: row;
     flex-direction: row;
-    /* 20px less the 4px the navbar overhangs #main-content's padding: a 16px
-       gap below the navbar. */
-    margin: 20px auto 40px;
+    /* 21px less the 4px the navbar overhangs #main-content's padding, less
+       the box's 1px border line (a box-shadow outside it): a 16px gap
+       between the navbar's line and the box's. */
+    margin: 21px auto 40px;
     padding: 0;
     box-shadow: 0 0 0 1px var(--color-border-primary);
     max-width: 1200px !important;
@@ -515,6 +516,67 @@ button:focus,
 @media (min-width: 769px) and (max-width: 1024px) {
     .columns-block {
         margin-bottom: 30px;
+    }
+}
+
+/* On desktop (at least 992px wide, where the navbar expands, and 600px
+   tall), the home page is a fixed frame: the box fills the window below the
+   navbar with the same 16px gap above and below, and the page itself never
+   scrolls. The left column stays put, vertically centred, its photo
+   shrinking on short windows so it still fits; only the right column
+   (Resume/Portfolio) scrolls. home/js/scripts.js forwards the mouse wheel
+   from the rest of the page to that column. Narrower or shorter windows
+   keep the normal scrolling page. */
+@media (min-width: 992px) and (min-height: 600px) {
+    html:has(#right-container) {
+        overflow: hidden;
+        scrollbar-gutter: auto;
+    }
+
+    #right-container {
+        /* 56px #main-content padding + 21px top margin, the 1px border line
+           (a box-shadow outside the box, which #main-content would clip
+           without the 1px margin below) + 16px gap below */
+        height: calc(100vh - 94px);
+        margin-bottom: 1px;
+    }
+
+    #right-container > .left-col-block {
+        display: flex;
+        flex-direction: column;
+        /* Last resort on very short windows, once the photo can't shrink. */
+        overflow-y: auto;
+    }
+
+    #right-container > .left-col-block > .header {
+        display: flex;
+        flex-direction: column;
+        /* Auto margins centre it vertically, and fall to 0 when it's tall. */
+        margin: auto 0;
+        min-height: 0;
+    }
+
+    #right-container > .left-col-block > .header > * {
+        flex-shrink: 0;
+    }
+
+    #right-container > .left-col-block > .header > .profile-img {
+        flex-shrink: 1;
+        /* 20px top padding + a photo at least 100px tall */
+        min-height: 120px;
+    }
+
+    #right-container > .left-col-block > .header .profile-img img {
+        width: auto;
+        max-height: 100%;
+        margin: 0 auto;
+    }
+
+    #right-container > .right-col-block {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-scrollbar-thumb) transparent;
     }
 }
 
