@@ -301,12 +301,12 @@
                                                     id="message-text" placeholder="Write message"></textarea>
                                             </div>
 
-                                            {% if turnstile_site_key %}<div class="form-group turnstile-slot" data-sitekey="{{ turnstile_site_key }}"></div>{% endif %}
                                             <div id="contactFormResumeMessage"></div>
 
-                                            <div class="text-right">
+                                            <div class="form-actions">
                                                 <button type="button" id="resume-mail-button"
                                                     class="btn btn-blog-outline">Submit</button>
+                                                {% if turnstile_site_key %}<div class="turnstile-slot" data-sitekey="{{ turnstile_site_key }}"></div>{% endif %}
                                             </div>
                                         </form>
                                     </div>
@@ -687,12 +687,12 @@
                                                     id="message-text" placeholder="Write message"></textarea>
                                             </div>
 
-                                            {% if turnstile_site_key %}<div class="form-group turnstile-slot" data-sitekey="{{ turnstile_site_key }}"></div>{% endif %}
                                             <div id="contactFormProjectsMessage"></div>
 
-                                            <div class="text-right">
+                                            <div class="form-actions">
                                                 <button type="button" class="btn btn-blog-outline"
                                                     id="projects-mail-button">Submit</button>
+                                                {% if turnstile_site_key %}<div class="turnstile-slot" data-sitekey="{{ turnstile_site_key }}"></div>{% endif %}
                                             </div>
                                         </form>
                                     </div>

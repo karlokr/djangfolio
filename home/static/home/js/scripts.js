@@ -315,7 +315,7 @@ jQuery(function ($) {
                 sitekey: this.dataset.sitekey,
                 action: 'contact',
                 theme: turnstileTheme(),
-                size: 'flexible'
+                size: 'normal'
             }));
         });
     }

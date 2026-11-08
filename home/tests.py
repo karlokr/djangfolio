@@ -323,4 +323,4 @@ class ContactTurnstileTests(TestCase):
         self.assertNotContains(self.client.get('/'), 'turnstile-slot')
         with self.settings(TURNSTILE_SITE_KEY='site-key-123', TURNSTILE_SECRET_KEY='secret'):
             self.assertContains(self.client.get('/'),
-                                '<div class="form-group turnstile-slot" data-sitekey="site-key-123"></div>', count=2)
+                                '<div class="turnstile-slot" data-sitekey="site-key-123"></div>', count=2)
