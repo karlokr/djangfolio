@@ -451,7 +451,9 @@ button:focus,
     display: flex;
     -webkit-flex-direction: row;
     flex-direction: row;
-    margin: 40px auto;
+    /* 20px less the 4px the navbar overhangs #main-content's padding: a 16px
+       gap below the navbar. */
+    margin: 20px auto 40px;
     padding: 0;
     box-shadow: 0 0 0 1px var(--color-border-primary);
     max-width: 1200px !important;
@@ -505,7 +507,6 @@ button:focus,
 
 @media (min-width: 769px) and (max-width: 1024px) {
     .columns-block {
-        margin-top: 30px;
         margin-bottom: 30px;
     }
 }
