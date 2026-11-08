@@ -307,6 +307,24 @@ CONTACT_EMAIL=contact@example.com
 
 - Use `EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend` to print emails to console instead of sending them
 
+### Cloudflare Turnstile (optional)
+
+The contact forms always have a honeypot field and a per-visitor rate limit. To also require a [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) check:
+
+1. In the Cloudflare dashboard, go to **Turnstile → Add widget**, add your hostname and pick a mode (Managed is a good default).
+2. Set both keys in your `.env`:
+
+   ```bash
+   TURNSTILE_SITE_KEY=your-site-key
+   TURNSTILE_SECRET_KEY=your-secret-key
+   ```
+
+3. Restart the container.
+
+With both keys set, each contact form shows the widget, and the server confirms the visitor's token with Cloudflare before sending the message (`home/turnstile.py`). The Content-Security-Policy is widened to allow Cloudflare's Turnstile script and frame. Leave both keys unset to turn it off. Setting only one of them stops the site from starting.
+
+For local testing, Cloudflare's [dummy keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) always pass: site key `1x00000000000000000000AA`, secret key `1x0000000000000000000000000000000AA`.
+
 ## Production Deployment
 
 ### Using Pre-built Docker Image

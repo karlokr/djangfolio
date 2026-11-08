@@ -301,6 +301,7 @@
                                                     id="message-text" placeholder="Write message"></textarea>
                                             </div>
 
+                                            {% if turnstile_site_key %}<div class="form-group turnstile-slot" data-sitekey="{{ turnstile_site_key }}"></div>{% endif %}
                                             <div id="contactFormResumeMessage"></div>
 
                                             <div class="text-right">
@@ -686,6 +687,7 @@
                                                     id="message-text" placeholder="Write message"></textarea>
                                             </div>
 
+                                            {% if turnstile_site_key %}<div class="form-group turnstile-slot" data-sitekey="{{ turnstile_site_key }}"></div>{% endif %}
                                             <div id="contactFormProjectsMessage"></div>
 
                                             <div class="text-right">
