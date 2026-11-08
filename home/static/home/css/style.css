@@ -51,8 +51,10 @@
     --color-white: #ffffff;
     --color-black: #000000;
     --color-shadow: rgba(0, 0, 0, 0.1);
-    /* Pale amber wash behind hovered navbar links */
+    /* Pale amber wash behind the current and hovered navbar links, and a
+       fainter one for the full-width rows of the collapsed (mobile) menu */
     --color-hover-tint: rgba(255, 193, 7, 0.14);
+    --color-hover-tint-subtle: rgba(255, 193, 7, 0.07);
 }
 
 /* Auto dark mode based on system preference */
@@ -109,6 +111,7 @@
         --color-black: #ffffff;
         --color-shadow: rgba(0, 0, 0, 0.3);
         --color-hover-tint: rgba(255, 193, 7, 0.09);
+        --color-hover-tint-subtle: rgba(255, 193, 7, 0.045);
     }
 }
 
@@ -164,6 +167,7 @@
     --color-black: #ffffff;
     --color-shadow: rgba(0, 0, 0, 0.3);
     --color-hover-tint: rgba(255, 193, 7, 0.09);
+    --color-hover-tint-subtle: rgba(255, 193, 7, 0.045);
 }
 
 body {
@@ -269,7 +273,21 @@ html, body {
 
 .navbar-expand-lg .navbar-nav .nav-link:hover {
     color: var(--color-text-black);
+}
+
+/* The current page's link keeps the tint that hovering gives the others. */
+.navbar-expand-lg .navbar-nav .nav-item.active .nav-link,
+.navbar-expand-lg .navbar-nav .nav-link:hover {
     background-color: var(--color-hover-tint);
+}
+
+/* In the collapsed (mobile) menu the links are full-width rows, so the
+   same tint would read as a heavy bar: use a fainter one there. */
+@media (max-width: 991.98px) {
+    .navbar-expand-lg .navbar-nav .nav-item.active .nav-link,
+    .navbar-expand-lg .navbar-nav .nav-link:hover {
+        background-color: var(--color-hover-tint-subtle);
+    }
 }
 
 
