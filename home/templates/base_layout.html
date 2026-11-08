@@ -198,13 +198,19 @@
     
     // Run after HTMX swaps content
     listenOnce(document.body, 'htmx:afterSwap', function(event) {
+        // Going Back also fires afterSwap, for htmx restoring its snapshot of
+        // <body>, but without a target. The snapshot keeps the page's markup
+        // (highlighted code, rendered math) but not its event handlers, so
+        // the set-up below still runs; only page navigation scrolls to the
+        // top, since htmx restores the scroll position itself on Back.
+        const pageSwap = event.detail.target && event.detail.target.id === 'main-content';
         updateActiveNavLink();
         // Scroll to top when navigating via HTMX
-        if (event.detail.target.id === 'main-content') {
+        if (pageSwap) {
             window.scrollTo(0, 0);
         }
         // Re-initialize syntax highlighting for new content
-        document.querySelectorAll('pre code').forEach((block) => {
+        document.querySelectorAll('pre code:not([data-highlighted])').forEach((block) => {
             hljs.highlightElement(block);
         });
         // Re-attach modal handlers for blog images
@@ -217,7 +223,7 @@
         wrapTablesForScroll();
         
         // Remove loading classes when navigating to home page
-        if (event.detail.target.id === 'main-content') {
+        if (pageSwap) {
             $('#preloader').hide(); // Immediately hide preloader on navigation
         }
     });
