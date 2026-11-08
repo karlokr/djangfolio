@@ -37,25 +37,74 @@ jQuery(function ($) {
 
 
     // --------------------------------------------------------------------
-    // Sticky Sidebar
+    // Layout: a fixed frame side by side, stacked on narrow screens
     // --------------------------------------------------------------------
 
+    // On desktop the page is a fixed frame that doesn't scroll; the right
+    // column, holding the Resume and Portfolio views, does (see
+    // #right-container in style.css, which uses the same media query).
+    // Otherwise the page scrolls as usual, with the columns side by side or,
+    // on narrow screens, stacked (see .columns-block).
+    var fixedFrame = window.matchMedia('(min-width: 992px) and (min-height: 600px)');
+    var stackedLayout = window.matchMedia('(max-width: 768px)');
+    var $viewColumn = $('#right-container > .right-col-block');
+
+    // The sticky sidebar plugin follows the page's scrolling, so it's only
+    // needed when the page is what scrolls.
+    function stickySidebar($elements) {
+        if (!fixedFrame.matches) {
+            $elements.theiaStickySidebar({
+                additionalMarginTop: 70,
+                sidebarBehavior: 'stick-to-top'
+            });
+        }
+    }
+
     // Only initialize sticky sidebar on visible elements (resume is shown by default)
-    $('.left-col-block, #resume').theiaStickySidebar({
-        additionalMarginTop: 70,
-        sidebarBehavior: 'stick-to-top'
+    stickySidebar($('.left-col-block, #resume'));
+
+    // The right column's scrolling stands in for the page's: the handlers on
+    // window scroll (playing the videos on screen, fixHeights) run on it too.
+    $viewColumn.on('scroll', function () {
+        $(window).trigger('scroll');
+    });
+
+    // In the fixed frame, the mouse wheel anywhere else on the page (the
+    // left column, the margins) scrolls the right column, so the views
+    // scroll wherever the pointer is. Not when the left column has to scroll
+    // itself (short windows), and not while a pop-up is open.
+    $('#main-wrapper').on('wheel', function (event) {
+        var wheel = event.originalEvent;
+        if (!fixedFrame.matches || wheel.ctrlKey || $('body').hasClass('modal-open') ||
+                $(event.target).closest($viewColumn).length) {
+            return;
+        }
+        var left = $(event.target).closest('.left-col-block')[0];
+        if (left && left.scrollHeight > left.clientHeight) {
+            return;
+        }
+        var column = $viewColumn[0];
+        var unit = wheel.deltaMode === 1 ? 40 : (wheel.deltaMode === 2 ? column.clientHeight : 1);
+        column.scrollBy({ top: wheel.deltaY * unit });
+        event.preventDefault();
     });
 
     // Side by side, the Resume/Portfolio switch scrolls to the top, where the
-    // view's column starts. Stacked (narrow screens, see .columns-block in
-    // style.css) the buttons sit just above the view, so the visitor stays
-    // where they are. The page's height is held while one view fades out
-    // and the other in: with neither shown the page is much shorter, and
+    // new view starts: the right column's in the fixed frame, else the
+    // page's. Stacked the buttons sit just above the view, so the visitor
+    // stays where they are. The page's height is held while one view fades
+    // out and the other in: with neither shown the page is much shorter, and
     // the browser would clamp the scroll position up to it.
-    var stackedLayout = window.matchMedia('(max-width: 768px)');
     var viewSwitchTimer = null;
 
     function beginViewSwitch() {
+        if (fixedFrame.matches) {
+            $viewColumn[0].scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            return;
+        }
         if (!stackedLayout.matches) {
             window.scrollTo({
                 top: 0,
@@ -82,10 +131,7 @@ jQuery(function ($) {
         $('#resume').stop(true, true).fadeOut(200, function () {
             $('#projects').stop(true, true).fadeIn(200, function () {
                 // Initialize sticky sidebar on portfolio now that it's visible
-                $('#projects').theiaStickySidebar({
-                    additionalMarginTop: 70,
-                    sidebarBehavior: 'stick-to-top'
-                });
+                stickySidebar($('#projects'));
                 // Start the videos now in view (they play on scroll otherwise).
                 $(window).trigger('scroll');
             });
@@ -145,9 +191,14 @@ jQuery(function ($) {
         // Start the videos now in view (they play on scroll otherwise).
         setTimeout(function () { $(window).trigger('scroll'); }, 0);
 
-        // Leave room for the fixed top navbar.
+        // In the fixed frame, scroll the right column to put the project near
+        // its top; otherwise scroll the page, leaving room for the navbar.
         function pin() {
-            window.scrollTo(0, $target.offset().top - 80);
+            if (fixedFrame.matches) {
+                $viewColumn.scrollTop($target.offset().top - $viewColumn.offset().top + $viewColumn.scrollTop() - 16);
+            } else {
+                window.scrollTo(0, $target.offset().top - 80);
+            }
         }
         pin();
 
@@ -159,6 +210,8 @@ jQuery(function ($) {
         const observer = window.ResizeObserver ? new ResizeObserver(pin) : null;
         if (observer) {
             observer.observe(document.body);
+            // In the fixed frame the page keeps its size; the Portfolio grows.
+            observer.observe(document.getElementById('projects'));
         }
         function repin() {
             if (pinned) {
@@ -286,7 +339,9 @@ jQuery(function ($) {
                     html += '<div class="see-all col-md-12"><h3><a target="_blank" href="https://github.com/' +
                         userPath + '?tab=repositories">See more...</a></h3></div>';
                 }
-                $('#github-items').append(html);
+                // Replace, not append: going Back restores a snapshot that
+                // already holds the list, and this script runs again.
+                $('#github-items').html(html);
             },
             error: function () {
                 // No cached repo list yet and GitHub unavailable: leave the

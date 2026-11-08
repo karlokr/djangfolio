@@ -229,6 +229,20 @@
     });
     listenOnce(document.body, 'htmx:pushedIntoHistory', updateActiveNavLink);
 
+    // htmx's Back snapshot keeps the page's markup and the window's scroll
+    // position, but not that of areas that scroll on their own (the home
+    // page's right column, marked data-keep-scroll): carry it in an attribute.
+    listenOnce(document.body, 'htmx:beforeHistorySave', function() {
+        document.querySelectorAll('[data-keep-scroll]').forEach(function(el) {
+            el.setAttribute('data-scroll-top', Math.round(el.scrollTop));
+        });
+    });
+    listenOnce(document.body, 'htmx:historyRestore', function() {
+        document.querySelectorAll('[data-keep-scroll][data-scroll-top]').forEach(function(el) {
+            el.scrollTop = Number(el.getAttribute('data-scroll-top'));
+        });
+    });
+
     // On the home page already, the navbar's Home link and site name do
     // nothing: no reload, no scroll, and no switch back to the Resume view.
     listenOnce(document.body, 'htmx:beforeRequest', function(event) {
