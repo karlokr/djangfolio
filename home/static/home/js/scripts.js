@@ -281,6 +281,87 @@ jQuery(function ($) {
         $("#ecoimg").css("display: block");
     }
 
+    // --------------------------------------------------------------------
+    // Cloudflare Turnstile (contact forms, only when a site key is set;
+    // checked server-side in home/turnstile.py)
+    // --------------------------------------------------------------------
+    // Rendered explicitly: this script runs again on every htmx visit to the
+    // home page, where Turnstile's automatic render never runs. Live widgets
+    // are tracked by element, because going Back restores a snapshot of the
+    // page whose widget markup is dead and has to be rendered afresh.
+    window.turnstileWidgets = window.turnstileWidgets || new WeakMap();
+
+    function turnstileTheme() {
+        // The site's own toggle sets data-theme; otherwise follow the system.
+        return document.documentElement.getAttribute('data-theme') || 'auto';
+    }
+
+    function renderTurnstile() {
+        $('.turnstile-slot').each(function () {
+            if (window.turnstileWidgets.has(this)) {
+                return;
+            }
+            $(this).empty();
+            window.turnstileWidgets.set(this, window.turnstile.render(this, {
+                sitekey: this.dataset.sitekey,
+                action: 'contact',
+                theme: turnstileTheme(),
+                size: 'flexible'
+            }));
+        });
+    }
+
+    function loadTurnstile() {
+        if (!$('.turnstile-slot').length) {
+            return;
+        }
+        if (window.turnstile) {
+            renderTurnstile();
+            return;
+        }
+        window.onTurnstileLoad = renderTurnstile;
+        if (!document.getElementById('turnstile-api')) {
+            var script = document.createElement('script');
+            script.id = 'turnstile-api';
+            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad';
+            script.async = true;
+            document.head.appendChild(script);
+        }
+    }
+
+    // Toggling the site theme re-renders the widgets to match.
+    if (!window.turnstileThemeListener) {
+        window.turnstileThemeListener = true;
+        document.addEventListener('themechange', function () {
+            if (!window.turnstile) {
+                return;
+            }
+            $('.turnstile-slot').each(function () {
+                if (window.turnstileWidgets.has(this)) {
+                    window.turnstile.remove(window.turnstileWidgets.get(this));
+                    window.turnstileWidgets.delete(this);
+                }
+            });
+            renderTurnstile();
+        });
+    }
+
+    // The form's widget id, or null when Turnstile is off for this form.
+    function turnstileWidget(form) {
+        var slot = form.find('.turnstile-slot').get(0);
+        return slot ? (window.turnstileWidgets.get(slot) || '') : null;
+    }
+
+    // Tokens are single-use: after each submission the widget gets a new one.
+    function resetTurnstile(form) {
+        var widget = turnstileWidget(form);
+        if (widget && window.turnstile) {
+            window.turnstile.reset(widget);
+        }
+    }
+
+    loadTurnstile();
+
     $("#projects-mail-button").on("click", function () {
         var form = $("#contactFormProjects");
         var messageContainer = $("#contactFormProjectsMessage");
@@ -307,6 +388,13 @@ jQuery(function ($) {
             return;
         }
         
+        var widget = turnstileWidget(form);
+        if (widget !== null && !(widget && window.turnstile && window.turnstile.getResponse(widget))) {
+            var waitMsg = $('<div class="form-message error show">Please wait for the verification below the message box to finish, then send again.</div>');
+            messageContainer.html(waitMsg);
+            return;
+        }
+
         var fromData = form.serialize();
         
         $.ajax({
@@ -326,7 +414,9 @@ jQuery(function ($) {
                         
                         // Clear form after delay
                         setTimeout(function() {
-                            form.find("input, textarea").val('').removeClass('success');
+                            // Only the visible fields: the hidden CSRF, honeypot and
+                            // Turnstile inputs must survive for the next message.
+                            form.find('.form-control').val('').removeClass('success');
                             successMsg.fadeOut(300, function() { $(this).remove(); });
                         }, 3000);
                     } else {
@@ -353,6 +443,9 @@ jQuery(function ($) {
                     
                     // Mark all required fields as error
                     form.find('.form-control[required]').addClass('error');
+                },
+                complete: function() {
+                    resetTurnstile(form);
                 }
         })
     });
@@ -383,6 +476,13 @@ jQuery(function ($) {
             return;
         }
         
+        var widget = turnstileWidget(form);
+        if (widget !== null && !(widget && window.turnstile && window.turnstile.getResponse(widget))) {
+            var waitMsg = $('<div class="form-message error show">Please wait for the verification below the message box to finish, then send again.</div>');
+            messageContainer.html(waitMsg);
+            return;
+        }
+
         var fromData = form.serialize();
         
         $.ajax({
@@ -402,7 +502,9 @@ jQuery(function ($) {
                         
                         // Clear form after delay
                         setTimeout(function() {
-                            form.find("input, textarea").val('').removeClass('success');
+                            // Only the visible fields: the hidden CSRF, honeypot and
+                            // Turnstile inputs must survive for the next message.
+                            form.find('.form-control').val('').removeClass('success');
                             successMsg.fadeOut(300, function() { $(this).remove(); });
                         }, 3000);
                     } else {
@@ -429,6 +531,9 @@ jQuery(function ($) {
                     
                     // Mark all required fields as error
                     form.find('.form-control[required]').addClass('error');
+                },
+                complete: function() {
+                    resetTurnstile(form);
                 }
          })
     });

@@ -150,6 +150,9 @@
         htmlElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         updateSyntaxHighlighting(newTheme);
+        // Lets page scripts restyle things CSS can't reach (the contact
+        // forms' Turnstile widgets, see home/js/scripts.js).
+        document.dispatchEvent(new CustomEvent('themechange', {detail: {theme: newTheme}}));
     }
 
     // The toggle's moon/sun icon is chosen by CSS from data-theme and the
