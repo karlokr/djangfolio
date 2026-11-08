@@ -216,6 +216,16 @@ class SiteScriptRerunTests(TestCase):
         # The theme buttons are replaced by the restore, so clicks are delegated.
         self.assertNotIn("getElementById('theme-toggle", source)
 
+    def test_after_swap_handles_history_restores(self):
+        from pathlib import Path
+        from django.conf import settings
+
+        source = (Path(settings.BASE_DIR) / 'home/templates/base_layout.html').read_text()
+        # Back fires htmx:afterSwap with no detail.target; reading .id off it
+        # threw and skipped the rest of the set-up (blog image pop-ups).
+        unguarded = re.findall(r'(?<!event\.detail\.target && )event\.detail\.target\.id', source)
+        self.assertEqual(unguarded, [])
+
     def test_social_buttons_have_tooltips(self):
         from blog.models import BlogPost
         from resume.models import Resume
