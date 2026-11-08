@@ -583,7 +583,7 @@
                                         <div class="portfolio-thumb web-thumb">
                                             {% with project.projectimage_set.all|first as img %}
                                             <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} loading="lazy" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
-                                                class="portfolio-img" style="border: 1px solid lightgrey">
+                                                class="portfolio-img">
                                             {% endwith %}
                                         </div>
                                     </a>
@@ -611,7 +611,7 @@
                                         <div class="portfolio-thumb">
                                             {% with project.projectimage_set.all|first as img %}
                                             <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} loading="lazy" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
-                                                class={% if project.preview_type == 'pdf' %}"portfolio-pdf"{% else %}"portfolio-img"{%endif%} style="border: 1px solid lightgrey">
+                                                class={% if project.preview_type == 'pdf' %}"portfolio-pdf"{% else %}"portfolio-img"{%endif%}>
                                             {% endwith %}
                                         </div>
                                     </a>
@@ -640,7 +640,7 @@
                                         <div class="portfolio-thumb web-thumb">
                                             {% with project.projectimage_set.all|first as img %}
                                             <img src="{{ img.image.url }}" srcset="{% image_srcset img.image '360 480 720 960' %}" {% image_dims img.image %} loading="lazy" sizes="(min-width: 992px) 370px, 100vw" alt="{{ project.title }}"
-                                                class={% if project.preview_type == 'pdf' %}"portfolio-pdf"{% else %}"portfolio-img"{%endif%} style="border: 1px solid lightgrey">
+                                                class={% if project.preview_type == 'pdf' %}"portfolio-pdf"{% else %}"portfolio-img"{%endif%}>
                                             {% endwith %}
                                         </div>
                                     </a>
