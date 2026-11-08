@@ -26,4 +26,6 @@ def site_config(request):
     return {
         'site_config': SiteConfiguration.get_solo(),
         'canonical_url': canonical_url,
+        # Empty when Turnstile is off; the contact forms then render without it.
+        'turnstile_site_key': settings.TURNSTILE_SITE_KEY,
     }

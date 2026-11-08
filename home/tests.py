@@ -1,8 +1,10 @@
 import json
 import re
 import urllib.error
+import urllib.parse
 from unittest import mock
 
+from django.core import mail
 from django.core.cache import cache
 from django.test import TestCase, override_settings
 
@@ -228,3 +230,87 @@ class SiteScriptRerunTests(TestCase):
                 response = self.client.get(url)
                 for label in ['GitHub', 'GitLab', 'X', 'Email']:
                     self.assertContains(response, f'data-tooltip="{label}"', count=1)
+
+
+def siteverify_response(result):
+    response = mock.MagicMock()
+    response.read.return_value = json.dumps(result).encode()
+    response.__enter__.return_value = response
+    return response
+
+
+@override_settings(CACHES=LOCMEM, EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+                   CONTACT_EMAIL='me@example.com', DEFAULT_FROM_EMAIL='site@example.com')
+class ContactTurnstileTests(TestCase):
+    """The contact form checks a Turnstile token with Cloudflare when configured."""
+
+    FORM = {'name': 'Ann', 'email': 'ann@example.com', 'subject': 'Hi', 'message': 'Hello'}
+
+    def setUp(self):
+        cache.clear()
+
+    def post(self, **extra):
+        return self.client.post('/send-email/', {**self.FORM, **extra}, HTTP_CF_CONNECTING_IP='203.0.113.7')
+
+    def test_off_without_keys(self):
+        with mock.patch('home.turnstile.urllib.request.urlopen') as urlopen:
+            response = self.post()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 1)
+        urlopen.assert_not_called()
+
+    @override_settings(TURNSTILE_SITE_KEY='site', TURNSTILE_SECRET_KEY='secret')
+    def test_missing_token_is_rejected_without_calling_cloudflare(self):
+        with mock.patch('home.turnstile.urllib.request.urlopen') as urlopen:
+            response = self.post()
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(len(mail.outbox), 0)
+        urlopen.assert_not_called()
+
+    @override_settings(TURNSTILE_SITE_KEY='site', TURNSTILE_SECRET_KEY='secret')
+    def test_valid_token_sends_message(self):
+        result = {'success': True, 'action': 'contact', 'hostname': 'example.com'}
+        with mock.patch('home.turnstile.urllib.request.urlopen',
+                        return_value=siteverify_response(result)) as urlopen:
+            response = self.post(**{'cf-turnstile-response': 'tok'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 1)
+        sent = urlopen.call_args.args[0]
+        self.assertEqual(sent.full_url, 'https://challenges.cloudflare.com/turnstile/v0/siteverify')
+        self.assertEqual(urllib.parse.parse_qs(sent.data.decode()),
+                         {'secret': ['secret'], 'response': ['tok'], 'remoteip': ['203.0.113.7']})
+
+    @override_settings(TURNSTILE_SITE_KEY='site', TURNSTILE_SECRET_KEY='secret')
+    def test_rejected_tokens(self):
+        for name, outcome in [
+            ('cloudflare says no', siteverify_response({'success': False, 'error-codes': ['invalid-input-response']})),
+            ('token for another action', siteverify_response({'success': True, 'action': 'login'})),
+            ('cloudflare unreachable', urllib.error.URLError('down')),
+        ]:
+            with self.subTest(name), mock.patch('home.turnstile.urllib.request.urlopen', side_effect=[outcome]):
+                response = self.post(**{'cf-turnstile-response': 'tok'})
+                self.assertEqual(response.status_code, 403)
+                self.assertEqual(response.json()['status'], 'error')
+        self.assertEqual(len(mail.outbox), 0)
+
+    @override_settings(TURNSTILE_SITE_KEY='site', TURNSTILE_SECRET_KEY='secret')
+    def test_cloudflare_testing_keys_pass_without_an_action(self):
+        # What siteverify returns for Cloudflare's dummy testing secret keys.
+        result = {'success': True, 'error-codes': [], 'hostname': 'example.com',
+                  'metadata': {'result_with_testing_key': True}}
+        with mock.patch('home.turnstile.urllib.request.urlopen', return_value=siteverify_response(result)):
+            response = self.post(**{'cf-turnstile-response': 'XXXX.DUMMY.TOKEN.XXXX'})
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(TURNSTILE_SITE_KEY='site', TURNSTILE_SECRET_KEY='secret')
+    def test_oversized_token_is_rejected_without_calling_cloudflare(self):
+        with mock.patch('home.turnstile.urllib.request.urlopen') as urlopen:
+            response = self.post(**{'cf-turnstile-response': 'x' * 2049})
+        self.assertEqual(response.status_code, 403)
+        urlopen.assert_not_called()
+
+    def test_widget_slots_only_render_with_a_site_key(self):
+        self.assertNotContains(self.client.get('/'), 'turnstile-slot')
+        with self.settings(TURNSTILE_SITE_KEY='site-key-123', TURNSTILE_SECRET_KEY='secret'):
+            self.assertContains(self.client.get('/'),
+                                '<div class="form-group turnstile-slot" data-sitekey="site-key-123"></div>', count=2)
