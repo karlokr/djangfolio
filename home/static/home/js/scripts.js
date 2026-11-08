@@ -315,7 +315,9 @@ jQuery(function ($) {
                 sitekey: this.dataset.sitekey,
                 action: 'contact',
                 theme: turnstileTheme(),
-                size: 'normal'
+                // Fills its slot: 300px beside Submit, the column's width on
+                // phones (see .form-actions in style.css).
+                size: 'flexible'
             }));
         });
     }
