@@ -482,10 +482,6 @@ button:focus,
     border-right: 1px solid var(--color-border-primary);
 }
 
-.left-col-block .theiaStickySidebar {
-    padding-top: 0 !important;
-}
-
 .right-col-block {
     -webkit-flex: 2 0 0;
     flex: 2 0 0;
@@ -520,28 +516,77 @@ button:focus,
 }
 
 /* On desktop (at least 992px wide, where the navbar expands, and 600px
-   tall), the home page is a fixed frame: the box fills the window below the
-   navbar with the same 16px gap above and below, and the page itself never
-   scrolls. The left column stays put, vertically centred, its photo
-   shrinking on short windows so it still fits; only the right column
-   (Resume/Portfolio) scrolls. home/js/scripts.js forwards the mouse wheel
-   from the rest of the page to that column. Narrower or shorter windows
-   keep the normal scrolling page. */
+   tall), the home page sits in a fixed frame: the box's border stays put
+   with the same 16px gap below the navbar's line and above the bottom of
+   the window, and the left column stays inside it, vertically centred, its
+   photo shrinking on short windows so it still fits. The page scrolls as
+   usual (same scrollbar), but only the right column (Resume/Portfolio)
+   moves, inside the frame. Narrower or shorter windows keep the normal
+   page, where the box scrolls by.
+
+   Geometry: the box starts at 77px (56px #main-content padding + 21px
+   margin), so its border line is at 76px, 16px below the navbar's line at
+   59px. The frame's bottom line is 17px above the bottom of the window. */
 @media (min-width: 992px) and (min-height: 600px) {
-    html:has(#right-container) {
-        overflow: hidden;
-        scrollbar-gutter: auto;
+    /* overflow-x: hidden makes an element a scroll container, which a
+       sticky child sticks to instead of the window; clip doesn't. */
+    body:has(#right-container),
+    body:has(#right-container) #main-content {
+        overflow-x: clip;
     }
 
     #right-container {
-        /* 56px #main-content padding + 21px top margin, the 1px border line
-           (a box-shadow outside the box, which #main-content would clip
-           without the 1px margin below) + 16px gap below */
-        height: calc(100vh - 94px);
-        margin-bottom: 1px;
+        /* At the end of the page the box's bottom meets the frame's. */
+        margin-bottom: 17px;
     }
 
+    /* The frame: the box's border, fixed to the window. Drawn above the
+       right column's content, which scrolls underneath it. */
+    #right-container::after {
+        content: '';
+        position: fixed;
+        top: 77px;
+        bottom: 17px;
+        left: 0;
+        right: 0;
+        width: min(1200px, 100%);
+        margin: 0 auto;
+        box-shadow: 0 0 0 1px var(--color-border-primary);
+        pointer-events: none;
+        z-index: 3;
+    }
+
+    /* Page-coloured strips over the gaps above and below the frame, so the
+       right column's content disappears at the frame's edges as it scrolls
+       (the navbar covers the rest of the top). Above #right-container,
+       whose z-index is 1, but not over the frame's lines. */
+    #main-wrapper::before,
+    #main-wrapper::after {
+        content: '';
+        position: fixed;
+        left: 0;
+        right: 0;
+        background-color: var(--color-bg-body);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    #main-wrapper::before {
+        top: 0;
+        height: 76px;
+    }
+
+    #main-wrapper::after {
+        bottom: 0;
+        height: 16px;
+    }
+
+    /* The left column fills the frame and stays in it. */
     #right-container > .left-col-block {
+        position: sticky;
+        top: 77px;
+        height: calc(100vh - 94px);
+        align-self: flex-start;
         display: flex;
         flex-direction: column;
         /* Last resort on very short windows, once the photo can't shrink. */
@@ -562,21 +607,14 @@ button:focus,
 
     #right-container > .left-col-block > .header > .profile-img {
         flex-shrink: 1;
-        /* 20px top padding + a photo at least 100px tall */
-        min-height: 120px;
+        /* 20px top padding + a photo at least 80px tall */
+        min-height: 100px;
     }
 
     #right-container > .left-col-block > .header .profile-img img {
         width: auto;
         max-height: 100%;
         margin: 0 auto;
-    }
-
-    #right-container > .right-col-block {
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        scrollbar-width: thin;
-        scrollbar-color: var(--color-scrollbar-thumb) transparent;
     }
 }
 
@@ -594,8 +632,11 @@ button:focus,
  *  main Wrapper
  * -------------------*/
 
+/* Contains the box's margins, as overflow: hidden did, without becoming a
+   scroll container: the left column's position: sticky would stick to it
+   instead of the window. */
 #main-wrapper {
-    overflow: hidden;
+    display: flow-root;
 }
 
 
