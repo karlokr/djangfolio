@@ -1522,8 +1522,9 @@ body.modal-open {
     }
 }
 
+/* Every Portfolio thumbnail gets the same gold border. */
 .portfolio-pdf, .portfolio-img, .portfolio-vid {
-    border: 1px solid lightgray;
+    border: 1px solid var(--color-border-primary);
     cursor: pointer;
 }
 
