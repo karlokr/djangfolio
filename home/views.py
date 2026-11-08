@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.views.decorators.http import require_POST
 from django.conf import settings
+from home import turnstile
 from home.security import client_ip, rate_limited
 from home.github import get_repos
 from home.models import SiteConfiguration
@@ -55,7 +56,7 @@ def send_contact_email(request):
     """Handle contact form submissions.
 
     Protected by CSRF (the forms carry {% csrf_token %}), a per-visitor rate
-    limit and a honeypot field.
+    limit, a honeypot field and, when configured, Cloudflare Turnstile.
     """
     try:
         if request.POST.get(CONTACT_HONEYPOT_FIELD):
@@ -94,6 +95,11 @@ def send_contact_email(request):
             validate_email(email)
         except ValidationError:
             return _contact_error('Please enter a valid email address')
+
+        if turnstile.enabled() and not turnstile.verify(
+            request.POST.get(turnstile.TOKEN_FIELD, ''), client_ip(request)
+        ):
+            return _contact_error('Verification failed. Please try again.', status=403)
 
         # Create email content
         email_subject = f"Portfolio Contact: {subject}" if subject else "Portfolio Contact Form"

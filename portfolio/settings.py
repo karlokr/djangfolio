@@ -355,6 +355,16 @@ if not DEBUG:
 # needed: the list is fetched at most once an hour per app instance.
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN', '')
 
+# Cloudflare Turnstile on the contact forms (home/turnstile.py). Create a
+# widget in the Cloudflare dashboard and set both keys; leave both unset to
+# turn Turnstile off (local development, tests).
+TURNSTILE_SITE_KEY = os.getenv('TURNSTILE_SITE_KEY', '').strip()
+TURNSTILE_SECRET_KEY = os.getenv('TURNSTILE_SECRET_KEY', '').strip()
+if bool(TURNSTILE_SITE_KEY) != bool(TURNSTILE_SECRET_KEY):
+    raise ImproperlyConfigured(
+        'Set both TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY, or neither.'
+    )
+
 # Admin address. Set ADMIN_URL (for example 'manage-7f3k/') to move the admin
 # away from the well-known /admin/ path that bots target.
 ADMIN_URL = os.getenv('ADMIN_URL', 'admin/').strip('/') + '/'
@@ -395,6 +405,10 @@ CONTENT_SECURITY_POLICY = {
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
 }
+# Turnstile's script and challenge iframe are served from Cloudflare.
+if TURNSTILE_SITE_KEY:
+    CONTENT_SECURITY_POLICY['script-src'].append('https://challenges.cloudflare.com')
+    CONTENT_SECURITY_POLICY['frame-src'].append('https://challenges.cloudflare.com')
 # Set CSP_REPORT_ONLY=true to report violations without blocking anything.
 CSP_REPORT_ONLY = os.getenv('CSP_REPORT_ONLY', 'False').lower() == 'true'
 
