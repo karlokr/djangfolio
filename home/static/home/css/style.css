@@ -752,13 +752,25 @@ button:focus,
 .form-actions {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    /* Tops aligned: with Cloudflare's test keys the widget grows a 10px
+       "testing only" strip below its usual 65px. */
+    align-items: flex-start;
     gap: 20px;
 }
 
 .form-actions .turnstile-slot {
     /* Hold the widget's place before it renders, so the row doesn't jump. */
     min-height: 65px;
+}
+
+/* The widget is a fixed 65px tall (Cloudflare's only other size, compact,
+   is 140px tall, and it mustn't be scaled), so Submit matches it. */
+.form-actions:has(.turnstile-slot) .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 65px;
+    padding: 0 32px;
 }
 
 /*-------------------
