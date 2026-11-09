@@ -15,7 +15,7 @@
                     {% if site_config.profile_image %}
                         <img src="{{ site_config.profile_image.url }}" class="img-responsive" alt="{{ site_config.profile_image_alt_text }}"
                             srcset="{% image_srcset site_config.profile_image '240 360 480 720' %}" {% image_dims site_config.profile_image %}
-                            sizes="(min-width: 992px) 360px, calc(100vw - 60px)" fetchpriority="high"
+                            sizes="(min-width: 992px) 360px, (min-width: 769px) 33vw, 260px" fetchpriority="high"
                             id="profile-image" />
                     {% endif %}
                 </div>

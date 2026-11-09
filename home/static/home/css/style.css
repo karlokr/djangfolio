@@ -508,6 +508,23 @@ button:focus,
         position: relative;
         box-shadow: none;
     }
+
+    /* Stacked, a full-width photo pushed the name and about text off the
+       screen: it's 180-260px wide, centred, instead. */
+    #right-container .header .profile-img {
+        /* The header's own padding is the gap above, as at the sides; 21px
+           because the 57px navbar overlaps #main-content's 56px padding. */
+        padding-top: 0;
+    }
+
+    #right-container .header {
+        padding-top: 21px !important;
+    }
+
+    #right-container .header .profile-img img {
+        width: clamp(180px, 50vw, 260px);
+        margin: 0 auto;
+    }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
