@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from projects.models import Project
 from home import seo
 from home.models import SiteConfiguration
@@ -23,9 +24,15 @@ def projects_list(request):
 
 def project_detail(request, slug):
     project = get_object_or_404(Project, slug=slug)
+    config = SiteConfiguration.get_solo()
+    trail = [('Home', reverse('home:home_page'))]
+    if config.show_projects_link:
+        trail.append(('Projects', reverse('projects:projects_list')))
+    trail.append((project.title, request.path))
     context = {
-        'page_title': seo.page_title(project.title, SiteConfiguration.get_solo().full_name),
+        'page_title': seo.page_title(project.title, config.full_name),
         'page_description': seo_description(project.short_description),
+        'structured_data': [seo.breadcrumbs(request, *trail)],
         'project': project,
         'active_page': 'projects',
     }

@@ -35,6 +35,10 @@ def home_page(request):
         'active_page': 'home',
         'page_title': seo.home_title(config, resume),
         'page_description': seo.home_description(config, resume),
+        'structured_data': [
+            seo.person(request, config, resume, seo.home_description(config, resume)),
+            seo.website(request, config),
+        ],
     }
     
     # Return partial template for HTMX requests
@@ -177,6 +181,7 @@ Disallow: /blog/?*tag=
 
 @require_GET
 def robots_txt(request):
-    response = HttpResponse(ROBOTS_TXT, content_type='text/plain')
+    sitemap_line = f'\nSitemap: {seo.site_root(request)}/sitemap.xml\n'
+    response = HttpResponse(ROBOTS_TXT + sitemap_line, content_type='text/plain')
     response['Cache-Control'] = 'public, max-age=86400'
     return response
