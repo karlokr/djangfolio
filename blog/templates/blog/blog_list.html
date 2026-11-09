@@ -1,14 +1,21 @@
 {% extends 'base_layout.html' %}
 {% load static %}
 
-{% block title %}Blog - {{ site_config.full_name }}{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
 
-{% block extra_head %}
+{% block meta_description %}<meta name="description" content="{{ page_description }}">{% endblock %}
+
+{% block canonical %}
 {% if selected_categories or selected_tags %}
+    {# Filtered lists aren't indexed; they all point to the plain list. #}
     <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="{{ site_root }}{{ request.path }}">
+{% else %}
     <link rel="canonical" href="{{ canonical_url }}">
 {% endif %}
 {% endblock %}
+
+{% block social_meta %}{% include 'seo/social_meta.html' with meta_title=page_title meta_description=page_description %}{% endblock %}
 
 {% block content %}
 {% include 'blog/blog_list_partial.html' %}

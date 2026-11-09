@@ -2,6 +2,20 @@
 
 {% load static %}
 
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block meta_description %}<meta name="description" content="{{ page_description }}">{% endblock %}
+
+{% block canonical %}
+{% if not site_config.show_projects_link %}
+    {# Hidden from the navbar (Site Configuration): keep the list out of search results; the project pages stay indexed. #}
+    <meta name="robots" content="noindex, follow">
+{% endif %}
+<link rel="canonical" href="{{ canonical_url }}">
+{% endblock %}
+
+{% block social_meta %}{% include 'seo/social_meta.html' with meta_title=page_title meta_description=page_description %}{% endblock %}
+
 {% block content %}
 {% include 'projects/projects_list_partial.html' %}
 {% endblock %}
