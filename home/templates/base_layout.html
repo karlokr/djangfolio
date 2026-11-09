@@ -1,4 +1,4 @@
-{% load static %}
+{% load static custom_filters %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,9 +11,20 @@
     <meta name="htmx-config" content='{"inlineScriptNonce": "{{ request.csp_nonce }}"}'>
     <title>{% block title %}{{ site_config.full_name }}{% endblock %}</title>
     {% block meta_description %}<meta name="description" content="{{ site_config.full_name }}: software engineering portfolio, projects and blog.">{% endblock %}
+    {# One address per page for search engines; pages may override (see blog_list.html). #}
+    {% block canonical %}<link rel="canonical" href="{{ canonical_url }}">{% endblock %}
+    {# Link previews: pages include seo/social_meta.html with their title, description and image. #}
+    {% block social_meta %}{% endblock %}
+    {% if structured_data %}
+    {# What the page is about, for search engines (schema.org; built in home/seo.py). #}
+    <script type="application/ld+json">{{ structured_data|json_ld }}</script>
+    {% endif %}
     {% block extra_head %}{% endblock %}
     {% if site_config.favicon %}
-        <link rel="shortcut icon" type="image/png" href="{{ site_config.favicon.url }}"/>
+        {# Square copies of the uploaded favicon (home/favicon.py). #}
+        <link rel="icon" href="{% url 'home:favicon_ico' %}" sizes="48x48">
+        <link rel="icon" type="image/png" href="{% url 'home:favicon_png' %}" sizes="192x192">
+        <link rel="apple-touch-icon" href="{% url 'home:apple_touch_icon' %}">
     {% endif %}
     <link rel="stylesheet" type="text/css" href="{% static 'typeface-hind/index.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static '@fortawesome/fontawesome-free/css/all.min.css' %}">

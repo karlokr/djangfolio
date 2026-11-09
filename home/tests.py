@@ -163,7 +163,7 @@ class HtmxTabTitleTests(TestCase):
         return re.findall(r'<title>(.*?)</title>', response.content.decode(), re.DOTALL)
 
     def test_partials_carry_the_full_page_title(self):
-        for url in ['/', '/blog/', '/blog/a-post/', '/projects/', f'/projects/{self.project.pk}/']:
+        for url in ['/', '/blog/', '/blog/a-post/', '/projects/', self.project.get_absolute_url()]:
             with self.subTest(url=url):
                 full = self.titles(self.client.get(url))
                 partial = self.titles(self.client.get(url, HTTP_HX_REQUEST='true'))
@@ -341,3 +341,215 @@ class NotFoundCachingTests(TestCase):
         response = self.client.get('/robots.txt')
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('no-store', response.get('Cache-Control', ''))
+
+
+class SeoTests(TestCase):
+    """One host, canonical links, titles, descriptions and link-preview tags."""
+
+    HOSTS = ['example.com', 'www.example.com', 'testserver']
+
+    def setUp(self):
+        from blog.models import BlogPost
+        from resume.models import Resume
+
+        self.resume = Resume.objects.create(
+            name='Jane Doe', headline='Data Engineer', location='Earth',
+            about_text='I build pipelines. ' * 30)
+        BlogPost.objects.create(title='A Post', slug='a-post', excerpt='Short excerpt.',
+                                content='Body', published=True)
+        config = SiteConfiguration.get_solo()
+        config.full_name = 'Jane Doe'
+        config.save()
+
+    def head(self, response):
+        html = response.content.decode()
+        return html[:html.index('</head>')]
+
+    @override_settings(SITE_URL='https://example.com', ALLOWED_HOSTS=HOSTS)
+    def test_other_hosts_redirect_to_site_url(self):
+        response = self.client.get('/blog/?page=2', HTTP_HOST='www.example.com')
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'https://example.com/blog/?page=2')
+        self.assertEqual(self.client.get('/blog/', HTTP_HOST='example.com').status_code, 200)
+
+    @override_settings(SITE_URL='', ALLOWED_HOSTS=HOSTS)
+    def test_no_redirect_without_site_url(self):
+        self.assertEqual(self.client.get('/', HTTP_HOST='www.example.com').status_code, 200)
+
+    @override_settings(SITE_URL='https://example.com', ALLOWED_HOSTS=HOSTS)
+    def test_canonical_links(self):
+        for url, canonical in [
+            ('/', 'https://example.com/'),
+            ('/blog/a-post/', 'https://example.com/blog/a-post/'),
+            ('/blog/?page=2&utm_source=x', 'https://example.com/blog/?page=2'),
+            ('/blog/?page=1', 'https://example.com/blog/'),
+            ('/blog/?tag=python&page=2', 'https://example.com/blog/'),
+            ('/projects/', 'https://example.com/projects/'),
+        ]:
+            with self.subTest(url=url):
+                head = self.head(self.client.get(url, HTTP_HOST='example.com'))
+                self.assertEqual(re.findall(r'<link rel="canonical" href="([^"]+)">', head), [canonical])
+
+    def test_titles(self):
+        for url, title in [
+            ('/', 'Jane Doe | Data Engineer'),
+            ('/blog/', 'Blog | Jane Doe'),
+            ('/blog/a-post/', 'A Post | Jane Doe'),
+            ('/projects/', 'Projects | Jane Doe'),
+        ]:
+            with self.subTest(url=url):
+                self.assertContains(self.client.get(url), f'<title>{title}</title>')
+
+    def test_seo_title_overrides_the_home_title(self):
+        config = SiteConfiguration.get_solo()
+        config.seo_title = 'Jane Doe, pipelines and data'
+        config.save()
+        self.assertContains(self.client.get('/'), '<title>Jane Doe, pipelines and data</title>')
+
+    def test_home_description(self):
+        head = self.head(self.client.get('/'))
+        description = re.search(r'<meta name="description" content="([^"]*)">', head).group(1)
+        self.assertLessEqual(len(description), 160)
+        self.assertTrue(description.endswith('pipelines.…') or description.endswith('…'))
+        self.assertTrue(description.startswith('I build pipelines.'))
+        config = SiteConfiguration.get_solo()
+        config.meta_description = 'Data engineer building pipelines.'
+        config.save()
+        self.assertContains(self.client.get('/'), '<meta name="description" content="Data engineer building pipelines.">')
+
+    @override_settings(SITE_URL='https://example.com', ALLOWED_HOSTS=HOSTS)
+    def test_link_preview_tags(self):
+        head = self.head(self.client.get('/', HTTP_HOST='example.com'))
+        self.assertIn('<meta property="og:url" content="https://example.com/">', head)
+        self.assertIn('<meta property="og:title" content="Jane Doe | Data Engineer">', head)
+        self.assertIn('<meta name="twitter:card" content="summary">', head)
+        self.assertNotIn('property="twitter:', head)
+        post = self.head(self.client.get('/blog/a-post/', HTTP_HOST='example.com'))
+        self.assertIn('<meta property="og:type" content="article">', post)
+        self.assertIn('<meta property="og:title" content="A Post">', post)
+        self.assertIn('property="article:modified_time"', post)
+
+    def test_seo_description_filter(self):
+        from home.templatetags.custom_filters import seo_description
+
+        self.assertEqual(seo_description('<p>Short   text.</p>'), 'Short text.')
+        long = seo_description('word ' * 60)
+        self.assertLessEqual(len(long), 160)
+        self.assertTrue(long.endswith('word…'))
+
+    def test_listing_description(self):
+        from home import seo
+
+        self.assertEqual(seo.listing_description('Articles by Jane', ['A', 'B', 'C']),
+                         'Articles by Jane on A, B and C.')
+        self.assertEqual(seo.listing_description('Articles by Jane', []), 'Articles by Jane.')
+
+
+class SeoDiscoveryTests(TestCase):
+    """sitemap.xml, robots.txt's Sitemap line, structured data and square icons."""
+
+    HOSTS = ['example.com', 'testserver']
+
+    def setUp(self):
+        from blog.models import BlogPost
+        from projects.models import Project
+        from resume.models import Resume
+
+        Resume.objects.create(name='Jane Doe', headline='Data Engineer', location='Earth',
+                              about_text='I build pipelines.')
+        self.post = BlogPost.objects.create(title='A <b>Post</b>', slug='a-post', excerpt='Short.',
+                                            content='Body', published=True, author='Jane Doe')
+        BlogPost.objects.create(title='Draft', slug='draft', excerpt='x', content='x', published=False)
+        Project.objects.create(title='Pipeline Kit', short_description='x', long_description='y', css_id='p')
+        config = SiteConfiguration.get_solo()
+        config.full_name = 'Jane Doe'
+        config.github_url = 'https://github.com/janedoe'
+        config.save()  # x_url keeps its placeholder default
+
+    def structured_data(self, url, **extra):
+        html = self.client.get(url, **extra).content.decode()
+        found = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+        self.assertEqual(len(found), 1)
+        document = json.loads(found[0])
+        self.assertEqual(document['@context'], 'https://schema.org')
+        return {item['@type']: item for item in document['@graph']}, found[0]
+
+    @override_settings(SITE_URL='https://example.com', ALLOWED_HOSTS=HOSTS)
+    def test_sitemap(self):
+        config = SiteConfiguration.get_solo()
+        config.show_projects_link = False
+        config.save()
+        xml = self.client.get('/sitemap.xml', HTTP_HOST='example.com').content.decode()
+        locations = re.findall(r'<loc>([^<]+)</loc>', xml)
+        self.assertEqual(sorted(locations), sorted([
+            'https://example.com/', 'https://example.com/blog/',
+            'https://example.com/blog/a-post/', 'https://example.com/projects/pipeline-kit/',
+        ]))
+        self.assertIn('<lastmod>', xml)
+        config.show_projects_link = True
+        config.save()
+        xml = self.client.get('/sitemap.xml', HTTP_HOST='example.com').content.decode()
+        self.assertIn('<loc>https://example.com/projects/</loc>', xml)
+
+    @override_settings(SITE_URL='https://example.com', ALLOWED_HOSTS=HOSTS)
+    def test_robots_points_to_sitemap(self):
+        self.assertContains(self.client.get('/robots.txt', HTTP_HOST='example.com'),
+                            'Sitemap: https://example.com/sitemap.xml')
+
+    @override_settings(SITE_URL='https://example.com', ALLOWED_HOSTS=HOSTS)
+    def test_home_person_and_website(self):
+        items, _ = self.structured_data('/', HTTP_HOST='example.com')
+        person = items['Person']
+        self.assertEqual(person['name'], 'Jane Doe')
+        self.assertEqual(person['jobTitle'], 'Data Engineer')
+        self.assertEqual(person['url'], 'https://example.com/')
+        # The placeholder X URL isn't a real profile, so it's left out.
+        self.assertEqual(person['sameAs'], ['https://github.com/janedoe'])
+        self.assertEqual(items['WebSite']['author'], {'@id': 'https://example.com/#person'})
+
+    @override_settings(SITE_URL='https://example.com', ALLOWED_HOSTS=HOSTS)
+    def test_post_and_breadcrumbs(self):
+        items, raw = self.structured_data('/blog/a-post/', HTTP_HOST='example.com')
+        posting = items['BlogPosting']
+        self.assertEqual(posting['headline'], 'A <b>Post</b>')
+        self.assertEqual(posting['mainEntityOfPage'], 'https://example.com/blog/a-post/')
+        self.assertEqual(posting['author'], {'@id': 'https://example.com/#person'})
+        self.assertEqual([i['item'] for i in items['BreadcrumbList']['itemListElement']],
+                         ['https://example.com/', 'https://example.com/blog/', 'https://example.com/blog/a-post/'])
+        # Escaped, so a title can't close the script element.
+        self.assertNotIn('<b>', raw)
+
+    def test_project_breadcrumbs_skip_a_hidden_list(self):
+        config = SiteConfiguration.get_solo()
+        config.show_projects_link = False
+        config.save()
+        items, _ = self.structured_data('/projects/pipeline-kit/')
+        self.assertEqual([i['name'] for i in items['BreadcrumbList']['itemListElement']],
+                         ['Home', 'Pipeline Kit'])
+
+    def test_square_icons(self):
+        import shutil
+        import tempfile
+        from io import BytesIO
+
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from PIL import Image
+
+        self.assertEqual(self.client.get('/favicon.ico').status_code, 404)  # none uploaded
+        media = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, media)
+        buffer = BytesIO()
+        Image.new('RGBA', (98, 60), (200, 0, 0, 255)).save(buffer, format='PNG')
+        with self.settings(MEDIA_ROOT=media):
+            config = SiteConfiguration.get_solo()
+            config.favicon = SimpleUploadedFile('icon.png', buffer.getvalue(), content_type='image/png')
+            config.save()
+            for url, size, content_type in [('/favicon.ico', 48, 'image/x-icon'),
+                                            ('/favicon-192.png', 192, 'image/png'),
+                                            ('/apple-touch-icon.png', 180, 'image/png')]:
+                with self.subTest(url=url):
+                    response = self.client.get(url)
+                    self.assertEqual(response['Content-Type'], content_type)
+                    icon = Image.open(BytesIO(response.content))
+                    self.assertEqual(icon.size, (size, size))
+            self.assertContains(self.client.get('/'), '<link rel="apple-touch-icon" href="/apple-touch-icon.png">')

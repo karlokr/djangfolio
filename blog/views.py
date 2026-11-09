@@ -1,6 +1,10 @@
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
+from home import seo
+from home.models import SiteConfiguration
+from home.templatetags.custom_filters import seo_description
 from home.templatetags.image_tags import add_srcset_to_media_images
 from .math_markdown import markdownify_with_math
 from .models import BlogPost, BlogCategory, BlogTag
@@ -60,7 +64,12 @@ def blog_list(request):
     selected_category_objects = BlogCategory.objects.filter(slug__in=category_slugs) if category_slugs else []
     selected_tag_objects = BlogTag.objects.filter(slug__in=tag_slugs) if tag_slugs else []
     
+    name = SiteConfiguration.get_solo().full_name
     context = {
+        'page_title': seo.page_title('Blog', name),
+        'page_description': seo.listing_description(
+            f'Articles by {name}', [c.name for c in categories if c.post_count]
+        ),
         'page_obj': page_obj,
         'page_range': page_range,
         'categories': categories,
@@ -94,7 +103,16 @@ def blog_detail(request, slug):
         categories__in=post.categories.all()
     ).exclude(id=post.id).distinct()[:3]
     
+    config = SiteConfiguration.get_solo()
+    description = seo_description(post.excerpt)
     context = {
+        'page_title': seo.page_title(post.title, config.full_name),
+        'page_description': description,
+        'structured_data': [
+            seo.blog_posting(request, config, post, description),
+            seo.breadcrumbs(request, ('Home', reverse('home:home_page')),
+                            ('Blog', reverse('blog:blog_list')), (post.title, request.path)),
+        ],
         'post': post,
         'post_content_html': add_srcset_to_media_images(
             markdownify_with_math(post.content),

@@ -2,7 +2,7 @@
 {% load custom_filters %}
 {% load image_tags %}
 {# htmx swaps only update the browser tab title if the response carries one. #}
-{% if request.htmx %}<title>{{ resume.name }}</title>{% endif %}
+{% if request.htmx %}<title>{{ page_title }}</title>{% endif %}
 
 <div id="main-wrapper">
 
@@ -512,8 +512,8 @@
 
                                     <div class="col-md-12" style="text-align:center;">
                                         {# Swap the project page in (no full reload, so no loading animation). #}
-                                        <a href="{% url 'projects:project_detail' project.pk %}"
-                                           hx-get="{% url 'projects:project_detail' project.pk %}"
+                                        <a href="{% url 'projects:project_detail' project.slug %}"
+                                           hx-get="{% url 'projects:project_detail' project.slug %}"
                                            hx-target="#main-content"
                                            hx-swap="innerHTML"
                                            hx-push-url="true">Read more...</a>

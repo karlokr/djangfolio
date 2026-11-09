@@ -1,7 +1,7 @@
 {% load static %}
 {% load image_tags %}
 {# htmx swaps only update the browser tab title if the response carries one. #}
-{% if request.htmx %}<title>{{ site_config.full_name }}</title>{% endif %}
+{% if request.htmx %}<title>{{ page_title }}</title>{% endif %}
 
 <div class="container page-container">
 <div class="row mt-3">
@@ -23,8 +23,8 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ project.title }}</h5>
                         <p class="card-text">{% autoescape off %}{{ project.short_description }}{% endautoescape %}</p>
-                        <a href="{% url 'projects:project_detail' project.pk %}"
-                           hx-get="{% url 'projects:project_detail' project.pk %}"
+                        <a href="{% url 'projects:project_detail' project.slug %}"
+                           hx-get="{% url 'projects:project_detail' project.slug %}"
                            hx-target="#main-content"
                            hx-swap="innerHTML"
                            hx-push-url="true"

@@ -39,6 +39,9 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
         ('Navigation Settings', {
             'fields': ('show_projects_link',)
         }),
+        ('Search engines', {
+            'fields': ('seo_title', 'meta_description')
+        }),
     )
     
     def has_add_permission(self, request):
