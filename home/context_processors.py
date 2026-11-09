@@ -4,6 +4,7 @@ Makes site configuration available to all templates.
 """
 from django.conf import settings
 from .models import SiteConfiguration
+from .seo import site_root as get_site_root
 
 
 def site_config(request):
@@ -17,8 +18,7 @@ def site_config(request):
     Returns:
         dict: Context dictionary with site_config and canonical_url
     """
-    # The site's public origin: SITE_URL in production, else this request's.
-    site_root = settings.SITE_URL or f'{request.scheme}://{request.get_host()}'
+    site_root = get_site_root(request)
     # The canonical address keeps only the page number of a paginated list;
     # any other query (filters, tracking parameters) points to the plain page.
     canonical_url = site_root + request.path

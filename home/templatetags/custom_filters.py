@@ -1,5 +1,8 @@
+import json
+
 from django import template
 from django.utils.html import strip_tags
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -33,3 +36,19 @@ def seo_description(value, limit=160):
     if ' ' in cut:
         cut = cut[:cut.rindex(' ')]
     return cut.rstrip(' ,;:.-–—') + '…'
+
+
+_JSON_ESCAPES = {ord('<'): '\\u003C', ord('>'): '\\u003E', ord('&'): '\\u0026'}
+
+
+@register.filter(name='json_ld')
+def json_ld(items):
+    """
+    A JSON-LD document from a list of schema.org objects, safe inside
+    <script type="application/ld+json"> (<, > and & are escaped, so text
+    can't close the script element).
+    Usage: <script type="application/ld+json">{{ structured_data|json_ld }}</script>
+    """
+    document = {'@context': 'https://schema.org', '@graph': list(items)}
+    return mark_safe(json.dumps(document, ensure_ascii=False).translate(_JSON_ESCAPES))
+
