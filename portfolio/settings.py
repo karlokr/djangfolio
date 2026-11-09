@@ -48,9 +48,11 @@ CSRF_TRUSTED_ORIGINS = os.getenv(
     'http://localhost:8888,http://127.0.0.1:8888'
 ).split(',')
 
-# Site URL for canonical links (used in social sharing)
-# Set this to your production URL for proper share links
-SITE_URL = os.getenv('SITE_URL', '')
+# The site's one public address, e.g. https://example.com (no trailing path).
+# Used for canonical links and share links, and every other host the site
+# answers on (www., for example) redirects to it (CanonicalHostMiddleware).
+# Leave unset in development.
+SITE_URL = os.getenv('SITE_URL', '').rstrip('/')
 
 # Application definition
 
@@ -73,6 +75,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # One host for search engines: redirects to SITE_URL's host (see below).
+    'portfolio.middleware.CanonicalHostMiddleware',
 ]
 
 # Only use WhiteNoise in production

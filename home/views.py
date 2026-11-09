@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.views.decorators.http import require_POST
 from django.conf import settings
-from home import turnstile
+from home import seo, turnstile
 from home.security import client_ip, rate_limited
 from home.github import get_repos
 from home.models import SiteConfiguration
@@ -25,6 +25,7 @@ def home_page(request):
     resume = Resume.objects.first()  # Use .first() instead of [0] to handle empty queryset
     
     skill_groups = SkillGroup.objects.all()
+    config = SiteConfiguration.get_solo()
     context = {
         'software_projects': software_projects,
         'mathphysics_projects': mathphysics_projects,
@@ -32,6 +33,8 @@ def home_page(request):
         'resume': resume,
         'skill_groups': skill_groups,
         'active_page': 'home',
+        'page_title': seo.home_title(config, resume),
+        'page_description': seo.home_description(config, resume),
     }
     
     # Return partial template for HTMX requests

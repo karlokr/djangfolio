@@ -224,6 +224,13 @@ The site includes feature flags to toggle certain elements:
 
 Access feature flags in the Site Configuration admin panel.
 
+### Search engines
+
+- **`SITE_URL`** (environment variable): the site's one public address, for example `https://example.com`. Every page gets a canonical link and link-preview tags on it, and any other host the site answers on (such as `www.example.com`) permanently redirects to it, so search engines see one copy of each page. Leave it unset in development.
+- **Page titles** follow "Page | Name": "Blog | Jane Doe", "My post | Jane Doe". The home page uses "Name | Resume headline" unless you set **`seo_title`** in Site Configuration.
+- **`meta_description`** in Site Configuration is the home page's summary in search results (search engines show about 155 characters). Left blank, the start of the resume's about text is used.
+- Every page has Open Graph and Twitter tags for link previews; the profile image is the default picture, and posts and projects use their own.
+
 ## Local Development (Without Docker)
 
 If you prefer to run the project without Docker:
@@ -354,6 +361,7 @@ services:
       - DEBUG=False
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
       - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - SITE_URL=${SITE_URL}
       - EMAIL_HOST=${EMAIL_HOST}
       - EMAIL_PORT=${EMAIL_PORT}
       - EMAIL_HOST_USER=${EMAIL_HOST_USER}

@@ -2,9 +2,11 @@
 {% load static %}
 {% load custom_filters %}
 
-{% block title %}{{ resume.name }}{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
 
-{% block meta_description %}<meta name="description" content="{{ resume.about_text|default:site_config.full_name|truncatechars:300 }}">{% endblock %}
+{% block meta_description %}<meta name="description" content="{{ page_description }}">{% endblock %}
+
+{% block social_meta %}{% include 'seo/social_meta.html' with meta_title=page_title meta_description=page_description %}{% endblock %}
 
 {% block extra_css %}
 {# Arriving at /#some-project (the "Back to portfolio" link): pick the Portfolio view before the first paint, so the page doesn't flash the preloader and Resume before switching. scripts.js finishes the job and removes the class if the anchor isn't a project. #}
