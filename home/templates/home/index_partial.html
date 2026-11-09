@@ -2,7 +2,7 @@
 {% load custom_filters %}
 {% load image_tags %}
 {# htmx swaps only update the browser tab title if the response carries one. #}
-{% if request.htmx %}<title>{{ resume.name }}</title>{% endif %}
+{% if request.htmx %}<title>{{ page_title }}</title>{% endif %}
 
 <div id="main-wrapper">
 

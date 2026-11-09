@@ -1,0 +1,35 @@
+{% comment %}
+Open Graph and Twitter tags for link previews (LinkedIn, X, Slack, ...).
+Every page includes this; pages pass what they know:
+  meta_title, meta_description  (required)
+  meta_type        og:type, default "website"
+  meta_image       an ImageField file; default the site's profile image
+  meta_image_alt   default the profile image's alt text
+  meta_card        twitter:card for meta_image, default "summary_large_image"
+  published, modified   datetimes, for articles
+All addresses are absolute, on SITE_URL (site_root) when it's set.
+{% endcomment %}
+{% with image=meta_image|default:site_config.profile_image %}
+<meta property="og:type" content="{{ meta_type|default:'website' }}">
+<meta property="og:site_name" content="{{ site_config.full_name }}">
+<meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:title" content="{{ meta_title }}">
+<meta property="og:description" content="{{ meta_description }}">
+{% if image %}
+<meta property="og:image" content="{{ site_root }}{{ image.url }}">
+<meta property="og:image:alt" content="{% if meta_image %}{{ meta_image_alt|default:meta_title }}{% else %}{{ site_config.profile_image_alt_text }}{% endif %}">
+{% endif %}
+{% if published %}
+<meta property="article:published_time" content="{{ published|date:'c' }}">
+{% endif %}
+{% if modified %}
+<meta property="article:modified_time" content="{{ modified|date:'c' }}">
+{% endif %}
+{# A page's own picture gets the large card; the profile photo, a portrait, the small one. #}
+<meta name="twitter:card" content="{% if meta_image %}{{ meta_card|default:'summary_large_image' }}{% else %}summary{% endif %}">
+<meta name="twitter:title" content="{{ meta_title }}">
+<meta name="twitter:description" content="{{ meta_description }}">
+{% if image %}
+<meta name="twitter:image" content="{{ site_root }}{{ image.url }}">
+{% endif %}
+{% endwith %}

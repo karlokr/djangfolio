@@ -1,8 +1,32 @@
 """Site-wide middleware."""
 import secrets
 
+from urllib.parse import urlsplit
+
 from django.conf import settings
+from django.http import HttpResponsePermanentRedirect
 from django.utils.cache import add_never_cache_headers
+
+
+class CanonicalHostMiddleware:
+    """Redirect every other host the site answers on to SITE_URL's host.
+
+    With SITE_URL set (for example https://example.com), a request for
+    www.example.com/blog/ gets a permanent redirect to
+    https://example.com/blog/, so search engines see one copy of each page
+    instead of one per host. Does nothing when SITE_URL is unset.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+        site = urlsplit(settings.SITE_URL) if settings.SITE_URL else None
+        self.host = site.netloc.lower() if site else ''
+        self.origin = f'{site.scheme}://{site.netloc}' if site else ''
+
+    def __call__(self, request):
+        if self.host and request.get_host().lower() != self.host:
+            return HttpResponsePermanentRedirect(self.origin + request.get_full_path())
+        return self.get_response(request)
 
 
 class NeverCacheNotFoundMiddleware:

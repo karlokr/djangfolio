@@ -1,41 +1,12 @@
 {% extends 'base_layout.html' %}
 {% load static %}
 
-{% block title %}{{ post.title }} - {{ site_config.full_name }}{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
 
-{% block meta_description %}<meta name="description" content="{{ post.excerpt|truncatechars:300 }}">{% endblock %}
+{% block meta_description %}<meta name="description" content="{{ page_description }}">{% endblock %}
 
-{% block extra_css %}
-
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="article">
-<meta property="og:url" content="{{ request.build_absolute_uri }}">
-<meta property="og:title" content="{{ post.title }}">
-<meta property="og:description" content="{{ post.excerpt }}">
-{% if post.featured_image %}
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}">
-<meta property="og:image:alt" content="{{ post.featured_image_caption|default:post.title }}">
-{% elif site_config.favicon %}
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site_config.favicon.url }}">
-<meta property="og:image:alt" content="{{ site_config.full_name }}">
-{% endif %}
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="{{ request.build_absolute_uri }}">
-<meta property="twitter:title" content="{{ post.title }}">
-<meta property="twitter:description" content="{{ post.excerpt }}">
-{% if post.featured_image %}
-<meta property="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}">
-<meta property="twitter:image:alt" content="{{ post.featured_image_caption|default:post.title }}">
-{% elif site_config.favicon %}
-<meta property="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site_config.favicon.url }}">
-<meta property="twitter:image:alt" content="{{ site_config.full_name }}">
-{% endif %}
-
-<!-- Open Graph site and article details -->
-<meta property="og:site_name" content="{{ site_config.full_name }}">
-<meta property="article:published_time" content="{{ post.created_date|date:'c' }}">
+{% block social_meta %}
+{% include 'seo/social_meta.html' with meta_type='article' meta_title=post.title meta_description=page_description meta_image=post.featured_image meta_image_alt=post.featured_image_caption published=post.created_date modified=post.updated_date %}
 <meta property="article:author" content="{{ post.author }}">
 {% endblock %}
 

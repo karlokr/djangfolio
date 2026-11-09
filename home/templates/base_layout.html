@@ -11,6 +11,10 @@
     <meta name="htmx-config" content='{"inlineScriptNonce": "{{ request.csp_nonce }}"}'>
     <title>{% block title %}{{ site_config.full_name }}{% endblock %}</title>
     {% block meta_description %}<meta name="description" content="{{ site_config.full_name }}: software engineering portfolio, projects and blog.">{% endblock %}
+    {# One address per page for search engines; pages may override (see blog_list.html). #}
+    {% block canonical %}<link rel="canonical" href="{{ canonical_url }}">{% endblock %}
+    {# Link previews: pages include seo/social_meta.html with their title, description and image. #}
+    {% block social_meta %}{% endblock %}
     {% block extra_head %}{% endblock %}
     {% if site_config.favicon %}
         <link rel="shortcut icon" type="image/png" href="{{ site_config.favicon.url }}"/>

@@ -86,6 +86,21 @@ class SiteConfiguration(models.Model):
         default=True,
         help_text='Show the Projects link in the navigation bar'
     )
+
+    # Search engines (both optional; see home/templates/home/seo_title.txt
+    # and seo_description.txt for what is used when they're blank)
+    seo_title = models.CharField(
+        max_length=70,
+        blank=True,
+        help_text='Home page title in search results and browser tabs. Leave blank '
+                  'for "<name> | <resume headline>". Keep it under about 60 characters.'
+    )
+    meta_description = models.CharField(
+        max_length=300,
+        blank=True,
+        help_text='Home page summary in search results. Leave blank to use the start '
+                  'of the resume\'s about text. Search engines show about 155 characters.'
+    )
     
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)

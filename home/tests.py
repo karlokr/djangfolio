@@ -341,3 +341,105 @@ class NotFoundCachingTests(TestCase):
         response = self.client.get('/robots.txt')
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('no-store', response.get('Cache-Control', ''))
+
+
+class SeoTests(TestCase):
+    """One host, canonical links, titles, descriptions and link-preview tags."""
+
+    HOSTS = ['example.com', 'www.example.com', 'testserver']
+
+    def setUp(self):
+        from blog.models import BlogPost
+        from resume.models import Resume
+
+        self.resume = Resume.objects.create(
+            name='Jane Doe', headline='Data Engineer', location='Earth',
+            about_text='I build pipelines. ' * 30)
+        BlogPost.objects.create(title='A Post', slug='a-post', excerpt='Short excerpt.',
+                                content='Body', published=True)
+        config = SiteConfiguration.get_solo()
+        config.full_name = 'Jane Doe'
+        config.save()
+
+    def head(self, response):
+        html = response.content.decode()
+        return html[:html.index('</head>')]
+
+    @override_settings(SITE_URL='https://example.com', ALLOWED_HOSTS=HOSTS)
+    def test_other_hosts_redirect_to_site_url(self):
+        response = self.client.get('/blog/?page=2', HTTP_HOST='www.example.com')
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'https://example.com/blog/?page=2')
+        self.assertEqual(self.client.get('/blog/', HTTP_HOST='example.com').status_code, 200)
+
+    @override_settings(SITE_URL='', ALLOWED_HOSTS=HOSTS)
+    def test_no_redirect_without_site_url(self):
+        self.assertEqual(self.client.get('/', HTTP_HOST='www.example.com').status_code, 200)
+
+    @override_settings(SITE_URL='https://example.com', ALLOWED_HOSTS=HOSTS)
+    def test_canonical_links(self):
+        for url, canonical in [
+            ('/', 'https://example.com/'),
+            ('/blog/a-post/', 'https://example.com/blog/a-post/'),
+            ('/blog/?page=2&utm_source=x', 'https://example.com/blog/?page=2'),
+            ('/blog/?page=1', 'https://example.com/blog/'),
+            ('/blog/?tag=python&page=2', 'https://example.com/blog/'),
+            ('/projects/', 'https://example.com/projects/'),
+        ]:
+            with self.subTest(url=url):
+                head = self.head(self.client.get(url, HTTP_HOST='example.com'))
+                self.assertEqual(re.findall(r'<link rel="canonical" href="([^"]+)">', head), [canonical])
+
+    def test_titles(self):
+        for url, title in [
+            ('/', 'Jane Doe | Data Engineer'),
+            ('/blog/', 'Blog | Jane Doe'),
+            ('/blog/a-post/', 'A Post | Jane Doe'),
+            ('/projects/', 'Projects | Jane Doe'),
+        ]:
+            with self.subTest(url=url):
+                self.assertContains(self.client.get(url), f'<title>{title}</title>')
+
+    def test_seo_title_overrides_the_home_title(self):
+        config = SiteConfiguration.get_solo()
+        config.seo_title = 'Jane Doe, pipelines and data'
+        config.save()
+        self.assertContains(self.client.get('/'), '<title>Jane Doe, pipelines and data</title>')
+
+    def test_home_description(self):
+        head = self.head(self.client.get('/'))
+        description = re.search(r'<meta name="description" content="([^"]*)">', head).group(1)
+        self.assertLessEqual(len(description), 160)
+        self.assertTrue(description.endswith('pipelines.…') or description.endswith('…'))
+        self.assertTrue(description.startswith('I build pipelines.'))
+        config = SiteConfiguration.get_solo()
+        config.meta_description = 'Data engineer building pipelines.'
+        config.save()
+        self.assertContains(self.client.get('/'), '<meta name="description" content="Data engineer building pipelines.">')
+
+    @override_settings(SITE_URL='https://example.com', ALLOWED_HOSTS=HOSTS)
+    def test_link_preview_tags(self):
+        head = self.head(self.client.get('/', HTTP_HOST='example.com'))
+        self.assertIn('<meta property="og:url" content="https://example.com/">', head)
+        self.assertIn('<meta property="og:title" content="Jane Doe | Data Engineer">', head)
+        self.assertIn('<meta name="twitter:card" content="summary">', head)
+        self.assertNotIn('property="twitter:', head)
+        post = self.head(self.client.get('/blog/a-post/', HTTP_HOST='example.com'))
+        self.assertIn('<meta property="og:type" content="article">', post)
+        self.assertIn('<meta property="og:title" content="A Post">', post)
+        self.assertIn('property="article:modified_time"', post)
+
+    def test_seo_description_filter(self):
+        from home.templatetags.custom_filters import seo_description
+
+        self.assertEqual(seo_description('<p>Short   text.</p>'), 'Short text.')
+        long = seo_description('word ' * 60)
+        self.assertLessEqual(len(long), 160)
+        self.assertTrue(long.endswith('word…'))
+
+    def test_listing_description(self):
+        from home import seo
+
+        self.assertEqual(seo.listing_description('Articles by Jane', ['A', 'B', 'C']),
+                         'Articles by Jane on A, B and C.')
+        self.assertEqual(seo.listing_description('Articles by Jane', []), 'Articles by Jane.')

@@ -17,14 +17,18 @@ def site_config(request):
     Returns:
         dict: Context dictionary with site_config and canonical_url
     """
-    # Build canonical URL - use SITE_URL if set, otherwise use request
-    if settings.SITE_URL:
-        canonical_url = settings.SITE_URL.rstrip('/') + request.path
-    else:
-        canonical_url = request.build_absolute_uri(request.path)
-    
+    # The site's public origin: SITE_URL in production, else this request's.
+    site_root = settings.SITE_URL or f'{request.scheme}://{request.get_host()}'
+    # The canonical address keeps only the page number of a paginated list;
+    # any other query (filters, tracking parameters) points to the plain page.
+    canonical_url = site_root + request.path
+    page = request.GET.get('page', '')
+    if page.isdigit() and int(page) > 1:
+        canonical_url += f'?page={int(page)}'
+
     return {
         'site_config': SiteConfiguration.get_solo(),
+        'site_root': site_root,
         'canonical_url': canonical_url,
         # Empty when Turnstile is off; the contact forms then render without it.
         'turnstile_site_key': settings.TURNSTILE_SITE_KEY,
