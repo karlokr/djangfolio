@@ -1,8 +1,25 @@
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
+
+
+def project_slug_base(title):
+    """The slug a title starts from. Never only digits, which would read as
+    an old numeric address (/projects/<id>/ redirects to /projects/<slug>/)."""
+    base = slugify(title)[:190] or 'project'
+    return f'project-{base}' if base.isdigit() else base
+
 
 class Project(models.Model):
     title = models.CharField(max_length=200)
+    slug = models.SlugField(
+        max_length=200,
+        unique=True,
+        blank=True,
+        help_text='The project page\'s address: /projects/<slug>/. Filled in from '
+                  'the title when left blank. Changing it breaks existing links.'
+    )
     short_description = models.TextField()
     long_description = models.TextField()
     technology = models.CharField(max_length=50, default=None, blank=True, null=True)
@@ -11,6 +28,18 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = project_slug_base(self.title)
+            slug, n = base, 2
+            while Project.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug, n = f'{base}-{n}', n + 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('projects:project_detail', args=[self.slug])
 
 class SoftwareProject(Project):
     project_type = models.CharField(max_length=30, default='Software Project')

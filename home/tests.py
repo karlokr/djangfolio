@@ -163,7 +163,7 @@ class HtmxTabTitleTests(TestCase):
         return re.findall(r'<title>(.*?)</title>', response.content.decode(), re.DOTALL)
 
     def test_partials_carry_the_full_page_title(self):
-        for url in ['/', '/blog/', '/blog/a-post/', '/projects/', f'/projects/{self.project.pk}/']:
+        for url in ['/', '/blog/', '/blog/a-post/', '/projects/', self.project.get_absolute_url()]:
             with self.subTest(url=url):
                 full = self.titles(self.client.get(url))
                 partial = self.titles(self.client.get(url, HTTP_HX_REQUEST='true'))

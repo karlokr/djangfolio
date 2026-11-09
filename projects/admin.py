@@ -46,6 +46,7 @@ class PlayStoreLinkInline(admin.StackedInline):
     extra = 1
 
 class MathPhysicsProjectAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('title',)}
     model = MathPhysicsProject
     inlines = [
         FeatureInline, SpecialThanksInline, 
@@ -55,6 +56,7 @@ class MathPhysicsProjectAdmin(admin.ModelAdmin):
     ]
 
 class WebProjectAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('title',)}
     model = WebProject
     inlines = [
         FeatureInline, SpecialThanksInline, 
@@ -64,6 +66,7 @@ class WebProjectAdmin(admin.ModelAdmin):
     ]
 
 class SoftwareProjectAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('title',)}
     model = SoftwareProject
     inlines = [
         FeatureInline, SpecialThanksInline, 

@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from projects.models import Project
 from home import seo
 from home.models import SiteConfiguration
@@ -21,8 +21,8 @@ def projects_list(request):
     template = 'projects/projects_list_partial.html' if wants_partial(request) else 'projects/projects_list.html'
     return render(request, template, context)
 
-def project_detail(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+def project_detail(request, slug):
+    project = get_object_or_404(Project, slug=slug)
     context = {
         'page_title': seo.page_title(project.title, SiteConfiguration.get_solo().full_name),
         'page_description': seo_description(project.short_description),
@@ -32,3 +32,8 @@ def project_detail(request, pk):
     # Return partial template for HTMX requests
     template = 'projects/project_detail_partial.html' if wants_partial(request) else 'projects/project_detail.html'
     return render(request, template, context)
+
+
+def project_detail_by_id(request, pk):
+    """Old /projects/<id>/ addresses: a permanent redirect to /projects/<slug>/."""
+    return redirect(get_object_or_404(Project, pk=pk), permanent=True)
